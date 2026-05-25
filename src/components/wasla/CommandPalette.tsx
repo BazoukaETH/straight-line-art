@@ -2,11 +2,13 @@ import { CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, C
 import { useApp } from "@/lib/app-context";
 import { channels, files, members, tasks } from "@/lib/mock-data";
 import { useNavigate } from "@tanstack/react-router";
+import { useTaskNav } from "@/lib/task-nav";
 import { CheckSquare, File, Hash, User } from "lucide-react";
 
 export function CommandPalette() {
-  const { commandOpen, setCommandOpen, openTask } = useApp();
+  const { commandOpen, setCommandOpen } = useApp();
   const nav = useNavigate();
+  const { goTask } = useTaskNav();
   const go = (path: string) => { setCommandOpen(false); nav({ to: path }); };
   return (
     <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
@@ -15,7 +17,7 @@ export function CommandPalette() {
         <CommandEmpty>No results.</CommandEmpty>
         <CommandGroup heading="Tasks">
           {tasks.slice(0, 6).map((t) => (
-            <CommandItem key={t.id} onSelect={() => { setCommandOpen(false); openTask(t.id); }}>
+            <CommandItem key={t.id} onSelect={() => { setCommandOpen(false); goTask(t.id); }}>
               <CheckSquare className="mr-2 size-4 text-muted-foreground" /> {t.title}
             </CommandItem>
           ))}
