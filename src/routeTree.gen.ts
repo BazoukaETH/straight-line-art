@@ -25,6 +25,7 @@ import { Route as OrgSubscriptionsRouteImport } from './routes/org.subscriptions
 import { Route as OrgSettingsRouteImport } from './routes/org.settings'
 import { Route as OrgMembersRouteImport } from './routes/org.members'
 import { Route as OrgFinancialRouteImport } from './routes/org.financial'
+import { Route as SpaceSpaceIdFolderFolderIdRouteImport } from './routes/space.$spaceId.folder.$folderId'
 
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
@@ -106,6 +107,12 @@ const OrgFinancialRoute = OrgFinancialRouteImport.update({
   path: '/financial',
   getParentRoute: () => OrgRoute,
 } as any)
+const SpaceSpaceIdFolderFolderIdRoute =
+  SpaceSpaceIdFolderFolderIdRouteImport.update({
+    id: '/folder/$folderId',
+    path: '/folder/$folderId',
+    getParentRoute: () => SpaceSpaceIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -122,8 +129,9 @@ export interface FileRoutesByFullPath {
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
-  '/space/$spaceId': typeof SpaceSpaceIdRoute
+  '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org/': typeof OrgIndexRoute
+  '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -139,8 +147,9 @@ export interface FileRoutesByTo {
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
-  '/space/$spaceId': typeof SpaceSpaceIdRoute
+  '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org': typeof OrgIndexRoute
+  '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -158,8 +167,9 @@ export interface FileRoutesById {
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
-  '/space/$spaceId': typeof SpaceSpaceIdRoute
+  '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org/': typeof OrgIndexRoute
+  '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/people/$id'
     | '/space/$spaceId'
     | '/org/'
+    | '/space/$spaceId/folder/$folderId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -197,6 +208,7 @@ export interface FileRouteTypes {
     | '/people/$id'
     | '/space/$spaceId'
     | '/org'
+    | '/space/$spaceId/folder/$folderId'
   id:
     | '__root__'
     | '/'
@@ -215,6 +227,7 @@ export interface FileRouteTypes {
     | '/people/$id'
     | '/space/$spaceId'
     | '/org/'
+    | '/space/$spaceId/folder/$folderId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -228,7 +241,7 @@ export interface RootRouteChildren {
   SpacesRoute: typeof SpacesRoute
   TasksRoute: typeof TasksRoute
   PeopleIdRoute: typeof PeopleIdRoute
-  SpaceSpaceIdRoute: typeof SpaceSpaceIdRoute
+  SpaceSpaceIdRoute: typeof SpaceSpaceIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -345,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgFinancialRouteImport
       parentRoute: typeof OrgRoute
     }
+    '/space/$spaceId/folder/$folderId': {
+      id: '/space/$spaceId/folder/$folderId'
+      path: '/folder/$folderId'
+      fullPath: '/space/$spaceId/folder/$folderId'
+      preLoaderRoute: typeof SpaceSpaceIdFolderFolderIdRouteImport
+      parentRoute: typeof SpaceSpaceIdRoute
+    }
   }
 }
 
@@ -366,6 +386,18 @@ const OrgRouteChildren: OrgRouteChildren = {
 
 const OrgRouteWithChildren = OrgRoute._addFileChildren(OrgRouteChildren)
 
+interface SpaceSpaceIdRouteChildren {
+  SpaceSpaceIdFolderFolderIdRoute: typeof SpaceSpaceIdFolderFolderIdRoute
+}
+
+const SpaceSpaceIdRouteChildren: SpaceSpaceIdRouteChildren = {
+  SpaceSpaceIdFolderFolderIdRoute: SpaceSpaceIdFolderFolderIdRoute,
+}
+
+const SpaceSpaceIdRouteWithChildren = SpaceSpaceIdRoute._addFileChildren(
+  SpaceSpaceIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
@@ -377,7 +409,7 @@ const rootRouteChildren: RootRouteChildren = {
   SpacesRoute: SpacesRoute,
   TasksRoute: TasksRoute,
   PeopleIdRoute: PeopleIdRoute,
-  SpaceSpaceIdRoute: SpaceSpaceIdRoute,
+  SpaceSpaceIdRoute: SpaceSpaceIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
