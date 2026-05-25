@@ -38,7 +38,7 @@ function Sidebar() {
 function Home() {
   const { currentUserId } = useApp();
   const me = memberById(currentUserId);
-  const today = new Date().toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const today = formatCairoDate();
   const [bodSubmitted, setBodSubmitted] = useState(false);
   const [bodText, setBodText] = useState("Ship the Venture X marketing site refresh and review the board deck.");
   const isEvening = new Date().getHours() >= 17;
