@@ -86,8 +86,6 @@ function FolderPage() {
             {flat ? "Show list cards" : "Show all tasks in folder (flattened)"}
           </Button>
         </div>
-        {/* avoid TS unused */}
-        <span className="hidden">{goTask && ""}</span>
       </div>
     </AppShell>
   );
