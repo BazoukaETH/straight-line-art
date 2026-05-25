@@ -93,7 +93,7 @@ function TaskNode({ task, allTasks, depth, expanded, setExpanded, visibleIds }: 
       <div
         className={cn("group flex items-center gap-2 border-b border-border/60 px-2 py-2 text-sm transition-colors hover:bg-muted/40", sel && "bg-[color-mix(in_oklab,var(--accent)_8%,transparent)]")}
         style={{ paddingLeft: 8 + depth * 24 }}
-        onDoubleClick={() => openTask(task.id)}
+        onDoubleClick={() => goTask(task.id)}
         draggable
         onDragStart={onDragStart}
         onDragOver={onDragOver}
