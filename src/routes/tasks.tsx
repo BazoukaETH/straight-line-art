@@ -303,7 +303,7 @@ function CalendarView({ tasks }: { tasks: Task[] }) {
 
 // ============ Table ============
 function TableView({ tasks, customFields }: { tasks: Task[]; customFields: CustomField[] }) {
-  const { openTask } = useApp();
+  const { goTask } = useTaskNav();
   const [sort, setSort] = useState<{ key: string; dir: "asc" | "desc" }>({ key: "title", dir: "asc" });
   const sorted = useMemo(() => {
     const arr = [...tasks];
