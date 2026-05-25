@@ -25,6 +25,7 @@ import { Route as OrgSubscriptionsRouteImport } from './routes/org.subscriptions
 import { Route as OrgSettingsRouteImport } from './routes/org.settings'
 import { Route as OrgMembersRouteImport } from './routes/org.members'
 import { Route as OrgFinancialRouteImport } from './routes/org.financial'
+import { Route as SpaceSpaceIdListListIdRouteImport } from './routes/space.$spaceId.list.$listId'
 import { Route as SpaceSpaceIdFolderFolderIdRouteImport } from './routes/space.$spaceId.folder.$folderId'
 
 const TasksRoute = TasksRouteImport.update({
@@ -107,6 +108,11 @@ const OrgFinancialRoute = OrgFinancialRouteImport.update({
   path: '/financial',
   getParentRoute: () => OrgRoute,
 } as any)
+const SpaceSpaceIdListListIdRoute = SpaceSpaceIdListListIdRouteImport.update({
+  id: '/list/$listId',
+  path: '/list/$listId',
+  getParentRoute: () => SpaceSpaceIdRoute,
+} as any)
 const SpaceSpaceIdFolderFolderIdRoute =
   SpaceSpaceIdFolderFolderIdRouteImport.update({
     id: '/folder/$folderId',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org/': typeof OrgIndexRoute
   '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
+  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org': typeof OrgIndexRoute
   '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
+  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org/': typeof OrgIndexRoute
   '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
+  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/space/$spaceId'
     | '/org/'
     | '/space/$spaceId/folder/$folderId'
+    | '/space/$spaceId/list/$listId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/space/$spaceId'
     | '/org'
     | '/space/$spaceId/folder/$folderId'
+    | '/space/$spaceId/list/$listId'
   id:
     | '__root__'
     | '/'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/space/$spaceId'
     | '/org/'
     | '/space/$spaceId/folder/$folderId'
+    | '/space/$spaceId/list/$listId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -358,6 +370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgFinancialRouteImport
       parentRoute: typeof OrgRoute
     }
+    '/space/$spaceId/list/$listId': {
+      id: '/space/$spaceId/list/$listId'
+      path: '/list/$listId'
+      fullPath: '/space/$spaceId/list/$listId'
+      preLoaderRoute: typeof SpaceSpaceIdListListIdRouteImport
+      parentRoute: typeof SpaceSpaceIdRoute
+    }
     '/space/$spaceId/folder/$folderId': {
       id: '/space/$spaceId/folder/$folderId'
       path: '/folder/$folderId'
@@ -388,10 +407,12 @@ const OrgRouteWithChildren = OrgRoute._addFileChildren(OrgRouteChildren)
 
 interface SpaceSpaceIdRouteChildren {
   SpaceSpaceIdFolderFolderIdRoute: typeof SpaceSpaceIdFolderFolderIdRoute
+  SpaceSpaceIdListListIdRoute: typeof SpaceSpaceIdListListIdRoute
 }
 
 const SpaceSpaceIdRouteChildren: SpaceSpaceIdRouteChildren = {
   SpaceSpaceIdFolderFolderIdRoute: SpaceSpaceIdFolderFolderIdRoute,
+  SpaceSpaceIdListListIdRoute: SpaceSpaceIdListListIdRoute,
 }
 
 const SpaceSpaceIdRouteWithChildren = SpaceSpaceIdRoute._addFileChildren(
@@ -414,3 +435,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
