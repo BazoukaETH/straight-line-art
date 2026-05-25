@@ -23,6 +23,7 @@ const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blo
 
 function SidebarTree({ onSelectList, activeListId }: { onSelectList: (id: string | "my") => void; activeListId: string | "my" }) {
   const { tasks, lists, folders, moveTask } = useTasks();
+  const { currentUserId } = useApp();
   const [open, setOpen] = useState<Record<string, boolean>>(() => {
     try { return JSON.parse(localStorage.getItem("wasla.tree") || "{}"); } catch { return {}; }
   });

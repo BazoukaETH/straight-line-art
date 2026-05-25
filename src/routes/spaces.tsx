@@ -4,10 +4,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { spaces, tasks, pillarMeta, type Pillar } from "@/lib/mock-data";
 import { Avatar } from "@/components/wasla/Avatar";
 import { Users, Clock, AlertCircle, ArrowRight } from "lucide-react";
+import { useApp } from "@/lib/app-context";
 
 export const Route = createFileRoute("/spaces")({ component: SpacesPage });
 
 function SpacesPage() {
+  const { currentUserId } = useApp();
   return (
     <AppShell breadcrumb={<span className="font-medium text-foreground">Spaces</span>}>
       <div className="px-6 py-5">
@@ -25,7 +27,7 @@ function SpacesPage() {
           {(Object.keys(pillarMeta) as Pillar[]).map((p) => (
             <TabsContent key={p} value={p} className="mt-5">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {spaces.filter((s) => s.pillar === p).map((s) => {
+                {spaces.filter((s) => s.pillar === p && (!s.ownerId || s.ownerId === currentUserId)).map((s) => {
                   const ts = tasks.filter((t) => t.spaceId === s.id);
                   const blockers = ts.filter((t) => t.status === "Blocked").length;
                   return (
