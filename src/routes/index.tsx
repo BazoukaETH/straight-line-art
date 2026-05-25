@@ -15,6 +15,7 @@ import { Layers } from "lucide-react";
 export const Route = createFileRoute("/")({ component: Home });
 
 function Sidebar() {
+  const { currentUserId } = useApp();
   return (
     <>
       <SidebarHeader title="Workspace" />
