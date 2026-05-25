@@ -144,12 +144,14 @@ function TaskNode({ task, allTasks, depth, expanded, setExpanded, visibleIds }: 
             className="h-7 flex-1 text-sm"
           />
         ) : (
-          <button
-            className="flex-1 truncate text-left font-medium text-foreground"
-            onClick={(e) => { e.stopPropagation(); setEditing(true); }}
+          <Link
+            to={taskRoute.to as any}
+            params={taskRoute.params as any}
+            className="flex-1 truncate text-left font-medium text-foreground hover:underline"
+            onDoubleClick={(e) => { e.preventDefault(); e.stopPropagation(); setEditing(true); }}
           >
             {task.title}
-          </button>
+          </Link>
         )}
 
         {depCount > 0 && (
