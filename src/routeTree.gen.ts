@@ -19,6 +19,7 @@ import { Route as FilesRouteImport } from './routes/files'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrgIndexRouteImport } from './routes/org.index'
+import { Route as SpaceSpaceIdRouteImport } from './routes/space.$spaceId'
 import { Route as PeopleIdRouteImport } from './routes/people.$id'
 import { Route as OrgSubscriptionsRouteImport } from './routes/org.subscriptions'
 import { Route as OrgSettingsRouteImport } from './routes/org.settings'
@@ -75,6 +76,11 @@ const OrgIndexRoute = OrgIndexRouteImport.update({
   path: '/',
   getParentRoute: () => OrgRoute,
 } as any)
+const SpaceSpaceIdRoute = SpaceSpaceIdRouteImport.update({
+  id: '/space/$spaceId',
+  path: '/space/$spaceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PeopleIdRoute = PeopleIdRouteImport.update({
   id: '/people/$id',
   path: '/people/$id',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
+  '/space/$spaceId': typeof SpaceSpaceIdRoute
   '/org/': typeof OrgIndexRoute
 }
 export interface FileRoutesByTo {
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
+  '/space/$spaceId': typeof SpaceSpaceIdRoute
   '/org': typeof OrgIndexRoute
 }
 export interface FileRoutesById {
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
+  '/space/$spaceId': typeof SpaceSpaceIdRoute
   '/org/': typeof OrgIndexRoute
 }
 export interface FileRouteTypes {
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/org/settings'
     | '/org/subscriptions'
     | '/people/$id'
+    | '/space/$spaceId'
     | '/org/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -185,6 +195,7 @@ export interface FileRouteTypes {
     | '/org/settings'
     | '/org/subscriptions'
     | '/people/$id'
+    | '/space/$spaceId'
     | '/org'
   id:
     | '__root__'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/org/settings'
     | '/org/subscriptions'
     | '/people/$id'
+    | '/space/$spaceId'
     | '/org/'
   fileRoutesById: FileRoutesById
 }
@@ -216,6 +228,7 @@ export interface RootRouteChildren {
   SpacesRoute: typeof SpacesRoute
   TasksRoute: typeof TasksRoute
   PeopleIdRoute: typeof PeopleIdRoute
+  SpaceSpaceIdRoute: typeof SpaceSpaceIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgIndexRouteImport
       parentRoute: typeof OrgRoute
     }
+    '/space/$spaceId': {
+      id: '/space/$spaceId'
+      path: '/space/$spaceId'
+      fullPath: '/space/$spaceId'
+      preLoaderRoute: typeof SpaceSpaceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/people/$id': {
       id: '/people/$id'
       path: '/people/$id'
@@ -357,7 +377,18 @@ const rootRouteChildren: RootRouteChildren = {
   SpacesRoute: SpacesRoute,
   TasksRoute: TasksRoute,
   PeopleIdRoute: PeopleIdRoute,
+  SpaceSpaceIdRoute: SpaceSpaceIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
