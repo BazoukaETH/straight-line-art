@@ -82,6 +82,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         openTask: setOpenTaskId,
         workspaceId,
         setWorkspaceId,
+        subscriptions,
+        setSubStatus,
       }}
     >
       {children}
