@@ -45,6 +45,7 @@ export function PageHeader({ crumbs, rightSlot, className }: { crumbs: Crumb[]; 
           );
         })}
       </nav>
+      {rightSlot}
     </div>
   );
 }
