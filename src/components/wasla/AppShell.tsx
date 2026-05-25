@@ -13,7 +13,7 @@ import { CommandPalette } from "./CommandPalette";
 import { toast } from "sonner";
 import type { ReactNode } from "react";
 
-const navItems = [
+const navItems: { to: string; icon: typeof Home; label: string; founderOnly?: boolean }[] = [
   { to: "/", icon: Home, label: "Home" },
   { to: "/tasks", icon: CheckSquare, label: "Tasks" },
   { to: "/inbox", icon: Inbox, label: "Inbox" },
@@ -21,7 +21,8 @@ const navItems = [
   { to: "/spaces", icon: Layers, label: "Spaces" },
   { to: "/founder", icon: BarChart3, label: "Founder Dashboard", founderOnly: true },
   { to: "/files", icon: Files, label: "Files" },
-] as const;
+];
+
 
 export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNode; sidebar?: ReactNode; breadcrumb?: ReactNode }) {
   const { role, setRole, currentUserId, dark, toggleDark, setCommandOpen } = useApp();
