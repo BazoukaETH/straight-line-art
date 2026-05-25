@@ -52,7 +52,15 @@ function FolderPage() {
           </div>
         </div>
 
-        {!flat ? (
+        {folderLists.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border py-16 text-center">
+            <div className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground"><ListIcon className="size-5" /></div>
+            <div className="text-sm font-medium">No lists in this folder yet</div>
+            <Button size="sm" className="mt-1 gap-1.5" onClick={() => openQuickCreate({ tab: "list" })}>
+              <Plus className="size-3.5" /> Add list
+            </Button>
+          </div>
+        ) : !flat ? (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {folderLists.map((l) => {
               const lTasks = tasks.filter((t) => t.listId === l.id && !t.parentId);
