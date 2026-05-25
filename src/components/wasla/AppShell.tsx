@@ -1,4 +1,4 @@
-import { Link, useLocation, useRouter } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Home, CheckSquare, Inbox, MessageSquare, Layers, BarChart3, Files, Search, Plus, Bell, Command, Sun, Moon, ChevronRight } from "lucide-react";
 import { useApp } from "@/lib/app-context";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
