@@ -20,6 +20,7 @@ function FolderPage() {
   const folder = folderById(folderId);
   const { tasks, lists } = useTasks();
   const { openQuickCreate } = useApp();
+  const folderLists = lists.filter((l) => l.folderId === folderId);
   const folderTasks = tasks.filter((t) => folderLists.some((l) => l.id === t.listId));
   const [flat, setFlat] = useState(false);
   const meta = pillarMeta[space.pillar];
