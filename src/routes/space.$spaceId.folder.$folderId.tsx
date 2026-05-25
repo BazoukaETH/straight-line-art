@@ -10,7 +10,7 @@ import { useApp } from "@/lib/app-context";
 import { TaskTree } from "@/components/wasla/TaskTree";
 import { StatusPill } from "@/components/wasla/StatusPill";
 import { useMemo, useState } from "react";
-import { useTaskNav } from "@/lib/task-nav";
+
 
 export const Route = createFileRoute("/space/$spaceId/folder/$folderId")({ component: FolderPage });
 
