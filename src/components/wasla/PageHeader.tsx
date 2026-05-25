@@ -1,7 +1,9 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useEscToBack } from "@/lib/page-title";
 
 export interface Crumb {
   label: string;
@@ -9,8 +11,9 @@ export interface Crumb {
   params?: Record<string, string>;
 }
 
-export function PageHeader({ crumbs, className }: { crumbs: Crumb[]; className?: string }) {
+export function PageHeader({ crumbs, rightSlot, className }: { crumbs: Crumb[]; rightSlot?: ReactNode; className?: string }) {
   const router = useRouter();
+  useEscToBack(true);
   return (
     <div className={cn("flex items-center gap-2 border-b border-border/60 px-5 py-3", className)}>
       <Button
