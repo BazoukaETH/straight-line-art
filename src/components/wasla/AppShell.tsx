@@ -198,6 +198,8 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
 
         <TaskSlideOver />
         <CommandPalette />
+        <QuickCreateModal />
+        <BulkActionBar />
       </div>
     </TooltipProvider>
   );
