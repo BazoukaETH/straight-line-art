@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusPill } from "@/components/wasla/StatusPill";
 import { useApp } from "@/lib/app-context";
+import { useTaskNav } from "@/lib/task-nav";
 import { useState } from "react";
 
 export const Route = createFileRoute("/chat")({ component: ChatPage });
@@ -15,7 +16,8 @@ function ChatPage() {
   const [activeId, setActiveId] = useState<string>("client-smg");
   const active = channels.find((c) => c.id === activeId) ?? channels[0];
   const msgs = channelMessages[activeId] ?? [];
-  const { openTask } = useApp();
+  const { goTask } = useTaskNav();
+  useApp();
 
   return (
     <AppShell
