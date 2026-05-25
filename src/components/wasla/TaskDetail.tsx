@@ -34,7 +34,7 @@ interface ChecklistItem { id: string; text: string; done: boolean }
 interface Checklist { id: string; title: string; items: ChecklistItem[] }
 
 export function TaskDetail({ taskId }: { taskId: string }) {
-  const { tasks, createTask, addDependency, removeDependency, updateTask } = useTasks();
+  const { tasks, createTask, updateTask } = useTasks();
   const task = tasks.find((t) => t.id === taskId);
   const { goTask } = useTaskNav();
 
