@@ -40,7 +40,7 @@ function Home() {
   const me = memberById(currentUserId);
   const today = formatCairoDate();
   const [bodSubmitted, setBodSubmitted] = useState(false);
-  const [bodText, setBodText] = useState("Ship the Venture X marketing site refresh and review the board deck.");
+  const [bodText, setBodText] = useState("Ship the Loop Commerce marketing site refresh and review the May board deck.");
   const isEvening = new Date().getHours() >= 17;
 
   const my = tasks.filter((t) => t.assigneeId === currentUserId);
