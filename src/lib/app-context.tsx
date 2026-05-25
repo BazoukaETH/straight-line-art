@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { roleToUser, workspaces, type Role } from "./mock-data";
+import { roleToUser, workspaces, subscriptionsSeed, type Role, type Subscription, type SubStatus } from "./mock-data";
 
 interface AppCtx {
   role: Role;
@@ -13,6 +13,8 @@ interface AppCtx {
   openTask: (id: string | null) => void;
   workspaceId: string;
   setWorkspaceId: (id: string) => void;
+  subscriptions: Subscription[];
+  setSubStatus: (id: string, status: SubStatus) => void;
 }
 
 const Ctx = createContext<AppCtx | null>(null);
