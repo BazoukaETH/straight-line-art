@@ -335,9 +335,10 @@ function TableView({ tasks, customFields }: { tasks: Task[]; customFields: Custo
         <tbody>
           {sorted.map((t) => {
             const due = relativeDue(t.due);
+            const r = routeForTask(t);
             return (
-              <tr key={t.id} onDoubleClick={() => openTask(t.id)} className="border-b border-border/60 hover:bg-muted/40">
-                <td className="px-3 py-2 font-medium">{t.title}</td>
+              <tr key={t.id} onClick={() => goTask(t.id)} onDoubleClick={() => goTask(t.id)} className="cursor-pointer border-b border-border/60 hover:bg-muted/40">
+                <td className="px-3 py-2 font-medium"><Link to={r.to as any} params={r.params as any} className="block hover:underline">{t.title}</Link></td>
                 <td className="px-3 py-2"><StatusPill status={t.status} /></td>
                 <td className="px-3 py-2"><div className="flex items-center gap-1.5"><Avatar memberId={t.assigneeId} size={20} /><span className="text-xs">{memberById(t.assigneeId).name.split(" ")[0]}</span></div></td>
                 <td className="px-3 py-2"><div className="flex items-center gap-1 capitalize text-xs"><PriorityIcon priority={t.priority} /> {t.priority}</div></td>
