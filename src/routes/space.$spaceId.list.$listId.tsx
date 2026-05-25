@@ -69,10 +69,11 @@ function ListPage() {
             <Button variant="ghost" size="sm" className="gap-1.5"><Filter className="size-3.5" /> Filter</Button>
             <Button variant="ghost" size="sm" className="gap-1.5"><ArrowDownAZ className="size-3.5" /> Sort</Button>
             <Button size="sm" className="gap-1.5" onClick={() => openQuickCreate({ listId, tab: "task" })}><Plus className="size-3.5" /> New task</Button>
+            {list && <PageActionsMenu kind="list" id={list.id} label={list.name} />}
           </div>
         </div>
 
-        <Tabs defaultValue="list">
+        <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <TabsList>
             <TabsTrigger value="list">List</TabsTrigger>
             <TabsTrigger value="board">Board</TabsTrigger>
@@ -81,7 +82,9 @@ function ListPage() {
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
           </TabsList>
           <TabsContent value="list" className="mt-4">
-            <TaskTree rootTasks={rootTasks} allTasks={scopedTasks} listId={listId} emptyAction={<Button size="sm" onClick={() => openQuickCreate({ listId, tab: "task" })}><Plus className="size-3.5 mr-1" /> Add task</Button>} />
+            {scopedTasks.length === 0
+              ? <EmptyListAdd listId={listId} onCreate={(input) => createTask(input)} />
+              : <TaskTree rootTasks={rootTasks} allTasks={scopedTasks} listId={listId} emptyAction={<Button size="sm" onClick={() => openQuickCreate({ listId, tab: "task" })}><Plus className="size-3.5 mr-1" /> Add task</Button>} />}
           </TabsContent>
           <TabsContent value="board" className="mt-4"><BoardView tasks={scopedTasks} /></TabsContent>
           <TabsContent value="calendar" className="mt-4"><CalendarView tasks={scopedTasks} /></TabsContent>
