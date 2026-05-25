@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { TaskSlideOver } from "./TaskSlideOver";
 import { CommandPalette } from "./CommandPalette";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
+import { QuickCreateModal } from "./QuickCreateModal";
+import { BulkActionBar } from "./BulkActionBar";
 import { toast } from "sonner";
 import type { ReactNode } from "react";
 
@@ -49,7 +51,7 @@ const orgNav: NavItem[] = [
 ];
 
 export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNode; sidebar?: ReactNode; breadcrumb?: ReactNode }) {
-  const { role, setRole, currentUserId, dark, toggleDark, setCommandOpen } = useApp();
+  const { role, setRole, currentUserId, dark, toggleDark, setCommandOpen, openQuickCreate } = useApp();
   const loc = useLocation();
   const nav = useNavigate();
   const me = memberById(currentUserId);
@@ -76,7 +78,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
               {breadcrumb ?? <span className="font-medium text-foreground">{titleFor(loc.pathname)}</span>}
             </div>
             <div className="flex items-center gap-1.5">
-              <Button size="sm" variant="ghost" className="gap-1.5" onClick={() => toast.success("Quick create coming soon")}>
+              <Button size="sm" variant="ghost" className="gap-1.5" onClick={() => openQuickCreate({ tab: "task" })}>
                 <Plus className="size-4" /> <span className="hidden sm:inline">New</span>
               </Button>
               <Button size="icon" variant="ghost" onClick={() => toast("3 unread notifications")} className="relative">
@@ -196,6 +198,8 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
 
         <TaskSlideOver />
         <CommandPalette />
+        <QuickCreateModal />
+        <BulkActionBar />
       </div>
     </TooltipProvider>
   );
