@@ -42,6 +42,7 @@ const comingSoonNav: { icon: typeof BookOpen; label: string; tooltip: string }[]
 
 const orgNav: NavItem[] = [
   { to: "/org",               icon: Globe,         label: "Org Dashboard" },
+  { to: "/org/financial",     icon: TrendingUp,    label: "Financial & Portfolio" },
   { to: "/org/members",       icon: Users,         label: "Org Members" },
   { to: "/org/subscriptions", icon: CreditCard,    label: "Subscriptions" },
   { to: "/org/settings",      icon: SettingsIcon,  label: "Org Settings" },
