@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { roleToUser, workspaces, subscriptionsSeed, type Role, type Subscription, type SubStatus } from "./mock-data";
 import { TasksProvider } from "./tasks-store";
+import { navigateToTask } from "./nav-bridge";
 
 type QuickCreateTab = "task" | "subtask" | "list" | "folder" | "space" | "channel";
 
