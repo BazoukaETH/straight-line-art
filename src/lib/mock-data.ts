@@ -172,7 +172,7 @@ function dueOffset(days: number): string {
 }
 
 // Hand-curated tasks across the new structure
-type Seed = Partial<Task> & { title: string; listId: string; assigneeId: string; status?: Status; priority?: Priority; due?: number; parentId?: string; tags?: string[] };
+type Seed = { id?: string; title: string; listId: string; assigneeId: string; status?: Status; priority?: Priority; due?: number; parentId?: string; tags?: string[] };
 const SEEDS: Seed[] = [
   // Cairo Capital > Q3 Campaign > Discovery
   { title: "Stakeholder interviews — Cairo Capital execs", listId: "l-cc-discovery", assigneeId: "usef", status: "In Progress", priority: "high", due: 2 },
