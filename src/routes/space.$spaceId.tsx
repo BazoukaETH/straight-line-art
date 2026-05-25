@@ -29,6 +29,9 @@ function SpacePage() {
     return spaceTasks.filter((t) => !t.parentId || !ids.has(t.parentId!));
   }, [spaceTasks]);
   const meta = pillarMeta[space.pillar];
+  usePageTitle(space.name);
+  const [tab, setTab] = useStickyState("tab", "overview");
+  const isEmpty = spaceFolders.length === 0 && directLists.length === 0;
 
   return (
     <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground">{meta.label} / {space.name}</span>}>
