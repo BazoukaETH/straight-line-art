@@ -19,6 +19,7 @@ import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { QuickCreateModal } from "./QuickCreateModal";
 import { BulkActionBar } from "./BulkActionBar";
 import { toast } from "sonner";
+import { FounderQuickAccess } from "./FounderQuickAccess";
 import type { ReactNode } from "react";
 
 type NavItem = { to: string; icon: typeof Home; label: string; founderOnly?: boolean };
