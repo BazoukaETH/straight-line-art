@@ -206,7 +206,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
           </div>
         </div>
 
-        <TaskSlideOver />
+        <NavBridge />
         <CommandPalette />
         <QuickCreateModal />
         <BulkActionBar />
