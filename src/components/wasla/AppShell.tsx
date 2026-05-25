@@ -101,6 +101,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
                   </SelectContent>
                 </Select>
               </div>
+              <div className="md:hidden"><FounderQuickAccess variant="mobile" /></div>
               <Avatar memberId={me.id} size={28} status />
             </div>
           </header>
