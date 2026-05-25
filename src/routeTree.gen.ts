@@ -20,6 +20,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrgIndexRouteImport } from './routes/org.index'
 import { Route as OrgSubscriptionsRouteImport } from './routes/org.subscriptions'
+import { Route as OrgSettingsRouteImport } from './routes/org.settings'
 import { Route as OrgMembersRouteImport } from './routes/org.members'
 
 const TasksRoute = TasksRouteImport.update({
@@ -77,6 +78,11 @@ const OrgSubscriptionsRoute = OrgSubscriptionsRouteImport.update({
   path: '/subscriptions',
   getParentRoute: () => OrgRoute,
 } as any)
+const OrgSettingsRoute = OrgSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => OrgRoute,
+} as any)
 const OrgMembersRoute = OrgMembersRouteImport.update({
   id: '/members',
   path: '/members',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
   '/org/members': typeof OrgMembersRoute
+  '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/org/': typeof OrgIndexRoute
 }
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
   '/org/members': typeof OrgMembersRoute
+  '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/org': typeof OrgIndexRoute
 }
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
   '/org/members': typeof OrgMembersRoute
+  '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/org/': typeof OrgIndexRoute
 }
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/spaces'
     | '/tasks'
     | '/org/members'
+    | '/org/settings'
     | '/org/subscriptions'
     | '/org/'
   fileRoutesByTo: FileRoutesByTo
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/spaces'
     | '/tasks'
     | '/org/members'
+    | '/org/settings'
     | '/org/subscriptions'
     | '/org'
   id:
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/spaces'
     | '/tasks'
     | '/org/members'
+    | '/org/settings'
     | '/org/subscriptions'
     | '/org/'
   fileRoutesById: FileRoutesById
@@ -260,6 +272,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgSubscriptionsRouteImport
       parentRoute: typeof OrgRoute
     }
+    '/org/settings': {
+      id: '/org/settings'
+      path: '/settings'
+      fullPath: '/org/settings'
+      preLoaderRoute: typeof OrgSettingsRouteImport
+      parentRoute: typeof OrgRoute
+    }
     '/org/members': {
       id: '/org/members'
       path: '/members'
@@ -272,12 +291,14 @@ declare module '@tanstack/react-router' {
 
 interface OrgRouteChildren {
   OrgMembersRoute: typeof OrgMembersRoute
+  OrgSettingsRoute: typeof OrgSettingsRoute
   OrgSubscriptionsRoute: typeof OrgSubscriptionsRoute
   OrgIndexRoute: typeof OrgIndexRoute
 }
 
 const OrgRouteChildren: OrgRouteChildren = {
   OrgMembersRoute: OrgMembersRoute,
+  OrgSettingsRoute: OrgSettingsRoute,
   OrgSubscriptionsRoute: OrgSubscriptionsRoute,
   OrgIndexRoute: OrgIndexRoute,
 }
