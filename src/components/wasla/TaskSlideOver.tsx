@@ -89,7 +89,7 @@ export function TaskSlideOver() {
                 </section>
 
                 <Button variant="outline" size="sm" className="gap-2">
-                  <Hash className="size-3.5" /> Continue in #venture-x
+                  <Hash className="size-3.5" /> Continue in #loop-commerce
                 </Button>
               </div>
 
