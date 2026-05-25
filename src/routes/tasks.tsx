@@ -367,7 +367,7 @@ function formatCF(v: string | number | undefined, f: CustomField) {
 
 // ============ Timeline (simple Gantt) ============
 function TimelineView({ tasks }: { tasks: Task[] }) {
-  const { openTask } = useApp();
+  
   const days = 28;
   const start = new Date(); start.setDate(start.getDate() - 7); start.setHours(0,0,0,0);
   const pxPerDay = 28;
