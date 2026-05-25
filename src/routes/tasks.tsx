@@ -15,6 +15,7 @@ import { Avatar } from "@/components/wasla/Avatar";
 import { StatusPill } from "@/components/wasla/StatusPill";
 import { PriorityIcon } from "@/components/wasla/PriorityIcon";
 import { relativeDue } from "@/lib/task-utils";
+import { useTaskNav, routeForTask } from "@/lib/task-nav";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tasks")({ component: TasksPage });
@@ -269,7 +270,7 @@ function CalendarView({ tasks }: { tasks: Task[] }) {
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const startDow = monthStart.getDay();
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-  const { openTask } = useApp();
+  
   return (
     <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-border bg-border text-sm">
       {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((d) => (
@@ -284,11 +285,14 @@ function CalendarView({ tasks }: { tasks: Task[] }) {
         return (
           <div key={i} className="min-h-[110px] bg-card p-1.5">
             {valid && <div className={cn("mb-1 text-[11px]", isToday ? "font-bold text-accent" : "text-muted-foreground")}>{dayNum}</div>}
-            {dayTasks.slice(0, 3).map((t) => (
-              <button key={t.id} onClick={() => openTask(t.id)} className="mb-1 block w-full truncate rounded bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] px-1.5 py-0.5 text-left text-[11px] text-accent hover:bg-[color-mix(in_oklab,var(--accent)_22%,transparent)]">
-                {t.title}
-              </button>
-            ))}
+            {dayTasks.slice(0, 3).map((t) => {
+              const r = routeForTask(t);
+              return (
+                <Link key={t.id} to={r.to as any} params={r.params as any} className="mb-1 block w-full truncate rounded bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] px-1.5 py-0.5 text-left text-[11px] text-accent hover:bg-[color-mix(in_oklab,var(--accent)_22%,transparent)]">
+                  {t.title}
+                </Link>
+              );
+            })}
             {dayTasks.length > 3 && <div className="text-[10px] text-muted-foreground">+{dayTasks.length - 3} more</div>}
           </div>
         );
@@ -299,7 +303,7 @@ function CalendarView({ tasks }: { tasks: Task[] }) {
 
 // ============ Table ============
 function TableView({ tasks, customFields }: { tasks: Task[]; customFields: CustomField[] }) {
-  const { openTask } = useApp();
+  const { goTask } = useTaskNav();
   const [sort, setSort] = useState<{ key: string; dir: "asc" | "desc" }>({ key: "title", dir: "asc" });
   const sorted = useMemo(() => {
     const arr = [...tasks];
@@ -331,9 +335,10 @@ function TableView({ tasks, customFields }: { tasks: Task[]; customFields: Custo
         <tbody>
           {sorted.map((t) => {
             const due = relativeDue(t.due);
+            const r = routeForTask(t);
             return (
-              <tr key={t.id} onDoubleClick={() => openTask(t.id)} className="border-b border-border/60 hover:bg-muted/40">
-                <td className="px-3 py-2 font-medium">{t.title}</td>
+              <tr key={t.id} onClick={() => goTask(t.id)} onDoubleClick={() => goTask(t.id)} className="cursor-pointer border-b border-border/60 hover:bg-muted/40">
+                <td className="px-3 py-2 font-medium"><Link to={r.to as any} params={r.params as any} className="block hover:underline">{t.title}</Link></td>
                 <td className="px-3 py-2"><StatusPill status={t.status} /></td>
                 <td className="px-3 py-2"><div className="flex items-center gap-1.5"><Avatar memberId={t.assigneeId} size={20} /><span className="text-xs">{memberById(t.assigneeId).name.split(" ")[0]}</span></div></td>
                 <td className="px-3 py-2"><div className="flex items-center gap-1 capitalize text-xs"><PriorityIcon priority={t.priority} /> {t.priority}</div></td>
@@ -362,7 +367,7 @@ function formatCF(v: string | number | undefined, f: CustomField) {
 
 // ============ Timeline (simple Gantt) ============
 function TimelineView({ tasks }: { tasks: Task[] }) {
-  const { openTask } = useApp();
+  
   const days = 28;
   const start = new Date(); start.setDate(start.getDate() - 7); start.setHours(0,0,0,0);
   const pxPerDay = 28;
@@ -393,18 +398,19 @@ function TimelineView({ tasks }: { tasks: Task[] }) {
             })}
           </div>
         </div>
-        {tasks.map((t, i) => {
+        {tasks.map((t) => {
           const p = positions.get(t.id)!;
+          const r = routeForTask(t);
           return (
             <div key={t.id} className="flex border-b border-border/60" style={{ height: rowH }}>
               <div className="flex w-60 shrink-0 items-center gap-2 truncate px-3 text-xs">
                 <PriorityIcon priority={t.priority} />
-                <span className="truncate">{t.title}</span>
+                <Link to={r.to as any} params={r.params as any} className="truncate hover:underline">{t.title}</Link>
               </div>
               <div className="relative" style={{ width: colWidth }}>
-                <button onClick={() => openTask(t.id)} className="absolute h-5 rounded bg-accent/70 px-2 text-[10px] text-accent-foreground hover:bg-accent" style={{ left: p.x, width: p.w, top: 8 }}>
+                <Link to={r.to as any} params={r.params as any} className="absolute flex h-5 items-center rounded bg-accent/70 px-2 text-[10px] text-accent-foreground hover:bg-accent" style={{ left: p.x, width: p.w, top: 8 }}>
                   {t.title.slice(0, 24)}
-                </button>
+                </Link>
               </div>
             </div>
           );

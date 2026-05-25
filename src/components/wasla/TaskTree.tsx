@@ -1,5 +1,7 @@
 import { useState, useMemo, type DragEvent } from "react";
+import { Link } from "@tanstack/react-router";
 import { useApp } from "@/lib/app-context";
+import { routeForTask, useTaskNav } from "@/lib/task-nav";
 import { useTasks } from "@/lib/tasks-store";
 import { type Task, type Status, type Priority, members, memberById, spaceById, listById } from "@/lib/mock-data";
 import { getChildren, relativeDue } from "@/lib/task-utils";
@@ -60,7 +62,9 @@ function flatten(roots: Task[], all: Task[], expanded: Record<string, boolean>):
 }
 
 function TaskNode({ task, allTasks, depth, expanded, setExpanded, visibleIds }: { task: Task; allTasks: Task[]; depth: number; expanded: Record<string, boolean>; setExpanded: (f: any) => void; visibleIds: string[] }) {
-  const { openTask, selectedTaskIds, toggleSelectTask } = useApp();
+  const { selectedTaskIds, toggleSelectTask } = useApp();
+  const { goTask } = useTaskNav();
+  const taskRoute = routeForTask(task);
   const { updateTask, moveTask } = useTasks();
   const children = getChildren(allTasks, task.id);
   const isOpen = expanded[task.id];
@@ -89,7 +93,7 @@ function TaskNode({ task, allTasks, depth, expanded, setExpanded, visibleIds }: 
       <div
         className={cn("group flex items-center gap-2 border-b border-border/60 px-2 py-2 text-sm transition-colors hover:bg-muted/40", sel && "bg-[color-mix(in_oklab,var(--accent)_8%,transparent)]")}
         style={{ paddingLeft: 8 + depth * 24 }}
-        onDoubleClick={() => openTask(task.id)}
+        onDoubleClick={() => goTask(task.id)}
         draggable
         onDragStart={onDragStart}
         onDragOver={onDragOver}
@@ -140,12 +144,14 @@ function TaskNode({ task, allTasks, depth, expanded, setExpanded, visibleIds }: 
             className="h-7 flex-1 text-sm"
           />
         ) : (
-          <button
-            className="flex-1 truncate text-left font-medium text-foreground"
-            onClick={(e) => { e.stopPropagation(); setEditing(true); }}
+          <Link
+            to={taskRoute.to as any}
+            params={taskRoute.params as any}
+            className="flex-1 truncate text-left font-medium text-foreground hover:underline"
+            onDoubleClick={(e) => { e.preventDefault(); e.stopPropagation(); setEditing(true); }}
           >
             {task.title}
-          </button>
+          </Link>
         )}
 
         {depCount > 0 && (

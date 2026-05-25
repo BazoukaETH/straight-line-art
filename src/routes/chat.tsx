@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusPill } from "@/components/wasla/StatusPill";
 import { useApp } from "@/lib/app-context";
+import { useTaskNav } from "@/lib/task-nav";
 import { useState } from "react";
 
 export const Route = createFileRoute("/chat")({ component: ChatPage });
@@ -15,7 +16,8 @@ function ChatPage() {
   const [activeId, setActiveId] = useState<string>("client-smg");
   const active = channels.find((c) => c.id === activeId) ?? channels[0];
   const msgs = channelMessages[activeId] ?? [];
-  const { openTask } = useApp();
+  const { goTask } = useTaskNav();
+  useApp();
 
   return (
     <AppShell
@@ -62,7 +64,7 @@ function ChatPage() {
                       <div className="px-3 py-2 text-xs text-muted-foreground">hero-option-b.png</div>
                     </div>
                   ) : m.kind === "task" && m.taskId ? (
-                    <button onClick={() => openTask(m.taskId!)} className="block w-96 rounded-lg border border-border bg-card p-3 text-left transition hover:border-foreground/20">
+                    <button onClick={() => goTask(m.taskId!)} className="block w-96 rounded-lg border border-border bg-card p-3 text-left transition hover:border-foreground/20">
                       <div className="mb-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Task · {m.taskId}</div>
                       <div className="mb-2 text-sm font-semibold">{taskById(m.taskId!)?.title}</div>
                       <div className="flex items-center justify-between">

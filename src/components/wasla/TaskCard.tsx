@@ -1,16 +1,18 @@
+import { Link } from "@tanstack/react-router";
 import { Avatar } from "./Avatar";
 import { PriorityIcon } from "./PriorityIcon";
 import { SpaceTag } from "./PillarTag";
 import { spaceById, type Task } from "@/lib/mock-data";
-import { useApp } from "@/lib/app-context";
+import { routeForTask } from "@/lib/task-nav";
 
 export function TaskCard({ task }: { task: Task }) {
-  const { openTask } = useApp();
   const sp = spaceById(task.spaceId);
+  const r = routeForTask(task);
   return (
-    <button
-      onClick={() => openTask(task.id)}
-      className="group w-full rounded-lg border border-border bg-card p-3 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-foreground/15 hover:shadow-sm"
+    <Link
+      to={r.to as any}
+      params={r.params as any}
+      className="group block w-full rounded-lg border border-border bg-card p-3 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-foreground/15 hover:shadow-sm"
     >
       <div className="mb-2 flex items-center justify-between">
         <SpaceTag name={sp.name} pillar={sp.pillar} />
@@ -21,6 +23,6 @@ export function TaskCard({ task }: { task: Task }) {
         <span className="text-[11px] text-muted-foreground">{task.id}</span>
         <Avatar memberId={task.assigneeId} size={22} />
       </div>
-    </button>
+    </Link>
   );
 }

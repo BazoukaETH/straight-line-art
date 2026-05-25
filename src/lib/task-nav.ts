@@ -5,7 +5,7 @@ import { taskById, type Task } from "./mock-data";
 /** Resolve the canonical route for a task (or subtask). Subtasks live on
  * the same route as their root ancestor's list, but use the subtask route
  * for any task with a parent. */
-function routeForTask(t: Task): { to: string; params: Record<string, string> } {
+export function routeForTask(t: Task): { to: string; params: Record<string, string> } {
   if (t.parentId) {
     // Walk up to the root ancestor to get the canonical task id segment.
     let root: Task = t;
@@ -23,6 +23,11 @@ function routeForTask(t: Task): { to: string; params: Record<string, string> } {
     to: "/space/$spaceId/list/$listId/task/$taskId",
     params: { spaceId: t.spaceId, listId: t.listId, taskId: t.id },
   };
+}
+
+export function taskHrefById(id: string): { to: string; params: Record<string, string> } | null {
+  const t = taskById(id);
+  return t ? routeForTask(t) : null;
 }
 
 export function useTaskNav() {
