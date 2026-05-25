@@ -1,5 +1,5 @@
 import { useEffect, useState, type DragEvent } from "react";
-import { useLocation } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useApp } from "@/lib/app-context";
 import { useTasks } from "@/lib/tasks-store";
 import { useTaskNav } from "@/lib/task-nav";
