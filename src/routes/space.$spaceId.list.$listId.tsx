@@ -30,13 +30,15 @@ const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blo
 
 function ListPage() {
   const { spaceId, listId } = Route.useParams();
-  const { lists, tasks, folders } = useTasks();
+  const { lists, tasks, folders, createTask } = useTasks();
   const { openQuickCreate } = useApp();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [tab, setTab] = useStickyState("listTab", "list");
 
   const list = lists.find((l) => l.id === listId);
   const space = spaceById(spaceId);
   const folder = list?.folderId ? folderById(list.folderId) : null;
+  usePageTitle(list ? `${space.name} · ${list.name}` : space.name);
   const scopedTasks = useMemo(() => tasks.filter((t) => t.listId === listId), [tasks, listId]);
   const rootTasks = useMemo(() => {
     const ids = new Set(scopedTasks.map((t) => t.id));
