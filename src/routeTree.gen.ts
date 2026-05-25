@@ -18,6 +18,12 @@ import { Route as FounderRouteImport } from './routes/founder'
 import { Route as FilesRouteImport } from './routes/files'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OrgIndexRouteImport } from './routes/org.index'
+import { Route as PeopleIdRouteImport } from './routes/people.$id'
+import { Route as OrgSubscriptionsRouteImport } from './routes/org.subscriptions'
+import { Route as OrgSettingsRouteImport } from './routes/org.settings'
+import { Route as OrgMembersRouteImport } from './routes/org.members'
+import { Route as OrgFinancialRouteImport } from './routes/org.financial'
 
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
@@ -64,6 +70,36 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrgIndexRoute = OrgIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrgRoute,
+} as any)
+const PeopleIdRoute = PeopleIdRouteImport.update({
+  id: '/people/$id',
+  path: '/people/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrgSubscriptionsRoute = OrgSubscriptionsRouteImport.update({
+  id: '/subscriptions',
+  path: '/subscriptions',
+  getParentRoute: () => OrgRoute,
+} as any)
+const OrgSettingsRoute = OrgSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => OrgRoute,
+} as any)
+const OrgMembersRoute = OrgMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => OrgRoute,
+} as any)
+const OrgFinancialRoute = OrgFinancialRouteImport.update({
+  id: '/financial',
+  path: '/financial',
+  getParentRoute: () => OrgRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,10 +107,16 @@ export interface FileRoutesByFullPath {
   '/files': typeof FilesRoute
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
-  '/org': typeof OrgRoute
+  '/org': typeof OrgRouteWithChildren
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
+  '/org/financial': typeof OrgFinancialRoute
+  '/org/members': typeof OrgMembersRoute
+  '/org/settings': typeof OrgSettingsRoute
+  '/org/subscriptions': typeof OrgSubscriptionsRoute
+  '/people/$id': typeof PeopleIdRoute
+  '/org/': typeof OrgIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -82,10 +124,15 @@ export interface FileRoutesByTo {
   '/files': typeof FilesRoute
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
-  '/org': typeof OrgRoute
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
+  '/org/financial': typeof OrgFinancialRoute
+  '/org/members': typeof OrgMembersRoute
+  '/org/settings': typeof OrgSettingsRoute
+  '/org/subscriptions': typeof OrgSubscriptionsRoute
+  '/people/$id': typeof PeopleIdRoute
+  '/org': typeof OrgIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -94,10 +141,16 @@ export interface FileRoutesById {
   '/files': typeof FilesRoute
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
-  '/org': typeof OrgRoute
+  '/org': typeof OrgRouteWithChildren
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
+  '/org/financial': typeof OrgFinancialRoute
+  '/org/members': typeof OrgMembersRoute
+  '/org/settings': typeof OrgSettingsRoute
+  '/org/subscriptions': typeof OrgSubscriptionsRoute
+  '/people/$id': typeof PeopleIdRoute
+  '/org/': typeof OrgIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +164,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/tasks'
+    | '/org/financial'
+    | '/org/members'
+    | '/org/settings'
+    | '/org/subscriptions'
+    | '/people/$id'
+    | '/org/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -118,10 +177,15 @@ export interface FileRouteTypes {
     | '/files'
     | '/founder'
     | '/inbox'
-    | '/org'
     | '/settings'
     | '/spaces'
     | '/tasks'
+    | '/org/financial'
+    | '/org/members'
+    | '/org/settings'
+    | '/org/subscriptions'
+    | '/people/$id'
+    | '/org'
   id:
     | '__root__'
     | '/'
@@ -133,6 +197,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/tasks'
+    | '/org/financial'
+    | '/org/members'
+    | '/org/settings'
+    | '/org/subscriptions'
+    | '/people/$id'
+    | '/org/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -141,10 +211,11 @@ export interface RootRouteChildren {
   FilesRoute: typeof FilesRoute
   FounderRoute: typeof FounderRoute
   InboxRoute: typeof InboxRoute
-  OrgRoute: typeof OrgRoute
+  OrgRoute: typeof OrgRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   SpacesRoute: typeof SpacesRoute
   TasksRoute: typeof TasksRoute
+  PeopleIdRoute: typeof PeopleIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,8 +283,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/org/': {
+      id: '/org/'
+      path: '/'
+      fullPath: '/org/'
+      preLoaderRoute: typeof OrgIndexRouteImport
+      parentRoute: typeof OrgRoute
+    }
+    '/people/$id': {
+      id: '/people/$id'
+      path: '/people/$id'
+      fullPath: '/people/$id'
+      preLoaderRoute: typeof PeopleIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/org/subscriptions': {
+      id: '/org/subscriptions'
+      path: '/subscriptions'
+      fullPath: '/org/subscriptions'
+      preLoaderRoute: typeof OrgSubscriptionsRouteImport
+      parentRoute: typeof OrgRoute
+    }
+    '/org/settings': {
+      id: '/org/settings'
+      path: '/settings'
+      fullPath: '/org/settings'
+      preLoaderRoute: typeof OrgSettingsRouteImport
+      parentRoute: typeof OrgRoute
+    }
+    '/org/members': {
+      id: '/org/members'
+      path: '/members'
+      fullPath: '/org/members'
+      preLoaderRoute: typeof OrgMembersRouteImport
+      parentRoute: typeof OrgRoute
+    }
+    '/org/financial': {
+      id: '/org/financial'
+      path: '/financial'
+      fullPath: '/org/financial'
+      preLoaderRoute: typeof OrgFinancialRouteImport
+      parentRoute: typeof OrgRoute
+    }
   }
 }
+
+interface OrgRouteChildren {
+  OrgFinancialRoute: typeof OrgFinancialRoute
+  OrgMembersRoute: typeof OrgMembersRoute
+  OrgSettingsRoute: typeof OrgSettingsRoute
+  OrgSubscriptionsRoute: typeof OrgSubscriptionsRoute
+  OrgIndexRoute: typeof OrgIndexRoute
+}
+
+const OrgRouteChildren: OrgRouteChildren = {
+  OrgFinancialRoute: OrgFinancialRoute,
+  OrgMembersRoute: OrgMembersRoute,
+  OrgSettingsRoute: OrgSettingsRoute,
+  OrgSubscriptionsRoute: OrgSubscriptionsRoute,
+  OrgIndexRoute: OrgIndexRoute,
+}
+
+const OrgRouteWithChildren = OrgRoute._addFileChildren(OrgRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -221,10 +352,11 @@ const rootRouteChildren: RootRouteChildren = {
   FilesRoute: FilesRoute,
   FounderRoute: FounderRoute,
   InboxRoute: InboxRoute,
-  OrgRoute: OrgRoute,
+  OrgRoute: OrgRouteWithChildren,
   SettingsRoute: SettingsRoute,
   SpacesRoute: SpacesRoute,
   TasksRoute: TasksRoute,
+  PeopleIdRoute: PeopleIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

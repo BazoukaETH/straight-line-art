@@ -3,7 +3,7 @@ import {
   Home, CheckSquare, Inbox, MessageSquare, Layers, BarChart3, Files,
   Search, Plus, Bell, Command, Sun, Moon, ChevronRight,
   BookOpen, Video, CalendarPlus, ClipboardList, Users, Briefcase,
-  Globe, CreditCard, Settings as SettingsIcon, ArrowLeft,
+  Globe, CreditCard, Settings as SettingsIcon, ArrowLeft, TrendingUp,
 } from "lucide-react";
 import { useApp } from "@/lib/app-context";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -42,6 +42,7 @@ const comingSoonNav: { icon: typeof BookOpen; label: string; tooltip: string }[]
 
 const orgNav: NavItem[] = [
   { to: "/org",               icon: Globe,         label: "Org Dashboard" },
+  { to: "/org/financial",     icon: TrendingUp,    label: "Financial & Portfolio" },
   { to: "/org/members",       icon: Users,         label: "Org Members" },
   { to: "/org/subscriptions", icon: CreditCard,    label: "Subscriptions" },
   { to: "/org/settings",      icon: SettingsIcon,  label: "Org Settings" },

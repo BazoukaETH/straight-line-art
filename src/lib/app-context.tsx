@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { roleToUser, workspaces, type Role } from "./mock-data";
+import { roleToUser, workspaces, subscriptionsSeed, type Role, type Subscription, type SubStatus } from "./mock-data";
 
 interface AppCtx {
   role: Role;
@@ -13,6 +13,8 @@ interface AppCtx {
   openTask: (id: string | null) => void;
   workspaceId: string;
   setWorkspaceId: (id: string) => void;
+  subscriptions: Subscription[];
+  setSubStatus: (id: string, status: SubStatus) => void;
 }
 
 const Ctx = createContext<AppCtx | null>(null);
@@ -32,6 +34,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [dark, setDark] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>(subscriptionsSeed);
+  const setSubStatus = (id: string, status: SubStatus) =>
+    setSubscriptions((list) => list.map((s) => (s.id === id ? { ...s, status, cutoverDate: status === "Cutover" ? new Date().toISOString().slice(0, 10) : s.cutoverDate } : s)));
 
   // Hydrate from localStorage after mount (avoid SSR mismatch)
   useEffect(() => {
@@ -77,6 +82,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         openTask: setOpenTaskId,
         workspaceId,
         setWorkspaceId,
+        subscriptions,
+        setSubStatus,
       }}
     >
       {children}
