@@ -52,13 +52,12 @@ export function SpaceTreeSidebar() {
     <>
       <SidebarHeader title="Workspaces" />
       <div className="flex-1 overflow-y-auto px-1.5 py-2 scrollbar-thin text-sm">
-        <a
-          href="/tasks"
-          onClick={(e) => { e.preventDefault(); window.history.pushState({}, "", "/tasks"); window.dispatchEvent(new PopStateEvent("popstate")); }}
+        <Link
+          to="/tasks"
           className={cn("mb-2 flex w-full items-center gap-2 rounded-md px-2 py-1.5", isMy ? "bg-muted text-foreground" : "hover:bg-muted/60 text-foreground/80")}
         >
           <Inbox className="size-3.5 text-muted-foreground" /> <span className="flex-1 text-left font-medium">My Work</span>
-        </a>
+        </Link>
 
         {(Object.keys(pillarMeta) as Array<keyof typeof pillarMeta>).map((p) => (
           <div key={p} className="mb-2">
