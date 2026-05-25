@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/AppShell";
 import { useApp } from "@/lib/app-context";
-import { bodEod, memberById, pillarMeta, spaces, tasks } from "@/lib/mock-data";
+import { bodEod, memberById, pillarMeta, spaces, tasks, formatCairoDate } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -38,9 +38,9 @@ function Sidebar() {
 function Home() {
   const { currentUserId } = useApp();
   const me = memberById(currentUserId);
-  const today = new Date().toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const today = formatCairoDate();
   const [bodSubmitted, setBodSubmitted] = useState(false);
-  const [bodText, setBodText] = useState("Ship the Venture X marketing site refresh and review the board deck.");
+  const [bodText, setBodText] = useState("Ship the Loop Commerce marketing site refresh and review the May board deck.");
   const isEvening = new Date().getHours() >= 17;
 
   const my = tasks.filter((t) => t.assigneeId === currentUserId);
@@ -116,8 +116,8 @@ function Home() {
             <div className="space-y-2">
               {[
                 { t: "09:30", title: "Founders sync", who: "Bassel, Moaz" },
-                { t: "11:00", title: "Venture X launch review", who: "Yara, Omar" },
-                { t: "15:30", title: "Acme weekly", who: "Lina, Bassel" },
+                { t: "11:00", title: "Loop Commerce launch review", who: "Osama, Hagry" },
+                { t: "15:30", title: "Cairo Capital weekly", who: "Usef, Bassel" },
               ].map((m) => (
                 <div key={m.t} className="flex items-center gap-4 rounded-md border border-border/60 px-3 py-2">
                   <span className="text-xs font-mono text-muted-foreground">{m.t}</span>
@@ -175,9 +175,9 @@ function Home() {
               {bodEod.slice(0, 4).map((b, i) => {
                 const m = memberById(b.memberId);
                 const previews = [
-                  "@bassel can you approve the tagline?",
-                  "Replied to your comment on Hero option B",
-                  "Moved ‘Q3 invoices’ to In Review",
+                  "@bassel can you approve the Loop tagline?",
+                  "Replied to your comment on Cairo Capital hero B",
+                  "Moved 'April invoices' to In Review",
                   "@bassel new Drive folder shared",
                 ];
                 return (
@@ -187,7 +187,7 @@ function Home() {
                       <p className="text-sm leading-snug">
                         <b className="font-semibold">{m.name}</b> <span className="text-muted-foreground">{previews[i]}</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground">{i + 1}h ago · #venture-x</p>
+                      <p className="text-[11px] text-muted-foreground">{i + 1}h ago · #loop-commerce</p>
                     </div>
                     <ArrowUpRight className="size-3.5 text-muted-foreground" />
                   </div>
@@ -198,7 +198,7 @@ function Home() {
 
           <Card className="border-border p-5">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold"><AlertCircle className="size-4 text-[color:var(--warning)]" /> Heads up</h3>
-            <p className="text-sm text-muted-foreground">Tarek hasn't submitted BOD yet. <a className="text-accent">Nudge</a></p>
+            <p className="text-sm text-muted-foreground">Saif hasn't submitted BOD yet. <a className="text-accent cursor-pointer hover:underline">Nudge</a></p>
           </Card>
         </div>
       </div>

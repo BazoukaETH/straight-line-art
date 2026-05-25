@@ -12,8 +12,8 @@ import { useState } from "react";
 export const Route = createFileRoute("/chat")({ component: ChatPage });
 
 function ChatPage() {
-  const [activeId, setActiveId] = useState<string>("venture-x");
-  const active = channels.find((c) => c.id === activeId)!;
+  const [activeId, setActiveId] = useState<string>("loop-commerce");
+  const active = channels.find((c) => c.id === activeId) ?? channels[0];
   const msgs = channelMessages[activeId] ?? [];
   const { openTask } = useApp();
 
@@ -135,7 +135,7 @@ function ChannelsSidebar({ active, onSelect }: { active: string; onSelect: (id: 
           </div>
         ))}
         <div className="mt-2 mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Direct messages</div>
-        {["moaz","lina","yara"].map((id) => (
+        {["moaz","usef","ali","hagry"].map((id) => (
           <button key={id} className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/75 hover:bg-muted/60">
             <Avatar memberId={id} size={18} status />
             <span>{memberById(id).name}</span>

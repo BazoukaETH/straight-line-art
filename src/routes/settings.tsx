@@ -58,8 +58,8 @@ function Workspace() {
         <p className="text-sm text-muted-foreground">Settings for the Wasla workspace.</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Workspace name" defaultValue="Wasla" />
-        <Field label="Time zone" defaultValue="Asia/Beirut (GMT+3)" />
+        <Field label="Workspace name" defaultValue="Wasla Solutions" />
+        <Field label="Time zone" defaultValue="Africa/Cairo (UTC+2)" />
       </div>
       <div>
         <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">Working days</Label>
