@@ -56,28 +56,37 @@ function SidebarTree({ onSelectList, activeListId }: { onSelectList: (id: string
               const opn = open[`s:${s.id}`];
               return (
                 <div key={s.id} className="mb-0.5">
-                  <button onClick={() => toggle(`s:${s.id}`)} className="flex w-full items-center gap-1 rounded px-1.5 py-1 hover:bg-muted/60">
-                    <ChevronRight className={cn("size-3 text-muted-foreground transition-transform", opn && "rotate-90")} />
-                    <span className="flex-1 truncate text-left text-[13px] font-medium">{s.name}</span>
-                    <span className="text-[10px] text-muted-foreground">{tasks.filter((t) => t.spaceId === s.id).length}</span>
-                  </button>
+                  <div className="flex w-full items-center gap-1 rounded px-1.5 py-1 hover:bg-muted/60">
+                    <button onClick={() => toggle(`s:${s.id}`)} aria-label="Toggle" className="shrink-0">
+                      <ChevronRight className={cn("size-3 text-muted-foreground transition-transform", opn && "rotate-90")} />
+                    </button>
+                    <Link to="/space/$spaceId" params={{ spaceId: s.id }} className="flex flex-1 items-center gap-1 min-w-0">
+                      <span className="flex-1 truncate text-left text-[13px] font-medium">{s.name}</span>
+                      <span className="text-[10px] text-muted-foreground">{tasks.filter((t) => t.spaceId === s.id).length}</span>
+                    </Link>
+                  </div>
                   {opn && (
                     <div className="ml-2 border-l border-border/60 pl-1">
                       {spaceFolders.map((f) => {
                         const fOpen = open[`f:${f.id}`];
                         return (
                           <div key={f.id}>
-                            <button onClick={() => toggle(`f:${f.id}`)} className="flex w-full items-center gap-1 rounded px-1.5 py-1 hover:bg-muted/60">
-                              <ChevronRight className={cn("size-3 text-muted-foreground transition-transform", fOpen && "rotate-90")} />
-                              <FolderOpen className="size-3.5 text-muted-foreground" />
-                              <span className="flex-1 truncate text-left text-[12px]">{f.name}</span>
-                            </button>
+                            <div className="flex w-full items-center gap-1 rounded px-1.5 py-1 hover:bg-muted/60">
+                              <button onClick={() => toggle(`f:${f.id}`)} aria-label="Toggle" className="shrink-0">
+                                <ChevronRight className={cn("size-3 text-muted-foreground transition-transform", fOpen && "rotate-90")} />
+                              </button>
+                              <Link to="/space/$spaceId/folder/$folderId" params={{ spaceId: s.id, folderId: f.id }} className="flex flex-1 items-center gap-1 min-w-0">
+                                <FolderOpen className="size-3.5 text-muted-foreground" />
+                                <span className="flex-1 truncate text-left text-[12px]">{f.name}</span>
+                              </Link>
+                            </div>
                             {fOpen && (
                               <div className="ml-2 border-l border-border/60 pl-1">
                                 {lists.filter((l) => l.folderId === f.id).map((l) => (
-                                  <button
+                                  <Link
                                     key={l.id}
-                                    onClick={() => onSelectList(l.id)}
+                                    to="/space/$spaceId/list/$listId"
+                                    params={{ spaceId: s.id, listId: l.id }}
                                     onDragOver={(e) => e.preventDefault()}
                                     onDrop={(e) => handleDrop(e, l.id)}
                                     className={cn("flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-[12px]", activeListId === l.id ? "bg-muted text-foreground" : "hover:bg-muted/60 text-foreground/80")}
@@ -85,7 +94,7 @@ function SidebarTree({ onSelectList, activeListId }: { onSelectList: (id: string
                                     <ListIcon className="size-3 text-muted-foreground" />
                                     <span className="flex-1 truncate text-left">{l.name}</span>
                                     <span className="text-[10px] text-muted-foreground">{tasks.filter((t) => t.listId === l.id && !t.parentId).length}</span>
-                                  </button>
+                                  </Link>
                                 ))}
                               </div>
                             )}
@@ -93,9 +102,10 @@ function SidebarTree({ onSelectList, activeListId }: { onSelectList: (id: string
                         );
                       })}
                       {directLists.map((l) => (
-                        <button
+                        <Link
                           key={l.id}
-                          onClick={() => onSelectList(l.id)}
+                          to="/space/$spaceId/list/$listId"
+                          params={{ spaceId: s.id, listId: l.id }}
                           onDragOver={(e) => e.preventDefault()}
                           onDrop={(e) => handleDrop(e, l.id)}
                           className={cn("flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-[12px]", activeListId === l.id ? "bg-muted text-foreground" : "hover:bg-muted/60 text-foreground/80")}
@@ -103,7 +113,7 @@ function SidebarTree({ onSelectList, activeListId }: { onSelectList: (id: string
                           <ListIcon className="size-3 text-muted-foreground" />
                           <span className="flex-1 truncate text-left">{l.name}</span>
                           <span className="text-[10px] text-muted-foreground">{tasks.filter((t) => t.listId === l.id && !t.parentId).length}</span>
-                        </button>
+                        </Link>
                       ))}
                     </div>
                   )}
