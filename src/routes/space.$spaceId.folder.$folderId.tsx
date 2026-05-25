@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useChildMatches } from "@tanstack/react-router";
 import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { PageHeader } from "@/components/wasla/PageHeader";
@@ -17,6 +17,8 @@ import { useMemo, useState } from "react";
 export const Route = createFileRoute("/space/$spaceId/folder/$folderId")({ component: FolderPage });
 
 function FolderPage() {
+  const childMatches = useChildMatches();
+  if (childMatches.length > 0) return <Outlet />;
   const { spaceId, folderId } = Route.useParams();
   const space = spaceById(spaceId);
   const folder = folderById(folderId);
