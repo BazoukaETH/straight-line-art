@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useLocation } from "@tanstack/react-router";
 
 /** Sets `document.title` to `Wasla OS · {name}` while the component is mounted. */
@@ -21,7 +21,6 @@ export function useEscToBack(enabled: boolean = true) {
       if (e.key !== "Escape") return;
       const el = document.activeElement as HTMLElement | null;
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
-      // Skip if a Radix overlay is open (dialog / popover / dropdown)
       if (document.querySelector("[data-state='open'][role='dialog'], [data-radix-popper-content-wrapper]")) return;
       e.preventDefault();
       router.history.back();
@@ -35,18 +34,16 @@ export function useEscToBack(enabled: boolean = true) {
 export function useStickyState<T extends string>(suffix: string, initial: T): [T, (v: T) => void] {
   const loc = useLocation();
   const key = `wasla.view:${loc.pathname}:${suffix}`;
-  const get = (): T => {
+  const [v, setV] = useState<T>(() => {
     if (typeof window === "undefined") return initial;
     return (sessionStorage.getItem(key) as T) || initial;
-  };
-  // Read once on mount; updates go through setter
-  // We don't use useState for SSR safety — compute lazily via ref-like pattern.
-  // Simpler: derive from sessionStorage on every render but trigger re-render via state.
-  const [v, setV] = (function useS() {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [s, set] = (require("react") as typeof import("react")).useState<T>(get);
-    return [s, set] as const;
-  })();
+  });
+  // Re-sync when pathname changes
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setV((sessionStorage.getItem(key) as T) || initial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
   const set = (next: T) => {
     setV(next);
     try { sessionStorage.setItem(key, next); } catch { /* noop */ }
