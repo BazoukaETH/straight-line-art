@@ -398,18 +398,19 @@ function TimelineView({ tasks }: { tasks: Task[] }) {
             })}
           </div>
         </div>
-        {tasks.map((t, i) => {
+        {tasks.map((t) => {
           const p = positions.get(t.id)!;
+          const r = routeForTask(t);
           return (
             <div key={t.id} className="flex border-b border-border/60" style={{ height: rowH }}>
               <div className="flex w-60 shrink-0 items-center gap-2 truncate px-3 text-xs">
                 <PriorityIcon priority={t.priority} />
-                <span className="truncate">{t.title}</span>
+                <Link to={r.to as any} params={r.params as any} className="truncate hover:underline">{t.title}</Link>
               </div>
               <div className="relative" style={{ width: colWidth }}>
-                <button onClick={() => openTask(t.id)} className="absolute h-5 rounded bg-accent/70 px-2 text-[10px] text-accent-foreground hover:bg-accent" style={{ left: p.x, width: p.w, top: 8 }}>
+                <Link to={r.to as any} params={r.params as any} className="absolute flex h-5 items-center rounded bg-accent/70 px-2 text-[10px] text-accent-foreground hover:bg-accent" style={{ left: p.x, width: p.w, top: 8 }}>
                   {t.title.slice(0, 24)}
-                </button>
+                </Link>
               </div>
             </div>
           );
