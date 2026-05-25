@@ -127,9 +127,19 @@ function SpacePage() {
               </section>
             )}
 
-            {spaceFolders.length === 0 && directLists.length === 0 && (
-              <div className="rounded-lg border border-dashed border-border py-12 text-center text-sm text-muted-foreground">
-                No folders or lists yet.
+            {isEmpty && (
+              <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border py-16 text-center">
+                <div className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground"><FolderOpen className="size-5" /></div>
+                <div className="text-sm font-medium">No folders or lists here yet</div>
+                <div className="text-xs text-muted-foreground">Group work into folders, or just spin up a list.</div>
+                <div className="mt-1 flex items-center gap-2">
+                  <Button size="sm" variant="outline" className="gap-1.5" onClick={() => openQuickCreate({ tab: "folder" })}>
+                    <FolderPlus className="size-3.5" /> Add folder
+                  </Button>
+                  <Button size="sm" className="gap-1.5" onClick={() => openQuickCreate({ tab: "list" })}>
+                    <Plus className="size-3.5" /> Add list
+                  </Button>
+                </div>
               </div>
             )}
           </TabsContent>
