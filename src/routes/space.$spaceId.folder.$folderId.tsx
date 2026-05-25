@@ -26,6 +26,7 @@ function FolderPage() {
   const folderTasks = tasks.filter((t) => folderLists.some((l) => l.id === t.listId));
   const [flat, setFlat] = useState(false);
   const meta = pillarMeta[space.pillar];
+  usePageTitle(folder ? `${space.name} · ${folder.name}` : space.name);
 
   const rootTasks = useMemo(() => {
     const ids = new Set(folderTasks.map((t) => t.id));
@@ -43,9 +44,12 @@ function FolderPage() {
       <div className="px-6 py-5">
         <div className="mb-5 flex items-center justify-between gap-3">
           <h1 className="text-2xl font-bold">{folder?.name ?? "Folder"}</h1>
-          <Button size="sm" className="gap-1.5" onClick={() => openQuickCreate({ tab: "list" })}>
-            <Plus className="size-3.5" /> Add list
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button size="sm" className="gap-1.5" onClick={() => openQuickCreate({ tab: "list" })}>
+              <Plus className="size-3.5" /> Add list
+            </Button>
+            {folder && <PageActionsMenu kind="folder" id={folder.id} label={folder.name} />}
+          </div>
         </div>
 
         {!flat ? (
