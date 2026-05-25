@@ -86,7 +86,7 @@ export function SpaceTreeSidebar() {
                 return (
                   <Link
                     key={`${f.kind}:${f.id}`}
-                    to={f.href}
+                    to={f.href as never}
                     className={cn(
                       "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-[12px]",
                       active ? "text-foreground" : "text-foreground/80 hover:bg-muted/60",
