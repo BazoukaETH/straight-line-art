@@ -11,6 +11,8 @@ import { usePageTitle } from "@/lib/page-title";
 export const Route = createFileRoute("/space/$spaceId/list/$listId/task/$taskId")({ component: TaskPage });
 
 function TaskPage() {
+  const childMatches = useChildMatches();
+  if (childMatches.length > 0) return <Outlet />;
   const { spaceId, listId, taskId } = Route.useParams();
   const { tasks, lists } = useTasks();
   const space = spaceById(spaceId);
