@@ -7,11 +7,29 @@ export interface Member {
   id: string;
   name: string;
   initials: string;
+  color: string;
   role: Role;
   title: string;
   pillar: Pillar;
   online?: boolean;
+  orgFounder?: boolean;
 }
+
+export interface Workspace {
+  id: string;
+  name: string;
+  comingSoon?: boolean;
+}
+
+export const organization = {
+  id: "wasla-ventures",
+  name: "Wasla Ventures",
+};
+
+export const workspaces: Workspace[] = [
+  { id: "wasla-solutions", name: "Wasla Solutions" },
+  { id: "paperwork-studio", name: "Paperwork Studio", comingSoon: true },
+];
 
 export interface Space {
   id: string;
@@ -27,7 +45,7 @@ export interface Task {
   priority: Priority;
   spaceId: string;
   assigneeId: string;
-  due: string; // ISO
+  due: string;
   description?: string;
   subtasks?: { id: string; title: string; done: boolean }[];
   comments?: { id: string; authorId: string; body: string; at: string }[];
@@ -38,58 +56,70 @@ export interface Task {
 export interface BodEod {
   id: string;
   memberId: string;
-  date: string; // YYYY-MM-DD
+  date: string;
   bod?: { ship: string; blockers?: string };
   eod?: { shipped: string; blockedTomorrow?: string };
 }
 
 export const members: Member[] = [
-  { id: "bassel", name: "Bassel Hatoum", initials: "BH", role: "founder", title: "Founder & CEO", pillar: "ventures", online: true },
-  { id: "moaz", name: "Moaz Tarek", initials: "MT", role: "manager", title: "Head of Engineering", pillar: "ventures", online: true },
-  { id: "lina", name: "Lina Khoury", initials: "LK", role: "manager", title: "Client Lead", pillar: "client", online: true },
-  { id: "omar", name: "Omar Saleh", initials: "OS", role: "member", title: "Designer", pillar: "client" },
-  { id: "yara", name: "Yara Mansour", initials: "YM", role: "member", title: "Marketing", pillar: "ventures", online: true },
-  { id: "tarek", name: "Tarek Hadid", initials: "TH", role: "member", title: "Finance Ops", pillar: "internal" },
-  { id: "noor", name: "Noor Abbas", initials: "NA", role: "member", title: "People Ops", pillar: "internal", online: true },
+  { id: "bassel", name: "Bassel Aroussy",  initials: "BA", color: "#0B2545", role: "founder", title: "Founder & CEO",                 pillar: "ventures", online: true, orgFounder: true },
+  { id: "moaz",   name: "Moaz Sawy",        initials: "MS", color: "#3B82F6", role: "manager", title: "Development Lead",              pillar: "ventures", online: true },
+  { id: "usef",   name: "Usef Shazly",      initials: "US", color: "#8B5CF6", role: "manager", title: "Digital & Design Lead",         pillar: "client",   online: true },
+  { id: "ali",    name: "Ali Amir",         initials: "AA", color: "#EC4899", role: "manager", title: "Creative Lead",                 pillar: "client",   online: false },
+  { id: "hagry",  name: "Mohamed Hagry",    initials: "MH", color: "#F59E0B", role: "member",  title: "UI / UX Designer",              pillar: "client",   online: true },
+  { id: "osama",  name: "Osama Abbas",      initials: "OA", color: "#10B981", role: "member",  title: "E-Commerce & Digital Growth",   pillar: "ventures", online: true },
+  { id: "saif",   name: "Saif Nosair",      initials: "SN", color: "#14B8A6", role: "member",  title: "Multimedia Designer",           pillar: "client",   online: false },
 ];
 
 export const spaces: Space[] = [
-  { id: "acme", name: "Acme", pillar: "client", members: 4 },
-  { id: "globex", name: "Globex", pillar: "client", members: 3 },
-  { id: "vx", name: "Venture X", pillar: "ventures", members: 5 },
-  { id: "vy", name: "Venture Y", pillar: "ventures", members: 3 },
-  { id: "finance", name: "Finance", pillar: "internal", members: 2 },
-  { id: "hr", name: "HR", pillar: "internal", members: 2 },
+  // Client Work
+  { id: "cairo-capital", name: "Cairo Capital",     pillar: "client",   members: 4 },
+  { id: "nile-holdings", name: "Nile Holdings",     pillar: "client",   members: 3 },
+  { id: "delta-pharma",  name: "Delta Pharma",      pillar: "client",   members: 3 },
+  { id: "sahara-tech",   name: "Sahara Tech",       pillar: "client",   members: 4 },
+  // Ventures
+  { id: "loop",          name: "Loop Commerce",     pillar: "ventures", members: 4 },
+  { id: "layer",         name: "Layer Studios",     pillar: "ventures", members: 3 },
+  { id: "studio-one",    name: "Studio One",        pillar: "ventures", members: 3 },
+  { id: "mirage",        name: "Mirage Media",      pillar: "ventures", members: 2 },
+  // Internal
+  { id: "finance",       name: "Finance & Accounting", pillar: "internal", members: 2 },
+  { id: "hr",            name: "HR & Talent",       pillar: "internal", members: 2 },
+  { id: "ops",           name: "Operations",        pillar: "internal", members: 2 },
+  { id: "brand",         name: "Brand & Marketing", pillar: "internal", members: 3 },
 ];
 
 const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"];
 const PRIORITIES: Priority[] = ["urgent", "high", "normal", "normal", "normal", "low"];
 const SAMPLE_TITLES = [
-  "Ship landing page hero refresh",
-  "Review Q3 invoice batch",
-  "Draft onboarding playbook v2",
-  "Design pricing comparison table",
-  "Fix auth redirect bug on iOS",
-  "Prepare board deck for May meeting",
-  "Coordinate Acme launch creative",
-  "Write blog post: founder operating system",
-  "Schedule 1:1s for Venture Y squad",
-  "Reconcile Stripe payouts April",
-  "Edit voiceover for Venture X teaser",
+  "Refresh Cairo Capital landing hero",
+  "Review April invoice batch — EGP",
+  "Draft Loop Commerce onboarding v2",
+  "Design Delta Pharma pricing table",
+  "Fix Sahara Tech auth redirect on iOS",
+  "Prepare May board deck for Wasla Ventures",
+  "Coordinate Nile Holdings launch creative",
+  "Write blog post: the founder operating system",
+  "Schedule 1:1s for Layer Studios squad",
+  "Reconcile Stripe payouts — April",
+  "Edit voiceover for Loop Commerce teaser",
   "Refactor task slide-over component",
-  "Publish updated brand guidelines",
+  "Publish updated Wasla brand guidelines",
   "Run hiring sync with recruiters",
   "Audit Drive folder permissions",
-  "Plan Globex weekly status note",
-  "Set up cohort analytics dashboard",
+  "Plan Cairo Capital weekly status note",
+  "Set up cohort analytics for Loop",
   "Send Thursday founder digest",
-  "Renew SaaS contracts for May",
-  "Review designer portfolios shortlist",
-  "Sync with legal on NDA template",
+  "Renew SaaS contracts — May",
+  "Review UI designer portfolios shortlist",
+  "Sync with legal on Delta Pharma NDA",
   "Compile EOD silence report",
   "Draft Q3 OKRs for Wasla Internal",
-  "Add Slack to Drive notifications",
-  "Test mobile bottom tab bar",
+  "Wire Slack into Drive notifications",
+  "QA mobile bottom tab bar on iOS",
+  "Mirage Media Q3 roadmap review",
+  "Studio One launch teaser cut",
+  "Brand kit handoff for Sahara Tech",
 ];
 
 function pick<T>(arr: T[], i: number) { return arr[i % arr.length]; }
@@ -112,16 +142,16 @@ export const tasks: Task[] = Array.from({ length: 48 }, (_, i) => {
     assigneeId: assignee.id,
     due: dueOffset(i),
     description:
-      "Tighten the hero composition, push the CTA priority, and align with the brand refresh. Coordinate with design on copy length and ensure mobile breakpoints feel calm.",
+      "Tighten composition, push the CTA priority, and align with the Wasla brand refresh. Coordinate with design on copy length and ensure mobile breakpoints feel calm.",
     subtasks: [
       { id: `${i}-1`, title: "Collect references", done: true },
       { id: `${i}-2`, title: "Draft v1", done: i % 3 === 0 },
       { id: `${i}-3`, title: "Review with team", done: false },
     ],
     comments: [
-      { id: "c1", authorId: "moaz", body: "Looks good — can we push the CTA up?", at: "2026-05-24T10:12:00Z" },
-      { id: "c2", authorId: "yara", body: "Adding the new tagline now.", at: "2026-05-24T11:03:00Z" },
-      { id: "c3", authorId: "bassel", body: "Love the direction. Ship by Friday.", at: "2026-05-24T14:45:00Z" },
+      { id: "c1", authorId: "moaz",  body: "Looks good — can we push the CTA up?", at: "2026-05-24T10:12:00Z" },
+      { id: "c2", authorId: "hagry", body: "Adding the new tagline now.",          at: "2026-05-24T11:03:00Z" },
+      { id: "c3", authorId: "bassel", body: "Love the direction. Ship by Thursday.", at: "2026-05-24T14:45:00Z" },
     ],
     watchers: ["bassel", "moaz"],
     tags: ["launch", space.id],
@@ -136,12 +166,16 @@ export interface Channel {
 }
 
 export const channels: Channel[] = [
-  { id: "client-acme", name: "client-acme", pillar: "client", unread: 2 },
-  { id: "client-globex", name: "client-globex", pillar: "client" },
-  { id: "venture-x", name: "venture-x", pillar: "ventures", unread: 5 },
-  { id: "venture-x-marketing", name: "venture-x-marketing", pillar: "ventures" },
-  { id: "internal-finance", name: "internal-finance", pillar: "internal" },
-  { id: "internal-hr", name: "internal-hr", pillar: "internal" },
+  { id: "client-cairo-capital", name: "client-cairo-capital", pillar: "client", unread: 2 },
+  { id: "client-nile-holdings", name: "client-nile-holdings", pillar: "client" },
+  { id: "client-delta-pharma",  name: "client-delta-pharma",  pillar: "client" },
+  { id: "client-sahara-tech",   name: "client-sahara-tech",   pillar: "client", unread: 1 },
+  { id: "loop-commerce",        name: "loop-commerce",        pillar: "ventures", unread: 5 },
+  { id: "loop-marketing",       name: "loop-marketing",       pillar: "ventures" },
+  { id: "layer-studios",        name: "layer-studios",        pillar: "ventures" },
+  { id: "internal-finance",     name: "internal-finance",     pillar: "internal" },
+  { id: "internal-hr",          name: "internal-hr",          pillar: "internal" },
+  { id: "internal-ops",         name: "internal-ops",         pillar: "internal" },
 ];
 
 export interface Message {
@@ -156,23 +190,23 @@ export interface Message {
 }
 
 export const channelMessages: Record<string, Message[]> = {
-  "venture-x": [
-    { id: "m1", authorId: "bassel", body: "Morning team — kicking off launch week. BODs in please.", at: "2026-05-25T08:02:00Z" },
-    { id: "m2", authorId: "yara", body: "On it. Pushing the marketing site copy by 11.", at: "2026-05-25T08:04:00Z", reactions: [{ emoji: "🔥", count: 3 }] },
-    { id: "m3", authorId: "moaz", body: "Voice note", at: "2026-05-25T08:10:00Z", kind: "voice" },
-    { id: "m4", authorId: "omar", body: "Hero option B mock attached.", at: "2026-05-25T08:21:00Z", kind: "image" },
-    { id: "m5", authorId: "lina", body: "Linking the launch task here:", at: "2026-05-25T08:25:00Z", kind: "task", taskId: "T-1000" },
-    { id: "m6", authorId: "yara", body: "@bassel quick approval on tagline?", at: "2026-05-25T08:40:00Z", replies: 3 },
+  "loop-commerce": [
+    { id: "m1", authorId: "bassel", body: "Morning team — kicking off Loop launch week. BODs in please.", at: "2026-05-25T08:02:00Z" },
+    { id: "m2", authorId: "osama",  body: "On it. Pushing the marketing site copy by 11.", at: "2026-05-25T08:04:00Z", reactions: [{ emoji: "🔥", count: 3 }] },
+    { id: "m3", authorId: "moaz",   body: "Voice note", at: "2026-05-25T08:10:00Z", kind: "voice" },
+    { id: "m4", authorId: "hagry",  body: "Hero option B mock attached.", at: "2026-05-25T08:21:00Z", kind: "image" },
+    { id: "m5", authorId: "usef",   body: "Linking the launch task here:", at: "2026-05-25T08:25:00Z", kind: "task", taskId: "T-1000" },
+    { id: "m6", authorId: "osama",  body: "@bassel quick approval on tagline?", at: "2026-05-25T08:40:00Z", replies: 3 },
     { id: "m7", authorId: "bassel", body: "Approved. Ship it.", at: "2026-05-25T08:44:00Z", reactions: [{ emoji: "✅", count: 4 }] },
-    { id: "m8", authorId: "moaz", body: "Deploying to staging in 10.", at: "2026-05-25T08:55:00Z" },
+    { id: "m8", authorId: "moaz",   body: "Deploying to staging in 10.", at: "2026-05-25T08:55:00Z" },
   ],
-  "client-acme": [
-    { id: "a1", authorId: "lina", body: "Acme weekly sync notes in Drive.", at: "2026-05-25T09:00:00Z" },
-    { id: "a2", authorId: "omar", body: "Updated the brand deck.", at: "2026-05-25T09:14:00Z", reactions: [{ emoji: "👏", count: 2 }] },
+  "client-cairo-capital": [
+    { id: "a1", authorId: "usef",  body: "Cairo Capital weekly sync notes in Drive.", at: "2026-05-25T09:00:00Z" },
+    { id: "a2", authorId: "hagry", body: "Updated the brand deck.", at: "2026-05-25T09:14:00Z", reactions: [{ emoji: "👏", count: 2 }] },
+    { id: "a3", authorId: "ali",   body: "New CI direction attached, looks great.", at: "2026-05-25T09:30:00Z" },
   ],
 };
 
-// BOD / EOD seed (last 14 days)
 function dayStr(offset: number) {
   const d = new Date();
   d.setDate(d.getDate() - offset);
@@ -183,14 +217,13 @@ export const bodEod: BodEod[] = (() => {
   const out: BodEod[] = [];
   for (const m of members) {
     for (let d = 0; d < 14; d++) {
-      // deliberately skip a few days for some people
-      const skip = (m.id === "tarek" && d % 4 === 0) || (m.id === "omar" && d === 2);
+      const skip = (m.id === "saif" && d % 4 === 0) || (m.id === "ali" && d === 2);
       if (skip) continue;
       out.push({
         id: `${m.id}-${d}`,
         memberId: m.id,
         date: dayStr(d),
-        bod: { ship: "Ship marketing site updates and review Q3 invoices.", blockers: d % 5 === 0 ? "Waiting on legal review" : "" },
+        bod: { ship: "Ship Loop marketing updates and review April invoices.", blockers: d % 5 === 0 ? "Waiting on legal review" : "" },
         eod: d === 0 ? undefined : { shipped: "Closed 4 tasks, reviewed 2 PRs.", blockedTomorrow: "" },
       });
     }
@@ -207,30 +240,49 @@ export interface InboxItem {
   fromId?: string;
 }
 export const inboxItems: InboxItem[] = [
-  { id: "i1", source: "chat", preview: "@bassel quick approval on tagline?", at: "2026-05-25T08:40:00Z", unread: true, fromId: "yara" },
-  { id: "i2", source: "task", preview: "Moaz assigned you ‘Review board deck’", at: "2026-05-25T08:30:00Z", unread: true, fromId: "moaz" },
-  { id: "i3", source: "system", preview: "Tarek hasn’t submitted BOD today", at: "2026-05-25T09:05:00Z", unread: true },
-  { id: "i4", source: "chat", preview: "Lina: notes in Drive folder", at: "2026-05-25T07:55:00Z", unread: false, fromId: "lina" },
-  { id: "i5", source: "task", preview: "Yara marked ‘Hero refresh’ In Review", at: "2026-05-24T18:11:00Z", unread: false, fromId: "yara" },
+  { id: "i1", source: "chat",   preview: "@bassel quick approval on the Loop tagline?",  at: "2026-05-25T08:40:00Z", unread: true, fromId: "osama" },
+  { id: "i2", source: "task",   preview: "Moaz assigned you 'Review board deck'",         at: "2026-05-25T08:30:00Z", unread: true, fromId: "moaz" },
+  { id: "i3", source: "system", preview: "Saif hasn't submitted BOD today",               at: "2026-05-25T09:05:00Z", unread: true },
+  { id: "i4", source: "chat",   preview: "Usef: notes in Cairo Capital Drive folder",     at: "2026-05-25T07:55:00Z", unread: false, fromId: "usef" },
+  { id: "i5", source: "task",   preview: "Hagry marked 'Hero refresh' In Review",         at: "2026-05-24T18:11:00Z", unread: false, fromId: "hagry" },
 ];
 
 export const files = [
-  { id: "f1", name: "Wasla — Brand Guidelines v3.pdf", modified: "2d ago", ownerId: "omar", kind: "pdf" },
-  { id: "f2", name: "Venture X Launch Plan.gdoc", modified: "1d ago", ownerId: "bassel", kind: "doc" },
-  { id: "f3", name: "Q3 Forecast.gsheet", modified: "4h ago", ownerId: "tarek", kind: "sheet" },
-  { id: "f4", name: "Board deck — May.pptx", modified: "3d ago", ownerId: "bassel", kind: "slide" },
-  { id: "f5", name: "Hero option A.png", modified: "5h ago", ownerId: "omar", kind: "image" },
-  { id: "f6", name: "Hero option B.png", modified: "5h ago", ownerId: "omar", kind: "image" },
-  { id: "f7", name: "Acme contract.pdf", modified: "1w ago", ownerId: "lina", kind: "pdf" },
-  { id: "f8", name: "Onboarding playbook.gdoc", modified: "2w ago", ownerId: "noor", kind: "doc" },
+  { id: "f1", name: "Wasla — Brand Guidelines v3.pdf",    modified: "2d ago", ownerId: "hagry",  kind: "pdf" },
+  { id: "f2", name: "Loop Commerce Launch Plan.gdoc",     modified: "1d ago", ownerId: "bassel", kind: "doc" },
+  { id: "f3", name: "Q3 Forecast — EGP.gsheet",           modified: "4h ago", ownerId: "bassel", kind: "sheet" },
+  { id: "f4", name: "Board deck — May 2026.pptx",         modified: "3d ago", ownerId: "bassel", kind: "slide" },
+  { id: "f5", name: "Cairo Capital hero A.png",           modified: "5h ago", ownerId: "hagry",  kind: "image" },
+  { id: "f6", name: "Cairo Capital hero B.png",           modified: "5h ago", ownerId: "hagry",  kind: "image" },
+  { id: "f7", name: "Delta Pharma contract.pdf",          modified: "1w ago", ownerId: "usef",   kind: "pdf" },
+  { id: "f8", name: "Onboarding playbook.gdoc",           modified: "2w ago", ownerId: "ali",    kind: "doc" },
 ];
 
-export function memberById(id: string) { return members.find(m => m.id === id)!; }
-export function spaceById(id: string) { return spaces.find(s => s.id === id)!; }
+export function memberById(id: string) { return members.find(m => m.id === id) ?? members[0]; }
+export function spaceById(id: string) { return spaces.find(s => s.id === id) ?? spaces[0]; }
 export function taskById(id: string) { return tasks.find(t => t.id === id); }
 
-export const pillarMeta: Record<Pillar, { label: string; color: string; tokenVar: string }> = {
-  client: { label: "Client Work", color: "var(--pillar-client)", tokenVar: "pillar-client" },
-  ventures: { label: "Wasla Ventures", color: "var(--pillar-ventures)", tokenVar: "pillar-ventures" },
-  internal: { label: "Wasla Internal", color: "var(--pillar-internal)", tokenVar: "pillar-internal" },
+export const pillarMeta: Record<Pillar, { label: string; color: string }> = {
+  client:   { label: "Client Work",      color: "#3B82F6" },
+  ventures: { label: "Wasla Ventures",   color: "#8B5CF6" },
+  internal: { label: "Wasla Internal",   color: "#10B981" },
 };
+
+// Role simulation: which member each role views as
+export const roleToUser: Record<Role, string> = {
+  founder: "bassel",
+  manager: "usef",
+  member:  "hagry",
+};
+
+// Cairo-localized date formatter — "Mon, 25 May 2026"
+export function formatCairoDate(d: Date | string = new Date()): string {
+  const date = typeof d === "string" ? new Date(d) : d;
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "Africa/Cairo",
+  }).format(date);
+}
