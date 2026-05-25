@@ -3,15 +3,19 @@ import { useEffect, useMemo, useState, type DragEvent } from "react";
 import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { PageHeader } from "@/components/wasla/PageHeader";
+import { PageActionsMenu } from "@/components/wasla/PageActionsMenu";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useApp } from "@/lib/app-context";
 import { useTasks } from "@/lib/tasks-store";
 import { useTaskNav } from "@/lib/task-nav";
+import { usePageTitle, useStickyState } from "@/lib/page-title";
 import { TaskTree } from "@/components/wasla/TaskTree";
 import { TaskCard } from "@/components/wasla/TaskCard";
 import { ListSettingsDialog } from "@/components/wasla/ListSettingsDialog";
 import { spaceById, folderById, pillarMeta, type Status, type Task, type CustomField, memberById } from "@/lib/mock-data";
+import { parseSmartInput } from "@/lib/task-utils";
 import { Plus, Settings, Filter, ArrowDownAZ, Hash } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/wasla/Avatar";
@@ -26,13 +30,15 @@ const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blo
 
 function ListPage() {
   const { spaceId, listId } = Route.useParams();
-  const { lists, tasks, folders } = useTasks();
+  const { lists, tasks, folders, createTask } = useTasks();
   const { openQuickCreate } = useApp();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [tab, setTab] = useStickyState("listTab", "list");
 
   const list = lists.find((l) => l.id === listId);
   const space = spaceById(spaceId);
   const folder = list?.folderId ? folderById(list.folderId) : null;
+  usePageTitle(list ? `${space.name} · ${list.name}` : space.name);
   const scopedTasks = useMemo(() => tasks.filter((t) => t.listId === listId), [tasks, listId]);
   const rootTasks = useMemo(() => {
     const ids = new Set(scopedTasks.map((t) => t.id));
@@ -63,10 +69,11 @@ function ListPage() {
             <Button variant="ghost" size="sm" className="gap-1.5"><Filter className="size-3.5" /> Filter</Button>
             <Button variant="ghost" size="sm" className="gap-1.5"><ArrowDownAZ className="size-3.5" /> Sort</Button>
             <Button size="sm" className="gap-1.5" onClick={() => openQuickCreate({ listId, tab: "task" })}><Plus className="size-3.5" /> New task</Button>
+            {list && <PageActionsMenu kind="list" id={list.id} label={list.name} />}
           </div>
         </div>
 
-        <Tabs defaultValue="list">
+        <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <TabsList>
             <TabsTrigger value="list">List</TabsTrigger>
             <TabsTrigger value="board">Board</TabsTrigger>
@@ -75,7 +82,9 @@ function ListPage() {
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
           </TabsList>
           <TabsContent value="list" className="mt-4">
-            <TaskTree rootTasks={rootTasks} allTasks={scopedTasks} listId={listId} emptyAction={<Button size="sm" onClick={() => openQuickCreate({ listId, tab: "task" })}><Plus className="size-3.5 mr-1" /> Add task</Button>} />
+            {scopedTasks.length === 0
+              ? <EmptyListAdd listId={listId} onCreate={(input) => createTask(input)} />
+              : <TaskTree rootTasks={rootTasks} allTasks={scopedTasks} listId={listId} emptyAction={<Button size="sm" onClick={() => openQuickCreate({ listId, tab: "task" })}><Plus className="size-3.5 mr-1" /> Add task</Button>} />}
           </TabsContent>
           <TabsContent value="board" className="mt-4"><BoardView tasks={scopedTasks} /></TabsContent>
           <TabsContent value="calendar" className="mt-4"><CalendarView tasks={scopedTasks} /></TabsContent>
@@ -87,6 +96,36 @@ function ListPage() {
       {/* avoid unused */}
       <span className="hidden">{folders.length}</span>
     </AppShell>
+  );
+}
+
+interface NewTaskInput { title: string; listId: string; priority?: any; due?: Date; tags?: string[]; assigneeId?: string; }
+
+function EmptyListAdd({ listId, onCreate }: { listId: string; onCreate: (input: NewTaskInput) => void }) {
+  const [val, setVal] = useState("");
+  const submit = () => {
+    if (!val.trim()) return;
+    const p = parseSmartInput(val);
+    onCreate({ title: p.cleanTitle || val, listId, priority: p.priority, due: p.due, tags: p.tags, assigneeId: p.assigneeId });
+    toast.success("Task created");
+    setVal("");
+  };
+  return (
+    <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border bg-card py-12 text-center">
+      <div className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground"><Plus className="size-5" /></div>
+      <div>
+        <div className="text-sm font-medium">No tasks yet. Capture the first one.</div>
+        <div className="text-xs text-muted-foreground">Try `Draft homepage @hagry !high tomorrow #ui`</div>
+      </div>
+      <Input
+        autoFocus
+        value={val}
+        onChange={(e) => setVal(e.target.value)}
+        placeholder="Type a task and press Enter…"
+        className="h-9 w-full max-w-sm text-sm"
+        onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
+      />
+    </div>
   );
 }
 

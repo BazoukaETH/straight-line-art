@@ -2,14 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { PageHeader } from "@/components/wasla/PageHeader";
+import { PageActionsMenu } from "@/components/wasla/PageActionsMenu";
 import { spaceById, pillarMeta } from "@/lib/mock-data";
 import { useTasks } from "@/lib/tasks-store";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Plus, FolderOpen, List as ListIcon, ChevronRight } from "lucide-react";
+import { Plus, FolderOpen, List as ListIcon, ChevronRight, FolderPlus } from "lucide-react";
 import { useApp } from "@/lib/app-context";
 import { TaskTree } from "@/components/wasla/TaskTree";
+import { usePageTitle, useStickyState } from "@/lib/page-title";
 import { useMemo } from "react";
 
 export const Route = createFileRoute("/space/$spaceId")({ component: SpacePage });
@@ -27,6 +29,9 @@ function SpacePage() {
     return spaceTasks.filter((t) => !t.parentId || !ids.has(t.parentId!));
   }, [spaceTasks]);
   const meta = pillarMeta[space.pillar];
+  usePageTitle(space.name);
+  const [tab, setTab] = useStickyState("tab", "overview");
+  const isEmpty = spaceFolders.length === 0 && directLists.length === 0;
 
   return (
     <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground">{meta.label} / {space.name}</span>}>
@@ -43,19 +48,22 @@ function SpacePage() {
               {meta.label}
             </span>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" className="gap-1.5"><Plus className="size-3.5" /> Add</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => openQuickCreate({ tab: "folder" })}>Add folder</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openQuickCreate({ tab: "list" })}>Add list</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openQuickCreate({ tab: "task", listId: directLists[0]?.id ?? lists.find(l => l.spaceId === spaceId)?.id })}>Add task</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" className="gap-1.5"><Plus className="size-3.5" /> Add</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => openQuickCreate({ tab: "folder" })}>Add folder</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => openQuickCreate({ tab: "list" })}>Add list</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => openQuickCreate({ tab: "task", listId: directLists[0]?.id ?? lists.find(l => l.spaceId === spaceId)?.id })}>Add task</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <PageActionsMenu kind="space" id={space.id} label={space.name} />
+          </div>
         </div>
 
-        <Tabs defaultValue="overview">
+        <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="tasks">Tasks</TabsTrigger>
@@ -119,9 +127,19 @@ function SpacePage() {
               </section>
             )}
 
-            {spaceFolders.length === 0 && directLists.length === 0 && (
-              <div className="rounded-lg border border-dashed border-border py-12 text-center text-sm text-muted-foreground">
-                No folders or lists yet.
+            {isEmpty && (
+              <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border py-16 text-center">
+                <div className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground"><FolderOpen className="size-5" /></div>
+                <div className="text-sm font-medium">No folders or lists here yet</div>
+                <div className="text-xs text-muted-foreground">Group work into folders, or just spin up a list.</div>
+                <div className="mt-1 flex items-center gap-2">
+                  <Button size="sm" variant="outline" className="gap-1.5" onClick={() => openQuickCreate({ tab: "folder" })}>
+                    <FolderPlus className="size-3.5" /> Add folder
+                  </Button>
+                  <Button size="sm" className="gap-1.5" onClick={() => openQuickCreate({ tab: "list" })}>
+                    <Plus className="size-3.5" /> Add list
+                  </Button>
+                </div>
               </div>
             )}
           </TabsContent>

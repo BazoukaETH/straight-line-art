@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { PageHeader } from "@/components/wasla/PageHeader";
+import { PageActionsMenu } from "@/components/wasla/PageActionsMenu";
 import { spaceById, folderById, pillarMeta } from "@/lib/mock-data";
 import { useTasks } from "@/lib/tasks-store";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Plus, List as ListIcon } from "lucide-react";
 import { useApp } from "@/lib/app-context";
 import { TaskTree } from "@/components/wasla/TaskTree";
 import { StatusPill } from "@/components/wasla/StatusPill";
+import { usePageTitle } from "@/lib/page-title";
 import { useMemo, useState } from "react";
 
 
@@ -24,6 +26,7 @@ function FolderPage() {
   const folderTasks = tasks.filter((t) => folderLists.some((l) => l.id === t.listId));
   const [flat, setFlat] = useState(false);
   const meta = pillarMeta[space.pillar];
+  usePageTitle(folder ? `${space.name} · ${folder.name}` : space.name);
 
   const rootTasks = useMemo(() => {
     const ids = new Set(folderTasks.map((t) => t.id));
@@ -41,12 +44,23 @@ function FolderPage() {
       <div className="px-6 py-5">
         <div className="mb-5 flex items-center justify-between gap-3">
           <h1 className="text-2xl font-bold">{folder?.name ?? "Folder"}</h1>
-          <Button size="sm" className="gap-1.5" onClick={() => openQuickCreate({ tab: "list" })}>
-            <Plus className="size-3.5" /> Add list
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button size="sm" className="gap-1.5" onClick={() => openQuickCreate({ tab: "list" })}>
+              <Plus className="size-3.5" /> Add list
+            </Button>
+            {folder && <PageActionsMenu kind="folder" id={folder.id} label={folder.name} />}
+          </div>
         </div>
 
-        {!flat ? (
+        {folderLists.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border py-16 text-center">
+            <div className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground"><ListIcon className="size-5" /></div>
+            <div className="text-sm font-medium">No lists in this folder yet</div>
+            <Button size="sm" className="mt-1 gap-1.5" onClick={() => openQuickCreate({ tab: "list" })}>
+              <Plus className="size-3.5" /> Add list
+            </Button>
+          </div>
+        ) : !flat ? (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {folderLists.map((l) => {
               const lTasks = tasks.filter((t) => t.listId === l.id && !t.parentId);

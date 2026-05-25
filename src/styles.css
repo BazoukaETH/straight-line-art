@@ -143,3 +143,11 @@
     border-radius: 999px;
   }
 }
+
+@layer utilities {
+  @keyframes wasla-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .wasla-fade-in { animation: wasla-fade-in 100ms ease-out; }
+}
