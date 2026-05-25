@@ -22,6 +22,7 @@ import { Route as OrgIndexRouteImport } from './routes/org.index'
 import { Route as OrgSubscriptionsRouteImport } from './routes/org.subscriptions'
 import { Route as OrgSettingsRouteImport } from './routes/org.settings'
 import { Route as OrgMembersRouteImport } from './routes/org.members'
+import { Route as OrgFinancialRouteImport } from './routes/org.financial'
 
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
@@ -88,6 +89,11 @@ const OrgMembersRoute = OrgMembersRouteImport.update({
   path: '/members',
   getParentRoute: () => OrgRoute,
 } as any)
+const OrgFinancialRoute = OrgFinancialRouteImport.update({
+  id: '/financial',
+  path: '/financial',
+  getParentRoute: () => OrgRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
+  '/org/financial': typeof OrgFinancialRoute
   '/org/members': typeof OrgMembersRoute
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
+  '/org/financial': typeof OrgFinancialRoute
   '/org/members': typeof OrgMembersRoute
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
+  '/org/financial': typeof OrgFinancialRoute
   '/org/members': typeof OrgMembersRoute
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/tasks'
+    | '/org/financial'
     | '/org/members'
     | '/org/settings'
     | '/org/subscriptions'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/tasks'
+    | '/org/financial'
     | '/org/members'
     | '/org/settings'
     | '/org/subscriptions'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/tasks'
+    | '/org/financial'
     | '/org/members'
     | '/org/settings'
     | '/org/subscriptions'
@@ -286,10 +298,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgMembersRouteImport
       parentRoute: typeof OrgRoute
     }
+    '/org/financial': {
+      id: '/org/financial'
+      path: '/financial'
+      fullPath: '/org/financial'
+      preLoaderRoute: typeof OrgFinancialRouteImport
+      parentRoute: typeof OrgRoute
+    }
   }
 }
 
 interface OrgRouteChildren {
+  OrgFinancialRoute: typeof OrgFinancialRoute
   OrgMembersRoute: typeof OrgMembersRoute
   OrgSettingsRoute: typeof OrgSettingsRoute
   OrgSubscriptionsRoute: typeof OrgSubscriptionsRoute
@@ -297,6 +317,7 @@ interface OrgRouteChildren {
 }
 
 const OrgRouteChildren: OrgRouteChildren = {
+  OrgFinancialRoute: OrgFinancialRoute,
   OrgMembersRoute: OrgMembersRoute,
   OrgSettingsRoute: OrgSettingsRoute,
   OrgSubscriptionsRoute: OrgSubscriptionsRoute,
