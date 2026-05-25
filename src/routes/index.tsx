@@ -116,8 +116,8 @@ function Home() {
             <div className="space-y-2">
               {[
                 { t: "09:30", title: "Founders sync", who: "Bassel, Moaz" },
-                { t: "11:00", title: "Venture X launch review", who: "Yara, Omar" },
-                { t: "15:30", title: "Acme weekly", who: "Lina, Bassel" },
+                { t: "11:00", title: "Loop Commerce launch review", who: "Osama, Hagry" },
+                { t: "15:30", title: "Cairo Capital weekly", who: "Usef, Bassel" },
               ].map((m) => (
                 <div key={m.t} className="flex items-center gap-4 rounded-md border border-border/60 px-3 py-2">
                   <span className="text-xs font-mono text-muted-foreground">{m.t}</span>
