@@ -19,11 +19,16 @@ import { Route as FilesRouteImport } from './routes/files'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrgIndexRouteImport } from './routes/org.index'
+import { Route as SpaceSpaceIdRouteImport } from './routes/space.$spaceId'
 import { Route as PeopleIdRouteImport } from './routes/people.$id'
 import { Route as OrgSubscriptionsRouteImport } from './routes/org.subscriptions'
 import { Route as OrgSettingsRouteImport } from './routes/org.settings'
 import { Route as OrgMembersRouteImport } from './routes/org.members'
 import { Route as OrgFinancialRouteImport } from './routes/org.financial'
+import { Route as SpaceSpaceIdListListIdRouteImport } from './routes/space.$spaceId.list.$listId'
+import { Route as SpaceSpaceIdFolderFolderIdRouteImport } from './routes/space.$spaceId.folder.$folderId'
+import { Route as SpaceSpaceIdListListIdTaskTaskIdRouteImport } from './routes/space.$spaceId.list.$listId.task.$taskId'
+import { Route as SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRouteImport } from './routes/space.$spaceId.list.$listId.task.$taskId.subtask.$subtaskId'
 
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
@@ -75,6 +80,11 @@ const OrgIndexRoute = OrgIndexRouteImport.update({
   path: '/',
   getParentRoute: () => OrgRoute,
 } as any)
+const SpaceSpaceIdRoute = SpaceSpaceIdRouteImport.update({
+  id: '/space/$spaceId',
+  path: '/space/$spaceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PeopleIdRoute = PeopleIdRouteImport.update({
   id: '/people/$id',
   path: '/people/$id',
@@ -100,6 +110,29 @@ const OrgFinancialRoute = OrgFinancialRouteImport.update({
   path: '/financial',
   getParentRoute: () => OrgRoute,
 } as any)
+const SpaceSpaceIdListListIdRoute = SpaceSpaceIdListListIdRouteImport.update({
+  id: '/list/$listId',
+  path: '/list/$listId',
+  getParentRoute: () => SpaceSpaceIdRoute,
+} as any)
+const SpaceSpaceIdFolderFolderIdRoute =
+  SpaceSpaceIdFolderFolderIdRouteImport.update({
+    id: '/folder/$folderId',
+    path: '/folder/$folderId',
+    getParentRoute: () => SpaceSpaceIdRoute,
+  } as any)
+const SpaceSpaceIdListListIdTaskTaskIdRoute =
+  SpaceSpaceIdListListIdTaskTaskIdRouteImport.update({
+    id: '/task/$taskId',
+    path: '/task/$taskId',
+    getParentRoute: () => SpaceSpaceIdListListIdRoute,
+  } as any)
+const SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute =
+  SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRouteImport.update({
+    id: '/subtask/$subtaskId',
+    path: '/subtask/$subtaskId',
+    getParentRoute: () => SpaceSpaceIdListListIdTaskTaskIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -116,7 +149,12 @@ export interface FileRoutesByFullPath {
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
+  '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org/': typeof OrgIndexRoute
+  '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
+  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRouteWithChildren
+  '/space/$spaceId/list/$listId/task/$taskId': typeof SpaceSpaceIdListListIdTaskTaskIdRouteWithChildren
+  '/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId': typeof SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -132,7 +170,12 @@ export interface FileRoutesByTo {
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
+  '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org': typeof OrgIndexRoute
+  '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
+  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRouteWithChildren
+  '/space/$spaceId/list/$listId/task/$taskId': typeof SpaceSpaceIdListListIdTaskTaskIdRouteWithChildren
+  '/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId': typeof SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -150,7 +193,12 @@ export interface FileRoutesById {
   '/org/settings': typeof OrgSettingsRoute
   '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
+  '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org/': typeof OrgIndexRoute
+  '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
+  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRouteWithChildren
+  '/space/$spaceId/list/$listId/task/$taskId': typeof SpaceSpaceIdListListIdTaskTaskIdRouteWithChildren
+  '/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId': typeof SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -169,7 +217,12 @@ export interface FileRouteTypes {
     | '/org/settings'
     | '/org/subscriptions'
     | '/people/$id'
+    | '/space/$spaceId'
     | '/org/'
+    | '/space/$spaceId/folder/$folderId'
+    | '/space/$spaceId/list/$listId'
+    | '/space/$spaceId/list/$listId/task/$taskId'
+    | '/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -185,7 +238,12 @@ export interface FileRouteTypes {
     | '/org/settings'
     | '/org/subscriptions'
     | '/people/$id'
+    | '/space/$spaceId'
     | '/org'
+    | '/space/$spaceId/folder/$folderId'
+    | '/space/$spaceId/list/$listId'
+    | '/space/$spaceId/list/$listId/task/$taskId'
+    | '/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId'
   id:
     | '__root__'
     | '/'
@@ -202,7 +260,12 @@ export interface FileRouteTypes {
     | '/org/settings'
     | '/org/subscriptions'
     | '/people/$id'
+    | '/space/$spaceId'
     | '/org/'
+    | '/space/$spaceId/folder/$folderId'
+    | '/space/$spaceId/list/$listId'
+    | '/space/$spaceId/list/$listId/task/$taskId'
+    | '/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -216,6 +279,7 @@ export interface RootRouteChildren {
   SpacesRoute: typeof SpacesRoute
   TasksRoute: typeof TasksRoute
   PeopleIdRoute: typeof PeopleIdRoute
+  SpaceSpaceIdRoute: typeof SpaceSpaceIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -290,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgIndexRouteImport
       parentRoute: typeof OrgRoute
     }
+    '/space/$spaceId': {
+      id: '/space/$spaceId'
+      path: '/space/$spaceId'
+      fullPath: '/space/$spaceId'
+      preLoaderRoute: typeof SpaceSpaceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/people/$id': {
       id: '/people/$id'
       path: '/people/$id'
@@ -325,6 +396,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrgFinancialRouteImport
       parentRoute: typeof OrgRoute
     }
+    '/space/$spaceId/list/$listId': {
+      id: '/space/$spaceId/list/$listId'
+      path: '/list/$listId'
+      fullPath: '/space/$spaceId/list/$listId'
+      preLoaderRoute: typeof SpaceSpaceIdListListIdRouteImport
+      parentRoute: typeof SpaceSpaceIdRoute
+    }
+    '/space/$spaceId/folder/$folderId': {
+      id: '/space/$spaceId/folder/$folderId'
+      path: '/folder/$folderId'
+      fullPath: '/space/$spaceId/folder/$folderId'
+      preLoaderRoute: typeof SpaceSpaceIdFolderFolderIdRouteImport
+      parentRoute: typeof SpaceSpaceIdRoute
+    }
+    '/space/$spaceId/list/$listId/task/$taskId': {
+      id: '/space/$spaceId/list/$listId/task/$taskId'
+      path: '/task/$taskId'
+      fullPath: '/space/$spaceId/list/$listId/task/$taskId'
+      preLoaderRoute: typeof SpaceSpaceIdListListIdTaskTaskIdRouteImport
+      parentRoute: typeof SpaceSpaceIdListListIdRoute
+    }
+    '/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId': {
+      id: '/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId'
+      path: '/subtask/$subtaskId'
+      fullPath: '/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId'
+      preLoaderRoute: typeof SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRouteImport
+      parentRoute: typeof SpaceSpaceIdListListIdTaskTaskIdRoute
+    }
   }
 }
 
@@ -346,6 +445,50 @@ const OrgRouteChildren: OrgRouteChildren = {
 
 const OrgRouteWithChildren = OrgRoute._addFileChildren(OrgRouteChildren)
 
+interface SpaceSpaceIdListListIdTaskTaskIdRouteChildren {
+  SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute: typeof SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute
+}
+
+const SpaceSpaceIdListListIdTaskTaskIdRouteChildren: SpaceSpaceIdListListIdTaskTaskIdRouteChildren =
+  {
+    SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute:
+      SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute,
+  }
+
+const SpaceSpaceIdListListIdTaskTaskIdRouteWithChildren =
+  SpaceSpaceIdListListIdTaskTaskIdRoute._addFileChildren(
+    SpaceSpaceIdListListIdTaskTaskIdRouteChildren,
+  )
+
+interface SpaceSpaceIdListListIdRouteChildren {
+  SpaceSpaceIdListListIdTaskTaskIdRoute: typeof SpaceSpaceIdListListIdTaskTaskIdRouteWithChildren
+}
+
+const SpaceSpaceIdListListIdRouteChildren: SpaceSpaceIdListListIdRouteChildren =
+  {
+    SpaceSpaceIdListListIdTaskTaskIdRoute:
+      SpaceSpaceIdListListIdTaskTaskIdRouteWithChildren,
+  }
+
+const SpaceSpaceIdListListIdRouteWithChildren =
+  SpaceSpaceIdListListIdRoute._addFileChildren(
+    SpaceSpaceIdListListIdRouteChildren,
+  )
+
+interface SpaceSpaceIdRouteChildren {
+  SpaceSpaceIdFolderFolderIdRoute: typeof SpaceSpaceIdFolderFolderIdRoute
+  SpaceSpaceIdListListIdRoute: typeof SpaceSpaceIdListListIdRouteWithChildren
+}
+
+const SpaceSpaceIdRouteChildren: SpaceSpaceIdRouteChildren = {
+  SpaceSpaceIdFolderFolderIdRoute: SpaceSpaceIdFolderFolderIdRoute,
+  SpaceSpaceIdListListIdRoute: SpaceSpaceIdListListIdRouteWithChildren,
+}
+
+const SpaceSpaceIdRouteWithChildren = SpaceSpaceIdRoute._addFileChildren(
+  SpaceSpaceIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
@@ -357,6 +500,7 @@ const rootRouteChildren: RootRouteChildren = {
   SpacesRoute: SpacesRoute,
   TasksRoute: TasksRoute,
   PeopleIdRoute: PeopleIdRoute,
+  SpaceSpaceIdRoute: SpaceSpaceIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

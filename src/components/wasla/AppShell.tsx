@@ -13,14 +13,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { TaskSlideOver } from "./TaskSlideOver";
 import { CommandPalette } from "./CommandPalette";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { QuickCreateModal } from "./QuickCreateModal";
 import { BulkActionBar } from "./BulkActionBar";
 import { toast } from "sonner";
 import { FounderQuickAccess } from "./FounderQuickAccess";
-import type { ReactNode } from "react";
+import { setNav } from "@/lib/nav-bridge";
+import { useEffect, type ReactNode } from "react";
 
 type NavItem = { to: string; icon: typeof Home; label: string; founderOnly?: boolean };
 
@@ -206,7 +206,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
           </div>
         </div>
 
-        <TaskSlideOver />
+        <NavBridge />
         <CommandPalette />
         <QuickCreateModal />
         <BulkActionBar />
@@ -247,4 +247,13 @@ export function SidebarTreeItem({ label, count, active, indent = 0, icon: Icon =
       {count !== undefined && <span className="text-[11px] text-muted-foreground">{count}</span>}
     </button>
   );
+}
+
+function NavBridge() {
+  const nav = useNavigate();
+  useEffect(() => {
+    setNav((opts: any) => nav(opts));
+    return () => setNav(null);
+  }, [nav]);
+  return null;
 }
