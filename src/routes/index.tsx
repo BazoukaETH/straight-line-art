@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/AppShell";
 import { useApp } from "@/lib/app-context";
-import { bodEod, memberById, pillarMeta, spaces, tasks } from "@/lib/mock-data";
+import { bodEod, memberById, pillarMeta, spaces, tasks, formatCairoDate } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
