@@ -29,6 +29,8 @@ export const Route = createFileRoute("/space/$spaceId/list/$listId")({ component
 const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"];
 
 function ListPage() {
+  const childMatches = useChildMatches();
+  if (childMatches.length > 0) return <Outlet />;
   const { spaceId, listId } = Route.useParams();
   const { lists, tasks, folders, createTask } = useTasks();
   const { openQuickCreate } = useApp();
