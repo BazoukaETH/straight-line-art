@@ -18,6 +18,8 @@ import { Route as FounderRouteImport } from './routes/founder'
 import { Route as FilesRouteImport } from './routes/files'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OrgIndexRouteImport } from './routes/org.index'
+import { Route as OrgMembersRouteImport } from './routes/org.members'
 
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
@@ -64,6 +66,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrgIndexRoute = OrgIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrgRoute,
+} as any)
+const OrgMembersRoute = OrgMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => OrgRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -71,10 +83,12 @@ export interface FileRoutesByFullPath {
   '/files': typeof FilesRoute
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
-  '/org': typeof OrgRoute
+  '/org': typeof OrgRouteWithChildren
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
+  '/org/members': typeof OrgMembersRoute
+  '/org/': typeof OrgIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -82,10 +96,11 @@ export interface FileRoutesByTo {
   '/files': typeof FilesRoute
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
-  '/org': typeof OrgRoute
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
+  '/org/members': typeof OrgMembersRoute
+  '/org': typeof OrgIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -94,10 +109,12 @@ export interface FileRoutesById {
   '/files': typeof FilesRoute
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
-  '/org': typeof OrgRoute
+  '/org': typeof OrgRouteWithChildren
   '/settings': typeof SettingsRoute
   '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
+  '/org/members': typeof OrgMembersRoute
+  '/org/': typeof OrgIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +128,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/tasks'
+    | '/org/members'
+    | '/org/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -118,10 +137,11 @@ export interface FileRouteTypes {
     | '/files'
     | '/founder'
     | '/inbox'
-    | '/org'
     | '/settings'
     | '/spaces'
     | '/tasks'
+    | '/org/members'
+    | '/org'
   id:
     | '__root__'
     | '/'
@@ -133,6 +153,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/tasks'
+    | '/org/members'
+    | '/org/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -141,7 +163,7 @@ export interface RootRouteChildren {
   FilesRoute: typeof FilesRoute
   FounderRoute: typeof FounderRoute
   InboxRoute: typeof InboxRoute
-  OrgRoute: typeof OrgRoute
+  OrgRoute: typeof OrgRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   SpacesRoute: typeof SpacesRoute
   TasksRoute: typeof TasksRoute
@@ -212,8 +234,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/org/': {
+      id: '/org/'
+      path: '/'
+      fullPath: '/org/'
+      preLoaderRoute: typeof OrgIndexRouteImport
+      parentRoute: typeof OrgRoute
+    }
+    '/org/members': {
+      id: '/org/members'
+      path: '/members'
+      fullPath: '/org/members'
+      preLoaderRoute: typeof OrgMembersRouteImport
+      parentRoute: typeof OrgRoute
+    }
   }
 }
+
+interface OrgRouteChildren {
+  OrgMembersRoute: typeof OrgMembersRoute
+  OrgIndexRoute: typeof OrgIndexRoute
+}
+
+const OrgRouteChildren: OrgRouteChildren = {
+  OrgMembersRoute: OrgMembersRoute,
+  OrgIndexRoute: OrgIndexRoute,
+}
+
+const OrgRouteWithChildren = OrgRoute._addFileChildren(OrgRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -221,7 +269,7 @@ const rootRouteChildren: RootRouteChildren = {
   FilesRoute: FilesRoute,
   FounderRoute: FounderRoute,
   InboxRoute: InboxRoute,
-  OrgRoute: OrgRoute,
+  OrgRoute: OrgRouteWithChildren,
   SettingsRoute: SettingsRoute,
   SpacesRoute: SpacesRoute,
   TasksRoute: TasksRoute,
@@ -229,3 +277,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
