@@ -19,6 +19,7 @@ import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { QuickCreateModal } from "./QuickCreateModal";
 import { BulkActionBar } from "./BulkActionBar";
 import { toast } from "sonner";
+import { FounderQuickAccess } from "./FounderQuickAccess";
 import type { ReactNode } from "react";
 
 type NavItem = { to: string; icon: typeof Home; label: string; founderOnly?: boolean };
@@ -100,6 +101,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
                   </SelectContent>
                 </Select>
               </div>
+              <div className="md:hidden"><FounderQuickAccess variant="mobile" /></div>
               <Avatar memberId={me.id} size={28} status />
             </div>
           </header>
@@ -109,6 +111,14 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
           {/* Left rail */}
           <aside className="hidden md:flex h-full w-[60px] flex-col items-center justify-between border-r border-border/60 bg-[color:var(--rail)] py-4 text-[color:var(--rail-foreground)]">
             <div className="flex flex-col items-center gap-1 overflow-y-auto px-1 scrollbar-thin">
+              {role === "founder" && (
+                <>
+                  <div className="mb-1 w-full px-0.5">
+                    <FounderQuickAccess variant="mobile" />
+                  </div>
+                  <div className="mb-1 h-px w-7 bg-white/15" />
+                </>
+              )}
               {items.map((item) => {
                 const active = loc.pathname === item.to || (item.to !== "/" && item.to !== "/org" && loc.pathname.startsWith(item.to));
                 return (
