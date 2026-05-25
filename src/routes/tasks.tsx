@@ -270,7 +270,7 @@ function CalendarView({ tasks }: { tasks: Task[] }) {
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const startDow = monthStart.getDay();
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-  const { openTask } = useApp();
+  const { goTask } = useTaskNav();
   return (
     <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-border bg-border text-sm">
       {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((d) => (
