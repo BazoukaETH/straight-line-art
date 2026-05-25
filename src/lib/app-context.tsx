@@ -66,10 +66,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const openTask = (id: string | null) => {
     setOpenTaskIdState(id);
     setDrillStack([]);
+    if (id) navigateToTask(id);
   };
   const pushDrill = (id: string) => {
     setDrillStack((s) => (openTaskId ? [...s, openTaskId] : s));
     setOpenTaskIdState(id);
+    navigateToTask(id);
   };
   const popDrill = () => {
     setDrillStack((s) => {
@@ -77,6 +79,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const next = [...s];
       const prev = next.pop()!;
       setOpenTaskIdState(prev);
+      navigateToTask(prev);
       return next;
     });
   };
