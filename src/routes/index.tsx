@@ -198,7 +198,7 @@ function Home() {
 
           <Card className="border-border p-5">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold"><AlertCircle className="size-4 text-[color:var(--warning)]" /> Heads up</h3>
-            <p className="text-sm text-muted-foreground">Tarek hasn't submitted BOD yet. <a className="text-accent">Nudge</a></p>
+            <p className="text-sm text-muted-foreground">Saif hasn't submitted BOD yet. <a className="text-accent cursor-pointer hover:underline">Nudge</a></p>
           </Card>
         </div>
       </div>
