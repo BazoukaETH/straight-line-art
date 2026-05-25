@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { PageHeader } from "@/components/wasla/PageHeader";
+import { PageActionsMenu } from "@/components/wasla/PageActionsMenu";
 import { spaceById, folderById, pillarMeta } from "@/lib/mock-data";
 import { useTasks } from "@/lib/tasks-store";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Plus, List as ListIcon } from "lucide-react";
 import { useApp } from "@/lib/app-context";
 import { TaskTree } from "@/components/wasla/TaskTree";
 import { StatusPill } from "@/components/wasla/StatusPill";
+import { usePageTitle } from "@/lib/page-title";
 import { useMemo, useState } from "react";
 
 
