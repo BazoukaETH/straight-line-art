@@ -16,6 +16,10 @@ interface AppCtx {
   setWorkspaceId: (id: string) => void;
   subscriptions: Subscription[];
   setSubStatus: (id: string, status: SubStatus) => void;
+  quickCreateOpen: boolean;
+  setQuickCreateOpen: (b: boolean) => void;
+  quickCreateContext: { listId?: string; parentId?: string; tab?: "task" | "subtask" | "list" | "folder" | "space" | "channel" } | null;
+  setQuickCreateContext: (c: AppCtx["quickCreateContext"]) => void;
 }
 
 const Ctx = createContext<AppCtx | null>(null);
@@ -36,6 +40,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [commandOpen, setCommandOpen] = useState(false);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>(subscriptionsSeed);
+  const [quickCreateOpen, setQuickCreateOpen] = useState(false);
+  const [quickCreateContext, setQuickCreateContext] = useState<AppCtx["quickCreateContext"]>(null);
   const setSubStatus = (id: string, status: SubStatus) =>
     setSubscriptions((list) => list.map((s) => (s.id === id ? { ...s, status, cutoverDate: status === "Cutover" ? new Date().toISOString().slice(0, 10) : s.cutoverDate } : s)));
 
@@ -85,9 +91,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setWorkspaceId,
         subscriptions,
         setSubStatus,
+        quickCreateOpen,
+        setQuickCreateOpen,
+        quickCreateContext,
+        setQuickCreateContext,
       }}
     >
-      {children}
+      <TasksProvider>{children}</TasksProvider>
     </Ctx.Provider>
   );
 }
