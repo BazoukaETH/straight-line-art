@@ -2,10 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { PageHeader } from "@/components/wasla/PageHeader";
+import { PageActionsMenu } from "@/components/wasla/PageActionsMenu";
 import { TaskDetail } from "@/components/wasla/TaskDetail";
 import { spaceById, folderById, pillarMeta } from "@/lib/mock-data";
 import { useTasks } from "@/lib/tasks-store";
 import { getAncestors } from "@/lib/task-utils";
+import { usePageTitle } from "@/lib/page-title";
 
 export const Route = createFileRoute("/space/$spaceId/list/$listId/task/$taskId/subtask/$subtaskId")({ component: SubtaskPage });
 
@@ -18,6 +20,7 @@ function SubtaskPage() {
   const root = tasks.find((t) => t.id === taskId);
   const sub = tasks.find((t) => t.id === subtaskId);
   const ancestors = sub ? getAncestors(tasks, sub.id) : [];
+  usePageTitle(sub ? `${space.name} · ${sub.title}` : space.name);
 
   const crumbs = [
     { label: "Tasks", to: "/tasks" },
@@ -32,8 +35,12 @@ function SubtaskPage() {
 
   return (
     <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground truncate max-w-md">{sub?.title}</span>}>
-      <PageHeader crumbs={crumbs} />
+      <PageHeader
+        crumbs={crumbs}
+        rightSlot={sub && <div className="ml-2"><PageActionsMenu kind="task" id={sub.id} label={sub.title} /></div>}
+      />
       <TaskDetail taskId={subtaskId} />
     </AppShell>
   );
 }
+
