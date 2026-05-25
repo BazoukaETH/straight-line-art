@@ -99,6 +99,36 @@ function ListPage() {
   );
 }
 
+interface NewTaskInput { title: string; listId: string; priority?: any; due?: Date; tags?: string[]; assigneeId?: string; }
+
+function EmptyListAdd({ listId, onCreate }: { listId: string; onCreate: (input: NewTaskInput) => void }) {
+  const [val, setVal] = useState("");
+  const submit = () => {
+    if (!val.trim()) return;
+    const p = parseSmartInput(val);
+    onCreate({ title: p.cleanTitle || val, listId, priority: p.priority, due: p.due, tags: p.tags, assigneeId: p.assigneeId });
+    toast.success("Task created");
+    setVal("");
+  };
+  return (
+    <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-border bg-card py-12 text-center">
+      <div className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground"><Plus className="size-5" /></div>
+      <div>
+        <div className="text-sm font-medium">No tasks yet. Capture the first one.</div>
+        <div className="text-xs text-muted-foreground">Try `Draft homepage @hagry !high tomorrow #ui`</div>
+      </div>
+      <Input
+        autoFocus
+        value={val}
+        onChange={(e) => setVal(e.target.value)}
+        placeholder="Type a task and press Enter…"
+        className="h-9 w-full max-w-sm text-sm"
+        onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
+      />
+    </div>
+  );
+}
+
 function BoardView({ tasks }: { tasks: Task[] }) {
   const { updateTask } = useTasks();
   const onDrop = (e: DragEvent, status: Status) => {
