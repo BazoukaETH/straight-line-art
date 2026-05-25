@@ -13,14 +13,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { TaskSlideOver } from "./TaskSlideOver";
 import { CommandPalette } from "./CommandPalette";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { QuickCreateModal } from "./QuickCreateModal";
 import { BulkActionBar } from "./BulkActionBar";
 import { toast } from "sonner";
 import { FounderQuickAccess } from "./FounderQuickAccess";
-import type { ReactNode } from "react";
+import { setNav } from "@/lib/nav-bridge";
+import { useEffect, type ReactNode } from "react";
 
 type NavItem = { to: string; icon: typeof Home; label: string; founderOnly?: boolean };
 
