@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useApp } from "@/lib/app-context";
 import { useTasks } from "@/lib/tasks-store";
-import { memberById, spaceById, listById, folderById, members } from "@/lib/mock-data";
+import { memberById, spaceById, listById, folderById } from "@/lib/mock-data";
 import { Avatar } from "./Avatar";
 import { StatusPill } from "./StatusPill";
 import { SpaceTag } from "./PillarTag";
