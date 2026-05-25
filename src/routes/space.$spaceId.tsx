@@ -17,6 +17,8 @@ import { useMemo } from "react";
 export const Route = createFileRoute("/space/$spaceId")({ component: SpacePage });
 
 function SpacePage() {
+  const childMatches = useChildMatches();
+  if (childMatches.length > 0) return <Outlet />;
   const { spaceId } = Route.useParams();
   const space = spaceById(spaceId);
   const { tasks, lists, folders } = useTasks();
