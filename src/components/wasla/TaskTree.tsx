@@ -63,6 +63,8 @@ function flatten(roots: Task[], all: Task[], expanded: Record<string, boolean>):
 
 function TaskNode({ task, allTasks, depth, expanded, setExpanded, visibleIds }: { task: Task; allTasks: Task[]; depth: number; expanded: Record<string, boolean>; setExpanded: (f: any) => void; visibleIds: string[] }) {
   const { selectedTaskIds, toggleSelectTask } = useApp();
+  const { goTask } = useTaskNav();
+  const taskRoute = routeForTask(task);
   const { updateTask, moveTask } = useTasks();
   const children = getChildren(allTasks, task.id);
   const isOpen = expanded[task.id];
