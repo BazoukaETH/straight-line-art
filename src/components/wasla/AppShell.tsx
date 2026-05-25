@@ -51,7 +51,7 @@ const orgNav: NavItem[] = [
 ];
 
 export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNode; sidebar?: ReactNode; breadcrumb?: ReactNode }) {
-  const { role, setRole, currentUserId, dark, toggleDark, setCommandOpen } = useApp();
+  const { role, setRole, currentUserId, dark, toggleDark, setCommandOpen, openQuickCreate } = useApp();
   const loc = useLocation();
   const nav = useNavigate();
   const me = memberById(currentUserId);
