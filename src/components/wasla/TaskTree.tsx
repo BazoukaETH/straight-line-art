@@ -1,5 +1,7 @@
 import { useState, useMemo, type DragEvent } from "react";
+import { Link } from "@tanstack/react-router";
 import { useApp } from "@/lib/app-context";
+import { routeForTask, useTaskNav } from "@/lib/task-nav";
 import { useTasks } from "@/lib/tasks-store";
 import { type Task, type Status, type Priority, members, memberById, spaceById, listById } from "@/lib/mock-data";
 import { getChildren, relativeDue } from "@/lib/task-utils";
