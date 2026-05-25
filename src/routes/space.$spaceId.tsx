@@ -48,19 +48,22 @@ function SpacePage() {
               {meta.label}
             </span>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" className="gap-1.5"><Plus className="size-3.5" /> Add</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => openQuickCreate({ tab: "folder" })}>Add folder</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openQuickCreate({ tab: "list" })}>Add list</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openQuickCreate({ tab: "task", listId: directLists[0]?.id ?? lists.find(l => l.spaceId === spaceId)?.id })}>Add task</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" className="gap-1.5"><Plus className="size-3.5" /> Add</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => openQuickCreate({ tab: "folder" })}>Add folder</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => openQuickCreate({ tab: "list" })}>Add list</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => openQuickCreate({ tab: "task", listId: directLists[0]?.id ?? lists.find(l => l.spaceId === spaceId)?.id })}>Add task</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <PageActionsMenu kind="space" id={space.id} label={space.name} />
+          </div>
         </div>
 
-        <Tabs defaultValue="overview">
+        <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="tasks">Tasks</TabsTrigger>
