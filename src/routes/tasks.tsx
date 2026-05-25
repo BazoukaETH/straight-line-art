@@ -23,6 +23,7 @@ const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blo
 
 function SidebarTree({ onSelectList, activeListId }: { onSelectList: (id: string | "my") => void; activeListId: string | "my" }) {
   const { tasks, lists, folders, moveTask } = useTasks();
+  const { currentUserId } = useApp();
   const [open, setOpen] = useState<Record<string, boolean>>(() => {
     try { return JSON.parse(localStorage.getItem("wasla.tree") || "{}"); } catch { return {}; }
   });
@@ -49,7 +50,7 @@ function SidebarTree({ onSelectList, activeListId }: { onSelectList: (id: string
         {(Object.keys(pillarMeta) as Array<keyof typeof pillarMeta>).map((p) => (
           <div key={p} className="mb-2">
             <div className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider" style={{ color: pillarMeta[p].color }}>{pillarMeta[p].label}</div>
-            {spaces.filter((s) => s.pillar === p).map((s) => {
+            {spaces.filter((s) => s.pillar === p && (!s.ownerId || s.ownerId === currentUserId)).map((s) => {
               const spaceFolders = folders.filter((f) => f.spaceId === s.id);
               const directLists = lists.filter((l) => l.spaceId === s.id && !l.folderId);
               const opn = open[`s:${s.id}`];

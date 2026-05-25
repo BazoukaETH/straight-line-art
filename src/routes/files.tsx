@@ -4,12 +4,14 @@ import { files, memberById, pillarMeta, spaces, type Pillar } from "@/lib/mock-d
 import { Avatar } from "@/components/wasla/Avatar";
 import { FileText, FileImage, FileSpreadsheet, Presentation, Layers, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useApp } from "@/lib/app-context";
 
 export const Route = createFileRoute("/files")({ component: FilesPage });
 
 const iconFor = { pdf: FileText, doc: FileText, sheet: FileSpreadsheet, slide: Presentation, image: FileImage } as const;
 
 function Sidebar() {
+  const { currentUserId } = useApp();
   return (
     <>
       <SidebarHeader title="Files" />
@@ -18,7 +20,7 @@ function Sidebar() {
           <div key={p} className="mb-2">
             <SidebarTreeItem label={pillarMeta[p].label} icon={Layers} />
             <div className="ml-3 border-l border-border/60 pl-1">
-              {spaces.filter((s) => s.pillar === p).map((s) => (
+              {spaces.filter((s) => s.pillar === p && (!s.ownerId || s.ownerId === currentUserId)).map((s) => (
                 <SidebarTreeItem key={s.id} label={s.name} />
               ))}
             </div>

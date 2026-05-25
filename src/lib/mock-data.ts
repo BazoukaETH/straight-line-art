@@ -29,6 +29,8 @@ export interface Space {
   name: string;
   pillar: Pillar;
   members: number;
+  /** If set, space is only visible to this user id. */
+  ownerId?: string;
 }
 
 export interface Folder {
@@ -42,8 +44,8 @@ export interface CustomField {
   id: string;
   name: string;
   type: CustomFieldType;
-  options?: string[];           // dropdown
-  currency?: "EGP" | "USD";     // money
+  options?: string[];
+  currency?: "EGP" | "USD";
 }
 
 export interface List {
@@ -59,9 +61,9 @@ export interface Task {
   title: string;
   status: Status;
   priority: Priority;
-  spaceId: string;       // derived from list for back-compat
+  spaceId: string;
   listId: string;
-  parentId?: string;     // recursive
+  parentId?: string;
   assigneeId: string;
   due: string;
   startDate?: string;
@@ -73,7 +75,6 @@ export interface Task {
   dependencies?: { blocks: string[]; blockedBy: string[] };
   customFieldValues?: Record<string, string | number>;
   createdAt?: string;
-  // legacy checklist (used by some screens)
   subtasks?: { id: string; title: string; done: boolean }[];
 }
 
@@ -96,69 +97,119 @@ export interface BodEod {
 
 export const members: Member[] = [
   { id: "bassel", name: "Bassel Aroussy",  initials: "BA", color: "#0B2545", role: "founder", title: "Founder & CEO",                 pillar: "ventures", online: true, orgFounder: true },
-  { id: "moaz",   name: "Moaz Sawy",        initials: "MS", color: "#3B82F6", role: "manager", title: "Development Lead",              pillar: "ventures", online: true },
-  { id: "usef",   name: "Usef Shazly",      initials: "US", color: "#8B5CF6", role: "manager", title: "Digital & Design Lead",         pillar: "client",   online: true },
-  { id: "ali",    name: "Ali Amir",         initials: "AA", color: "#EC4899", role: "manager", title: "Creative Lead",                 pillar: "client",   online: false },
+  { id: "moaz",   name: "Moaz Sawy",        initials: "MS", color: "#3B82F6", role: "manager", title: "Build & Tech Lead",             pillar: "ventures", online: true },
+  { id: "usef",   name: "Usef Shazly",      initials: "US", color: "#8B5CF6", role: "manager", title: "Design Lead",                   pillar: "client",   online: true },
+  { id: "ali",    name: "Ali Amir",         initials: "AA", color: "#EC4899", role: "manager", title: "Creative Direction",            pillar: "client",   online: false },
   { id: "hagry",  name: "Mohamed Hagry",    initials: "MH", color: "#F59E0B", role: "member",  title: "UI / UX Designer",              pillar: "client",   online: true },
-  { id: "osama",  name: "Osama Abbas",      initials: "OA", color: "#10B981", role: "member",  title: "E-Commerce & Digital Growth",   pillar: "ventures", online: true },
-  { id: "saif",   name: "Saif Nosair",      initials: "SN", color: "#14B8A6", role: "member",  title: "Multimedia Designer",           pillar: "client",   online: false },
+  { id: "osama",  name: "Osama Abbas",      initials: "OA", color: "#10B981", role: "member",  title: "E-Commerce & Performance",      pillar: "ventures", online: true },
+  { id: "saif",   name: "Saif Nosair",      initials: "SN", color: "#14B8A6", role: "member",  title: "Multimedia & Motion",           pillar: "client",   online: false },
 ];
 
+// ============ SPACES ============
 export const spaces: Space[] = [
-  { id: "cairo-capital", name: "Cairo Capital",     pillar: "client",   members: 4 },
-  { id: "nile-holdings", name: "Nile Holdings",     pillar: "client",   members: 3 },
-  { id: "delta-pharma",  name: "Delta Pharma",      pillar: "client",   members: 3 },
-  { id: "sahara-tech",   name: "Sahara Tech",       pillar: "client",   members: 4 },
-  { id: "loop",          name: "Loop Commerce",     pillar: "ventures", members: 4 },
-  { id: "layer",         name: "Layer Studios",     pillar: "ventures", members: 3 },
-  { id: "studio-one",    name: "Studio One",        pillar: "ventures", members: 3 },
-  { id: "mirage",        name: "Mirage Media",      pillar: "ventures", members: 2 },
-  { id: "finance",       name: "Finance & Accounting", pillar: "internal", members: 2 },
-  { id: "hr",            name: "HR & Talent",       pillar: "internal", members: 2 },
-  { id: "ops",           name: "Operations",        pillar: "internal", members: 2 },
-  { id: "brand",         name: "Brand & Marketing", pillar: "internal", members: 3 },
+  // Client Work
+  { id: "smg",       name: "SMG",       pillar: "client",   members: 5 },
+  { id: "ejb",       name: "EJB",       pillar: "client",   members: 3 },
+  { id: "clutch",    name: "Clutch",    pillar: "client",   members: 2 },
+  { id: "mw",        name: "MW",        pillar: "client",   members: 2 },
+  { id: "leads",     name: "Leads",     pillar: "client",   members: 1 },
+  { id: "proposals", name: "Proposals", pillar: "client",   members: 2 },
+  { id: "archived",  name: "Archived",  pillar: "client",   members: 0 },
+  // Wasla Ventures
+  { id: "tourism",   name: "Wasla Tourism",   pillar: "ventures", members: 4 },
+  { id: "hix",       name: "HIX",             pillar: "ventures", members: 4 },
+  { id: "wasla-os",  name: "Wasla OS",        pillar: "ventures", members: 3 },
+  { id: "agriwasla", name: "AgriWasla",       pillar: "ventures", members: 2 },
+  { id: "wasla-edu", name: "Wasla Education", pillar: "ventures", members: 1 },
+  { id: "wasla-labs",name: "Wasla Labs",      pillar: "ventures", members: 2 },
+  { id: "firewood",  name: "Firewood Egypt",  pillar: "ventures", members: 1 },
+  // Wasla Internal
+  { id: "marketing", name: "Marketing & Growth",   pillar: "internal", members: 3 },
+  { id: "operations",name: "Operations",            pillar: "internal", members: 3 },
+  { id: "fundraise", name: "Fundraise & Strategy",  pillar: "internal", members: 2 },
+  { id: "personal-bassel", name: "Personal — Bassel", pillar: "internal", members: 1, ownerId: "bassel" },
 ];
 
 // ============ FOLDERS ============
 export const folders: Folder[] = [
-  { id: "f-cc-q3",     name: "Q3 Campaign",   spaceId: "cairo-capital" },
-  { id: "f-cc-brand",  name: "Brand Refresh", spaceId: "cairo-capital" },
-  { id: "f-loop-launch", name: "Launch Week", spaceId: "loop" },
+  // SMG multi-project
+  { id: "f-smg-liqui",   name: "Liqui Moly Marketing",  spaceId: "smg" },
+  { id: "f-smg-corp",    name: "Corporate Holding Site", spaceId: "smg" },
+  { id: "f-smg-subs",    name: "Subsidiary Sites",       spaceId: "smg" },
+  { id: "f-smg-porsche", name: "Porsche Drive Platform", spaceId: "smg" },
 ];
 
 // ============ LISTS ============
-const ccConceptsCF: CustomField[] = [
-  { id: "cf-approval", name: "Approval status", type: "dropdown", options: ["Draft", "Submitted", "Approved", "Rejected"] },
+const hixProductCF: CustomField[] = [
+  { id: "cf-approval", name: "Approval status",  type: "dropdown", options: ["Draft", "Submitted", "Approved", "Rejected"] },
   { id: "cf-budget",   name: "Budget allocated", type: "money", currency: "EGP" },
 ];
 
 export const lists: List[] = [
-  // Cairo Capital — Q3 Campaign
-  { id: "l-cc-discovery",  name: "Discovery",   spaceId: "cairo-capital", folderId: "f-cc-q3" },
-  { id: "l-cc-design",     name: "Design",      spaceId: "cairo-capital", folderId: "f-cc-q3" },
-  { id: "l-cc-dev",        name: "Development", spaceId: "cairo-capital", folderId: "f-cc-q3" },
-  { id: "l-cc-launch",     name: "Launch",      spaceId: "cairo-capital", folderId: "f-cc-q3" },
-  // Cairo Capital — Brand Refresh
-  { id: "l-cc-research",   name: "Research",    spaceId: "cairo-capital", folderId: "f-cc-brand" },
-  { id: "l-cc-concepts",   name: "Concepts",    spaceId: "cairo-capital", folderId: "f-cc-brand", customFields: ccConceptsCF },
-  { id: "l-cc-final",      name: "Final",       spaceId: "cairo-capital", folderId: "f-cc-brand" },
-  // Cairo Capital — direct under space
-  { id: "l-cc-retainer",   name: "Ongoing Retainer", spaceId: "cairo-capital" },
-  { id: "l-cc-inbox",      name: "Inbox",       spaceId: "cairo-capital" },
-  // Other spaces — one default list each
-  { id: "l-nile-default",  name: "Tasks",       spaceId: "nile-holdings" },
-  { id: "l-delta-default", name: "Tasks",       spaceId: "delta-pharma" },
-  { id: "l-sahara-default",name: "Tasks",       spaceId: "sahara-tech" },
-  { id: "l-loop-launch-mkt",  name: "Marketing", spaceId: "loop", folderId: "f-loop-launch" },
-  { id: "l-loop-launch-eng",  name: "Engineering", spaceId: "loop", folderId: "f-loop-launch" },
-  { id: "l-loop-ongoing",  name: "Ongoing",     spaceId: "loop" },
-  { id: "l-layer-default", name: "Tasks",       spaceId: "layer" },
-  { id: "l-studio-default",name: "Tasks",       spaceId: "studio-one" },
-  { id: "l-mirage-default",name: "Tasks",       spaceId: "mirage" },
-  { id: "l-finance-default",name: "Tasks",      spaceId: "finance" },
-  { id: "l-hr-default",    name: "Tasks",       spaceId: "hr" },
-  { id: "l-ops-default",   name: "Tasks",       spaceId: "ops" },
-  { id: "l-brand-default", name: "Tasks",       spaceId: "brand" },
+  // SMG folders
+  { id: "l-smg-liqui",   name: "Tasks", spaceId: "smg", folderId: "f-smg-liqui" },
+  { id: "l-smg-corp",    name: "Tasks", spaceId: "smg", folderId: "f-smg-corp" },
+  { id: "l-smg-subs",    name: "Tasks", spaceId: "smg", folderId: "f-smg-subs" },
+  { id: "l-smg-porsche", name: "Tasks", spaceId: "smg", folderId: "f-smg-porsche" },
+  // Client direct lists
+  { id: "l-ejb",     name: "Tasks", spaceId: "ejb" },
+  { id: "l-clutch",  name: "Tasks", spaceId: "clutch" },
+  { id: "l-mw",      name: "Tasks", spaceId: "mw" },
+  { id: "l-leads",   name: "Prospects", spaceId: "leads" },
+  { id: "l-proposals", name: "In flight", spaceId: "proposals" },
+  { id: "l-archived",  name: "Archive", spaceId: "archived" },
+
+  // Wasla Tourism
+  { id: "l-tour-build",      name: "Build & Tech",            spaceId: "tourism" },
+  { id: "l-tour-partners",   name: "Partnerships & Providers", spaceId: "tourism" },
+  { id: "l-tour-raise",      name: "Fundraise",                spaceId: "tourism" },
+  { id: "l-tour-marketing",  name: "Launch Marketing",         spaceId: "tourism" },
+  { id: "l-tour-concierge",  name: "Concierge & Premium",      spaceId: "tourism" },
+  { id: "l-tour-gov",        name: "Strategic & Government",   spaceId: "tourism" },
+
+  // HIX
+  { id: "l-hix-product",  name: "Product & Manufacturing", spaceId: "hix", customFields: hixProductCF },
+  { id: "l-hix-brand",    name: "Brand & Creative",        spaceId: "hix" },
+  { id: "l-hix-d2c",      name: "Online & D2C",            spaceId: "hix" },
+  { id: "l-hix-launch",   name: "Launch & Marketing",      spaceId: "hix" },
+  { id: "l-hix-ops",      name: "Ops & Legal",             spaceId: "hix" },
+
+  // Wasla OS
+  { id: "l-os-build",   name: "Build & Tech",       spaceId: "wasla-os" },
+  { id: "l-os-roadmap", name: "Roadmap & Product",  spaceId: "wasla-os" },
+  { id: "l-os-agents",  name: "AI Agents",          spaceId: "wasla-os" },
+
+  // AgriWasla
+  { id: "l-agri-build", name: "Build & Product",        spaceId: "agriwasla" },
+  { id: "l-agri-ops",   name: "Operations & Investors", spaceId: "agriwasla" },
+
+  // Single-list ventures
+  { id: "l-edu-all",      name: "All Tasks", spaceId: "wasla-edu" },
+  { id: "l-labs-all",     name: "All Tasks", spaceId: "wasla-labs" },
+  { id: "l-firewood-all", name: "All Tasks", spaceId: "firewood" },
+
+  // Marketing & Growth
+  { id: "l-mkt-brand", name: "Wasla Brand",              spaceId: "marketing" },
+  { id: "l-mkt-perf",  name: "Performance Marketing Lab", spaceId: "marketing" },
+  { id: "l-mkt-content", name: "Content Pipeline",        spaceId: "marketing" },
+
+  // Operations
+  { id: "l-ops-hiring", name: "Hiring",               spaceId: "operations" },
+  { id: "l-ops-finance",name: "Finance",              spaceId: "operations" },
+  { id: "l-ops-legal",  name: "Legal",                spaceId: "operations" },
+  { id: "l-ops-tools",  name: "Tools & Subscriptions",spaceId: "operations" },
+  { id: "l-ops-hq",     name: "HQ Setup",             spaceId: "operations" },
+
+  // Fundraise & Strategy
+  { id: "l-fund-tourism", name: "Tourism Raise",     spaceId: "fundraise" },
+  { id: "l-fund-sov",     name: "Sovereign Mandate", spaceId: "fundraise" },
+  { id: "l-fund-updates", name: "Investor Updates",  spaceId: "fundraise" },
+
+  // Personal — Bassel
+  { id: "l-personal-exec",     name: "My Exec List", spaceId: "personal-bassel" },
+  { id: "l-personal-decisions",name: "Decisions",    spaceId: "personal-bassel" },
+  { id: "l-personal-followups",name: "Follow-ups",   spaceId: "personal-bassel" },
+  { id: "l-personal-lovable",  name: "Lovable Lab",  spaceId: "personal-bassel" },
 ];
 
 const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"];
@@ -171,106 +222,142 @@ function dueOffset(days: number): string {
   return d.toISOString();
 }
 
-// Hand-curated tasks across the new structure
 type Seed = { id?: string; title: string; listId: string; assigneeId: string; status?: Status; priority?: Priority; due?: number; parentId?: string; tags?: string[] };
+
 const SEEDS: Seed[] = [
-  // Cairo Capital > Q3 Campaign > Discovery
-  { title: "Stakeholder interviews — Cairo Capital execs", listId: "l-cc-discovery", assigneeId: "usef", status: "In Progress", priority: "high", due: 2 },
-  { title: "Audit current site analytics",               listId: "l-cc-discovery", assigneeId: "osama", status: "Done", priority: "normal", due: -7 },
-  { title: "Competitor landscape — boutique investors",  listId: "l-cc-discovery", assigneeId: "ali",  status: "To Do",    priority: "normal", due: 5 },
-  { title: "Brief: Q3 Campaign positioning",             listId: "l-cc-discovery", assigneeId: "usef", status: "In Review", priority: "high", due: 1 },
+  // ============ SMG > Liqui Moly ============
+  { title: "Brief intake from SMG — Liqui Moly scope & objectives", listId: "l-smg-liqui", assigneeId: "bassel", status: "In Progress", priority: "urgent", due: 1 },
+  { title: "Competitive & category landscape research", listId: "l-smg-liqui", assigneeId: "usef", status: "In Progress", priority: "high", due: 3, id: "T-SMG-COMP" },
+  {   title: "Map top 5 lubricant brands in Egypt",       listId: "l-smg-liqui", assigneeId: "usef", status: "In Progress", priority: "high", due: 2, parentId: "T-SMG-COMP" },
+  {   title: "Pull category share data from Nielsen",     listId: "l-smg-liqui", assigneeId: "usef", status: "To Do", priority: "normal", due: 4, parentId: "T-SMG-COMP" },
+  { title: "Define proposal scope & deliverables",         listId: "l-smg-liqui", assigneeId: "bassel", status: "In Progress", priority: "high", due: 4 },
+  { title: "Pricing & commercial model",                   listId: "l-smg-liqui", assigneeId: "bassel", status: "To Do", priority: "high", due: 6 },
+  { title: "Draft proposal document",                      listId: "l-smg-liqui", assigneeId: "usef", status: "To Do", priority: "high", due: 8 },
+  { title: "Internal review & sign-off",                   listId: "l-smg-liqui", assigneeId: "bassel", status: "To Do", priority: "normal", due: 10 },
+  { title: "Send proposal to SMG",                         listId: "l-smg-liqui", assigneeId: "bassel", status: "To Do", priority: "normal", due: 12 },
+  { title: "Follow-up cadence & negotiation",              listId: "l-smg-liqui", assigneeId: "bassel", status: "To Do", priority: "normal", due: 14 },
+  { title: "Contract signature & kick-off plan",           listId: "l-smg-liqui", assigneeId: "bassel", status: "To Do", priority: "normal", due: 18 },
+  { title: "Liqui Moly — Digital Marketing",               listId: "l-smg-liqui", assigneeId: "osama", status: "In Progress", priority: "high", due: 5 },
 
-  // Cairo Capital > Q3 Campaign > Design — has subtask depth
-  { title: "Design landing hero v2",                     listId: "l-cc-design", assigneeId: "hagry", status: "In Progress", priority: "urgent", due: 1, id: "T-CD-HERO" },
-  {   title: "Collect references",                        listId: "l-cc-design", assigneeId: "hagry", status: "Done",      priority: "normal", due: -3, parentId: "T-CD-HERO" },
-  {   title: "Draft hero option A",                       listId: "l-cc-design", assigneeId: "hagry", status: "In Progress", priority: "high", due: 0, parentId: "T-CD-HERO", id: "T-CD-HERO-A" },
-  {     title: "Type-lockup exploration",                 listId: "l-cc-design", assigneeId: "hagry", status: "In Progress", priority: "normal", due: 0, parentId: "T-CD-HERO-A" },
-  {     title: "Color study (navy/cream)",                listId: "l-cc-design", assigneeId: "saif",  status: "To Do",      priority: "low", due: 1, parentId: "T-CD-HERO-A" },
-  {   title: "Draft hero option B",                       listId: "l-cc-design", assigneeId: "saif",  status: "To Do",       priority: "normal", due: 2, parentId: "T-CD-HERO" },
-  {   title: "Founder review",                            listId: "l-cc-design", assigneeId: "bassel", status: "To Do",      priority: "high", due: 3, parentId: "T-CD-HERO" },
+  // ============ SMG > Corporate Holding Site ============
+  { title: "Corporate Holding Site",                       listId: "l-smg-corp", assigneeId: "moaz", status: "In Review", priority: "high", due: 2, id: "T-SMG-CORP" },
+  {   title: "Backend architecture & API design",          listId: "l-smg-corp", assigneeId: "moaz", status: "Done", priority: "high", due: -10, parentId: "T-SMG-CORP" },
+  {   title: "Frontend build",                             listId: "l-smg-corp", assigneeId: "moaz", status: "Done", priority: "high", due: -5, parentId: "T-SMG-CORP" },
+  {   title: "QA pass",                                    listId: "l-smg-corp", assigneeId: "moaz", status: "In Review", priority: "high", due: 1, parentId: "T-SMG-CORP" },
+  { title: "SMG corporate holding site — delivered & live",listId: "l-smg-corp", assigneeId: "moaz", status: "Done", priority: "low", due: -2 },
+  { title: "Post-launch maintenance & change requests",    listId: "l-smg-corp", assigneeId: "moaz", status: "To Do", priority: "low", due: 7 },
 
-  { title: "Mobile breakpoints pass",                    listId: "l-cc-design", assigneeId: "hagry", status: "Backlog", priority: "normal", due: 6 },
-  { title: "Iconography refresh",                        listId: "l-cc-design", assigneeId: "ali",   status: "To Do",   priority: "low",    due: 8 },
-  { title: "Pitch deck templates",                       listId: "l-cc-design", assigneeId: "saif",  status: "Blocked", priority: "high",   due: -1 },
+  // ============ SMG > Subsidiaries ============
+  { title: "Subsidiaries / Verticals",                                    listId: "l-smg-subs", assigneeId: "moaz", status: "In Progress", priority: "high", due: 8 },
+  { title: "SMG subsidiaries / verticals sites — delivered",              listId: "l-smg-subs", assigneeId: "moaz", status: "Done", priority: "low", due: -15 },
 
-  // Cairo Capital > Q3 Campaign > Development
-  { title: "Set up Next.js project",                     listId: "l-cc-dev", assigneeId: "moaz",  status: "Done",        priority: "normal", due: -5, id: "T-CD-DEV1" },
-  { title: "Implement hero component",                   listId: "l-cc-dev", assigneeId: "moaz",  status: "Blocked",     priority: "high",   due: 2, id: "T-CD-DEV2" },
-  { title: "Wire CMS for case studies",                  listId: "l-cc-dev", assigneeId: "moaz",  status: "To Do",       priority: "normal", due: 4 },
-  { title: "Analytics + SEO baseline",                   listId: "l-cc-dev", assigneeId: "osama", status: "To Do",       priority: "normal", due: 6 },
+  // ============ SMG > Porsche ============
+  { title: "Porsche Drive + Platform",                                    listId: "l-smg-porsche", assigneeId: "moaz", status: "In Progress", priority: "high", due: 10 },
 
-  // Cairo Capital > Q3 Campaign > Launch
-  { title: "Press kit prep",                             listId: "l-cc-launch", assigneeId: "ali",   status: "Backlog",  priority: "normal", due: 12, id: "T-CD-LAUNCH1" },
-  { title: "Schedule LinkedIn rollout",                  listId: "l-cc-launch", assigneeId: "osama", status: "Backlog",  priority: "normal", due: 14 },
-  { title: "Founder announcement video",                 listId: "l-cc-launch", assigneeId: "saif",  status: "Backlog",  priority: "high",   due: 10 },
+  // ============ EJB ============
+  { title: "Mobile Application", listId: "l-ejb", assigneeId: "moaz", status: "In Progress", priority: "high", due: 5, id: "T-EJB-MOB" },
+  {   title: "Auth and registration flow", listId: "l-ejb", assigneeId: "hagry", status: "In Progress", priority: "high", due: 3, parentId: "T-EJB-MOB", id: "T-EJB-AUTH" },
+  {   title: "Member directory",           listId: "l-ejb", assigneeId: "hagry", status: "To Do", priority: "normal", due: 7, parentId: "T-EJB-MOB" },
+  {   title: "Push notifications",         listId: "l-ejb", assigneeId: "hagry", status: "To Do", priority: "normal", due: 9, parentId: "T-EJB-MOB" },
+  { title: "Corporate Website",   listId: "l-ejb", assigneeId: "hagry", status: "In Progress", priority: "high", due: 6 },
+  { title: "Admin Dashboard",     listId: "l-ejb", assigneeId: "moaz",  status: "To Do",       priority: "high", due: 12 },
+  { title: "Ability for members to register then admin accepts", listId: "l-ejb", assigneeId: "moaz", status: "Blocked", priority: "high", due: 8, id: "T-EJB-REG" },
 
-  // Cairo Capital > Brand Refresh > Research
-  { title: "Brand audit — existing assets",              listId: "l-cc-research", assigneeId: "ali",   status: "Done",     priority: "normal", due: -10 },
-  { title: "Stakeholder brand survey",                   listId: "l-cc-research", assigneeId: "usef",  status: "Done",     priority: "normal", due: -8 },
+  // ============ Clutch ============
+  { title: "Website", listId: "l-clutch", assigneeId: "hagry", status: "In Progress", priority: "high", due: 4 },
 
-  // Cairo Capital > Brand Refresh > Concepts (custom fields list)
-  { title: "Concept A — Heritage",                       listId: "l-cc-concepts", assigneeId: "ali",   status: "In Review", priority: "high", due: 2 },
-  { title: "Concept B — Modern Navy",                    listId: "l-cc-concepts", assigneeId: "hagry", status: "In Progress", priority: "high", due: 3 },
-  { title: "Concept C — Cairo Skyline",                  listId: "l-cc-concepts", assigneeId: "saif",  status: "To Do",       priority: "normal", due: 5 },
+  // ============ MW ============
+  { title: "Framer Website", listId: "l-mw", assigneeId: "saif", status: "In Progress", priority: "normal", due: 6 },
 
-  // Cairo Capital > Brand Refresh > Final
-  { title: "Final logo lockups",                         listId: "l-cc-final", assigneeId: "hagry", status: "Backlog", priority: "high", due: 18 },
+  // ============ Leads ============
+  { title: "Yehia Shazly — 2 corporate websites (his factory)",      listId: "l-leads", assigneeId: "bassel", status: "To Do", priority: "high",   due: 3 },
+  { title: "Mansour (Yasmine Hafez referral)",                       listId: "l-leads", assigneeId: "bassel", status: "To Do", priority: "normal", due: 5 },
+  { title: "Aly El Garahy",                                          listId: "l-leads", assigneeId: "bassel", status: "To Do", priority: "normal", due: 7 },
+  { title: "Fatima Ragab — Restaurant bill payment solution",        listId: "l-leads", assigneeId: "bassel", status: "To Do", priority: "normal", due: 9 },
 
-  // Cairo Capital > Ongoing Retainer
-  { title: "Weekly status note",                         listId: "l-cc-retainer", assigneeId: "usef",  status: "In Progress", priority: "normal", due: 0 },
-  { title: "Monthly performance report",                 listId: "l-cc-retainer", assigneeId: "osama", status: "To Do",        priority: "normal", due: 4 },
-  { title: "Quarterly portfolio review prep",            listId: "l-cc-retainer", assigneeId: "bassel", status: "To Do",       priority: "high",   due: 9 },
+  // ============ Wasla Tourism > Build & Tech ============
+  { title: "Set up war room dev environment",                  listId: "l-tour-build", assigneeId: "moaz",   status: "In Progress", priority: "urgent", due: 1 },
+  { title: "Define multi-vertical platform architecture",      listId: "l-tour-build", assigneeId: "moaz",   status: "In Progress", priority: "urgent", due: 4 },
+  { title: "Build owned ticketing layer (white-label core)",   listId: "l-tour-build", assigneeId: "moaz",   status: "To Do",       priority: "high",   due: 14 },
 
-  // Cairo Capital > Inbox
-  { title: "Triage incoming client email — pricing",     listId: "l-cc-inbox",    assigneeId: "usef",  status: "To Do",   priority: "normal", due: 0 },
+  // ============ Wasla Tourism > Partnerships ============
+  { title: "Onboard accommodation providers across 10 cities", listId: "l-tour-partners", assigneeId: "bassel", status: "In Progress", priority: "urgent", due: 10, id: "T-TOUR-ACCOM" },
+  {   title: "Cairo (12/15)",         listId: "l-tour-partners", parentId: "T-TOUR-ACCOM", assigneeId: "bassel", status: "In Progress", priority: "high",   due: 5 },
+  {   title: "Alexandria (8/10)",     listId: "l-tour-partners", parentId: "T-TOUR-ACCOM", assigneeId: "bassel", status: "In Progress", priority: "high",   due: 6 },
+  {   title: "Sharm El Sheikh (10/10)",listId: "l-tour-partners", parentId: "T-TOUR-ACCOM", assigneeId: "bassel", status: "Done",       priority: "high",   due: -2 },
+  {   title: "Hurghada",              listId: "l-tour-partners", parentId: "T-TOUR-ACCOM", assigneeId: "bassel", status: "To Do",       priority: "high",   due: 8 },
+  {   title: "Luxor",                 listId: "l-tour-partners", parentId: "T-TOUR-ACCOM", assigneeId: "bassel", status: "To Do",       priority: "normal", due: 10 },
+  {   title: "Aswan",                 listId: "l-tour-partners", parentId: "T-TOUR-ACCOM", assigneeId: "bassel", status: "To Do",       priority: "normal", due: 12 },
+  {   title: "Marsa Alam",            listId: "l-tour-partners", parentId: "T-TOUR-ACCOM", assigneeId: "bassel", status: "To Do",       priority: "normal", due: 14 },
+  { title: "Onboard mobility partners (drivers, taxis, limos, train)", listId: "l-tour-partners", assigneeId: "bassel", status: "In Progress", priority: "high", due: 9 },
+  { title: "Onboard experience partners and tour guides",              listId: "l-tour-partners", assigneeId: "bassel", status: "To Do",       priority: "high", due: 12 },
 
-  // Loop Commerce > Launch Week > Marketing
-  { title: "Marketing site copy v2",                     listId: "l-loop-launch-mkt", assigneeId: "osama", status: "In Progress", priority: "urgent", due: 1, id: "T-LP-COPY" },
-  {   title: "Hero headline options",                     listId: "l-loop-launch-mkt", assigneeId: "osama", status: "Done", priority: "high", due: -1, parentId: "T-LP-COPY" },
-  {   title: "Feature section rewrite",                   listId: "l-loop-launch-mkt", assigneeId: "osama", status: "In Progress", priority: "high", due: 0, parentId: "T-LP-COPY" },
-  { title: "Launch teaser video",                        listId: "l-loop-launch-mkt", assigneeId: "saif",  status: "In Review", priority: "high", due: 2 },
-  { title: "LinkedIn + Twitter schedule",                listId: "l-loop-launch-mkt", assigneeId: "osama", status: "To Do", priority: "normal", due: 3 },
-  { title: "Press outreach list",                        listId: "l-loop-launch-mkt", assigneeId: "ali",   status: "To Do", priority: "normal", due: 4 },
+  // ============ Wasla Tourism > Fundraise ============
+  { title: "Finalize Tourism investor deck",                                       listId: "l-tour-raise", assigneeId: "bassel", status: "In Review",   priority: "urgent", due: 2 },
+  { title: "Build Tourism data room",                                              listId: "l-tour-raise", assigneeId: "bassel", status: "In Progress", priority: "urgent", due: 7 },
+  { title: "Legal prep with Zaki Hashem (term sheet, SHA, founding docs)",         listId: "l-tour-raise", assigneeId: "bassel", status: "In Progress", priority: "high",   due: 10 },
 
-  // Loop Commerce > Launch Week > Engineering
-  { title: "Deploy v2 to staging",                       listId: "l-loop-launch-eng", assigneeId: "moaz", status: "In Progress", priority: "urgent", due: 0, id: "T-LP-DEPLOY" },
-  { title: "Set up cohort analytics",                    listId: "l-loop-launch-eng", assigneeId: "moaz", status: "To Do",       priority: "high",   due: 2 },
-  { title: "Fix iOS auth redirect",                      listId: "l-loop-launch-eng", assigneeId: "moaz", status: "Blocked",     priority: "urgent", due: -1 },
-  { title: "Load test checkout",                         listId: "l-loop-launch-eng", assigneeId: "moaz", status: "To Do",       priority: "high",   due: 3 },
+  // ============ HIX > Product & Manufacturing ============
+  { title: "FSM Cosmetics — product brief execution",  listId: "l-hix-product", assigneeId: "usef",   status: "In Progress", priority: "urgent", due: 4 },
+  { title: "Validate formula direction with FSM",       listId: "l-hix-product", assigneeId: "bassel", status: "To Do",       priority: "high",   due: 9 },
 
-  // Loop Commerce > Ongoing
-  { title: "Weekly product sync notes",                  listId: "l-loop-ongoing", assigneeId: "bassel", status: "Done",     priority: "normal", due: -2 },
-  { title: "Plan v3 roadmap",                            listId: "l-loop-ongoing", assigneeId: "bassel", status: "Backlog",  priority: "normal", due: 20 },
+  // ============ HIX > Brand & Creative ============
+  { title: "Develop HIX brand identity and guidelines", listId: "l-hix-brand", assigneeId: "usef", status: "In Progress", priority: "urgent", due: 5 },
+  { title: "Packaging design — print-ready",            listId: "l-hix-brand", assigneeId: "ali",  status: "To Do",       priority: "high",   due: 14 },
 
-  // Other client spaces
-  { title: "Nile Holdings — quarterly creative refresh", listId: "l-nile-default", assigneeId: "ali",  status: "In Progress", priority: "normal", due: 6 },
-  { title: "Nile Holdings — review investor deck",       listId: "l-nile-default", assigneeId: "bassel", status: "To Do",     priority: "high",   due: 3 },
-  { title: "Delta Pharma — pricing table redesign",      listId: "l-delta-default", assigneeId: "hagry", status: "In Review", priority: "normal", due: 1 },
-  { title: "Delta Pharma — legal NDA review",            listId: "l-delta-default", assigneeId: "usef",  status: "Blocked",   priority: "high",   due: -2 },
-  { title: "Sahara Tech — brand kit handoff",            listId: "l-sahara-default", assigneeId: "ali",  status: "Done",      priority: "normal", due: -4 },
-  { title: "Sahara Tech — QA mobile bottom tabs",        listId: "l-sahara-default", assigneeId: "moaz", status: "To Do",     priority: "high",   due: 5 },
+  // ============ HIX > Online & D2C ============
+  { title: "Build HIX D2C Shopify store",               listId: "l-hix-d2c", assigneeId: "moaz", status: "To Do", priority: "high", due: 18 },
 
-  // Ventures
-  { title: "Layer Studios — Q3 roadmap review",          listId: "l-layer-default", assigneeId: "bassel", status: "In Progress", priority: "normal", due: 2 },
-  { title: "Layer Studios — 1:1 cadence",                listId: "l-layer-default", assigneeId: "moaz",   status: "To Do",       priority: "low",    due: 7 },
-  { title: "Studio One — launch teaser cut",             listId: "l-studio-default",assigneeId: "saif",   status: "In Progress", priority: "high",   due: 3 },
-  { title: "Studio One — beta invite list",              listId: "l-studio-default",assigneeId: "osama",  status: "To Do",       priority: "normal", due: 6 },
-  { title: "Mirage Media — Q3 campaign brief",           listId: "l-mirage-default",assigneeId: "ali",    status: "To Do",       priority: "normal", due: 4 },
+  // ============ HIX > Ops & Legal ============
+  { title: "Finalize HIX founding team equity and legal",listId: "l-hix-ops", assigneeId: "bassel", status: "In Progress", priority: "urgent", due: 6 },
 
-  // Internal
-  { title: "Reconcile Stripe payouts — April",           listId: "l-finance-default", assigneeId: "bassel", status: "In Review", priority: "high", due: 1 },
-  { title: "Renew SaaS contracts — May",                 listId: "l-finance-default", assigneeId: "bassel", status: "To Do",     priority: "normal", due: 6 },
-  { title: "April invoice batch review (EGP)",           listId: "l-finance-default", assigneeId: "usef",   status: "In Progress", priority: "high", due: 0 },
-  { title: "Hiring sync with recruiters",                listId: "l-hr-default", assigneeId: "bassel", status: "To Do",       priority: "normal", due: 2 },
-  { title: "UI designer portfolio shortlist",            listId: "l-hr-default", assigneeId: "ali",    status: "In Review",   priority: "normal", due: 3 },
-  { title: "Audit Drive folder permissions",             listId: "l-ops-default", assigneeId: "osama", status: "To Do",       priority: "low",    due: 5 },
-  { title: "Wire Slack into Drive notifications",        listId: "l-ops-default", assigneeId: "moaz",  status: "Backlog",     priority: "low",    due: 14 },
-  { title: "Publish updated Wasla brand guidelines",     listId: "l-brand-default", assigneeId: "hagry", status: "In Progress", priority: "high", due: 2 },
-  { title: "Blog: the founder operating system",         listId: "l-brand-default", assigneeId: "usef",  status: "To Do",       priority: "normal", due: 7 },
-  { title: "Send Thursday founder digest",               listId: "l-brand-default", assigneeId: "bassel", status: "To Do",      priority: "normal", due: 3 },
+  // ============ Wasla OS > Build & Tech ============
+  { title: "Wasla OS infrastructure setup",             listId: "l-os-build", assigneeId: "moaz", status: "In Progress", priority: "high",  due: 3 },
+  { title: "ClickUp API integration as task layer",     listId: "l-os-build", assigneeId: "moaz", status: "To Do",       priority: "normal",due: 9 },
+
+  // ============ Wasla OS > Roadmap ============
+  { title: "Wasla OS V1 scope and 16-week roadmap",     listId: "l-os-roadmap", assigneeId: "bassel", status: "In Review", priority: "high", due: 1 },
+
+  // ============ AgriWasla — placeholders ============
+  { title: "AgriWasla product design active",           listId: "l-agri-build", assigneeId: "hagry",  status: "In Progress", priority: "high",   due: 8 },
+  { title: "Investor conversations — AgriWasla",        listId: "l-agri-ops",   assigneeId: "bassel", status: "In Progress", priority: "normal", due: 6 },
+
+  // ============ Internal > Operations > Hiring ============
+  { title: "Invite team to Wasla OS as Members",        listId: "l-ops-hiring", assigneeId: "bassel", status: "In Progress", priority: "urgent", due: 2 },
+
+  // ============ Internal > Operations > Finance ============
+  { title: "Weekly Wasla Ventures Master Sheet update", listId: "l-ops-finance", assigneeId: "bassel", status: "In Progress", priority: "normal", due: 1, tags: ["recurring"] },
+  { title: "Refine assumptions and projections for investor updates", listId: "l-ops-finance", assigneeId: "bassel", status: "To Do", priority: "high", due: 7 },
+
+  // ============ Internal > Operations > Tools & Subscriptions ============
+  { title: "Audit all SaaS subscriptions and create renewal tracker", listId: "l-ops-tools", assigneeId: "bassel", status: "In Progress", priority: "normal", due: 5 },
+
+  // ============ Internal > Operations > Legal ============
+  { title: "Track open legal matters with Zaki Hashem", listId: "l-ops-legal", assigneeId: "bassel", status: "In Progress", priority: "high", due: 4 },
+
+  // ============ Internal > Operations > HQ Setup ============
+  { title: "Office buildout completion",                listId: "l-ops-hq", assigneeId: "bassel", status: "In Progress", priority: "high", due: 10 },
+  { title: "Hardware procurement (Mac Mini M4 fleet, hold Mac Studio for M5)", listId: "l-ops-hq", assigneeId: "bassel", status: "In Progress", priority: "high", due: 7 },
+  { title: "Network and UPS install (Ubiquiti or Omada, UPS per station)",     listId: "l-ops-hq", assigneeId: "moaz",   status: "To Do",       priority: "high", due: 12 },
+
+  // ============ Fundraise & Strategy > Investor Updates ============
+  { title: "Q1 2026 friends & family investor update", listId: "l-fund-updates", assigneeId: "bassel", status: "To Do", priority: "high", due: 8 },
+
+  // ============ Fundraise > Sovereign ============
+  { title: "Refine and circulate Sovereign CIM",       listId: "l-fund-sov", assigneeId: "bassel", status: "In Progress", priority: "high", due: 5 },
+
+  // ============ Marketing & Growth > Performance Lab ============
+  { title: "Set up shared ad accounts (Meta, TikTok, Google) under master billing", listId: "l-mkt-perf", assigneeId: "osama", status: "In Progress", priority: "high", due: 6 },
+  { title: "Osama — performance marketing skill build", listId: "l-mkt-perf", assigneeId: "osama", status: "In Progress", priority: "normal", due: 0, tags: ["recurring"] },
+
+  // ============ Marketing & Growth > Wasla Brand ============
+  { title: "Founder content strategy and cadence",      listId: "l-mkt-brand", assigneeId: "bassel", status: "To Do", priority: "normal", due: 10 },
+
+  // ============ Personal — Bassel > Decisions ============
+  { title: "Decide: payment aggregation Tier 2 launch timing", listId: "l-personal-decisions", assigneeId: "bassel", status: "To Do", priority: "normal", due: 5 },
+  { title: "Decide: formalize Paperwork agency relationship",  listId: "l-personal-decisions", assigneeId: "bassel", status: "To Do", priority: "normal", due: 7 },
 ];
 
-// Build tasks with derived fields
 export const tasks: Task[] = SEEDS.map((s, i) => {
   const list = lists.find((l) => l.id === s.listId)!;
   return {
@@ -284,15 +371,10 @@ export const tasks: Task[] = SEEDS.map((s, i) => {
     assigneeId: s.assigneeId,
     due: dueOffset(s.due ?? ((i * 3) % 14) - 4),
     startDate: dueOffset((s.due ?? 0) - 3),
-    description:
-      "Tighten composition, push the CTA priority, and align with the Wasla brand refresh. Coordinate with design on copy length and ensure mobile breakpoints feel calm.",
-    comments: i % 4 === 0 ? [
-      { id: `c-${i}-1`, authorId: "moaz",   body: "Looks good — can we push the CTA up?", at: "2026-05-24T10:12:00Z" },
-      { id: `c-${i}-2`, authorId: "hagry",  body: "Adding the new tagline now.",          at: "2026-05-24T11:03:00Z" },
-      { id: `c-${i}-3`, authorId: "bassel", body: "Love the direction. Ship by Thursday.", at: "2026-05-24T14:45:00Z" },
-    ] : [],
-    watchers: i % 3 === 0 ? ["bassel", "moaz"] : ["bassel"],
-    tags: s.tags ?? (i % 5 === 0 ? ["launch"] : i % 5 === 1 ? ["design"] : i % 5 === 2 ? ["urgent"] : []),
+    description: "Coordinated through Wasla OS. See linked thread for context, deliverables and approval owners.",
+    comments: [],
+    watchers: ["bassel"],
+    tags: s.tags ?? [],
     attachments: [],
     dependencies: { blocks: [], blockedBy: [] },
     customFieldValues: {},
@@ -300,7 +382,6 @@ export const tasks: Task[] = SEEDS.map((s, i) => {
   };
 });
 
-// Wire dependencies
 function addDep(blocker: string, blocked: string) {
   const a = tasks.find((t) => t.id === blocker);
   const b = tasks.find((t) => t.id === blocked);
@@ -310,62 +391,54 @@ function addDep(blocker: string, blocked: string) {
   a.dependencies.blocks.push(blocked);
   b.dependencies.blockedBy.push(blocker);
 }
-addDep("T-CD-HERO", "T-CD-DEV2");        // hero blocks dev hero impl
-addDep("T-CD-DEV1", "T-CD-DEV2");        // setup blocks impl
-addDep("T-CD-HERO", "T-CD-LAUNCH1");     // hero blocks press kit
-addDep("T-LP-COPY", "T-LP-DEPLOY");      // copy blocks deploy
-addDep("T-CD-HERO-A", "T-CD-HERO");      // option A blocks parent decision (illustrative)
+addDep("T-EJB-AUTH", "T-EJB-REG");
 
-// Wire some custom field values for Concepts list
-tasks.filter((t) => t.listId === "l-cc-concepts").forEach((t, i) => {
+// Sample custom field values on HIX Product list
+tasks.filter((t) => t.listId === "l-hix-product").forEach((t, i) => {
   t.customFieldValues = {
-    "cf-approval": ["Draft", "Submitted", "Approved"][i] ?? "Draft",
-    "cf-budget":   [25000, 40000, 18000][i] ?? 20000,
+    "cf-approval": ["Submitted", "Draft"][i] ?? "Draft",
+    "cf-budget":   [180000, 60000][i] ?? 50000,
   };
 });
 
 // ============ TEMPLATES ============
 export const taskTemplates: TaskTemplate[] = [
   {
-    id: "tpl-onboard",
-    name: "New client onboarding",
-    description: "Standard checklist for spinning up a new client engagement.",
-    subtasks: ["Kickoff call", "Signed SOW", "Drive folder setup", "Add to CRM"],
-    tags: ["onboarding"],
+    id: "tpl-onboard", name: "New client onboarding",
+    description: "Standard checklist for spinning up a new Wasla Solutions client engagement.",
+    subtasks: ["Kickoff call", "Signed SOW", "Drive folder setup", "Add to CRM"], tags: ["onboarding"],
   },
   {
-    id: "tpl-campaign",
-    name: "Marketing campaign brief",
+    id: "tpl-campaign", name: "Marketing campaign brief",
     description: "Use for any new campaign across Wasla Ventures.",
-    subtasks: ["Goals", "Audience", "Channels", "KPIs", "Timeline"],
-    tags: ["marketing"],
+    subtasks: ["Goals", "Audience", "Channels", "KPIs", "Timeline"], tags: ["marketing"],
   },
   {
-    id: "tpl-bug",
-    name: "Bug report",
+    id: "tpl-bug", name: "Bug report",
     description: "Standard template for engineering bug intake.",
     fields: [
       { label: "Steps to reproduce", placeholder: "1. … 2. …" },
       { label: "Expected",           placeholder: "What should happen?" },
       { label: "Actual",             placeholder: "What actually happens?" },
-    ],
-    tags: ["bug"],
+    ], tags: ["bug"],
   },
 ];
 
 // ============ CHANNELS / MESSAGES ============
 export interface Channel { id: string; name: string; pillar: Pillar; unread?: number }
 export const channels: Channel[] = [
-  { id: "client-cairo-capital", name: "client-cairo-capital", pillar: "client", unread: 2 },
-  { id: "client-nile-holdings", name: "client-nile-holdings", pillar: "client" },
-  { id: "client-delta-pharma",  name: "client-delta-pharma",  pillar: "client" },
-  { id: "client-sahara-tech",   name: "client-sahara-tech",   pillar: "client", unread: 1 },
-  { id: "loop-commerce",        name: "loop-commerce",        pillar: "ventures", unread: 5 },
-  { id: "loop-marketing",       name: "loop-marketing",       pillar: "ventures" },
-  { id: "layer-studios",        name: "layer-studios",        pillar: "ventures" },
-  { id: "internal-finance",     name: "internal-finance",     pillar: "internal" },
-  { id: "internal-hr",          name: "internal-hr",          pillar: "internal" },
-  { id: "internal-ops",         name: "internal-ops",         pillar: "internal" },
+  { id: "client-smg",       name: "client-smg",       pillar: "client",  unread: 4 },
+  { id: "client-ejb",       name: "client-ejb",       pillar: "client",  unread: 1 },
+  { id: "client-clutch",    name: "client-clutch",    pillar: "client" },
+  { id: "client-mw",        name: "client-mw",        pillar: "client" },
+  { id: "client-leads",     name: "client-leads",     pillar: "client" },
+  { id: "ventures-tourism", name: "ventures-tourism", pillar: "ventures", unread: 6 },
+  { id: "ventures-hix",     name: "ventures-hix",     pillar: "ventures", unread: 2 },
+  { id: "ventures-os",      name: "ventures-os",      pillar: "ventures" },
+  { id: "ventures-agri",    name: "ventures-agri",    pillar: "ventures" },
+  { id: "internal-ops",     name: "internal-ops",     pillar: "internal" },
+  { id: "internal-fundraise",name:"internal-fundraise",pillar: "internal" },
+  { id: "internal-marketing",name:"internal-marketing",pillar: "internal" },
 ];
 
 export interface Message {
@@ -379,20 +452,17 @@ export interface Message {
   reactions?: { emoji: string; count: number }[];
 }
 export const channelMessages: Record<string, Message[]> = {
-  "loop-commerce": [
-    { id: "m1", authorId: "bassel", body: "Morning team — kicking off Loop launch week. BODs in please.", at: "2026-05-25T08:02:00Z" },
-    { id: "m2", authorId: "osama",  body: "On it. Pushing the marketing site copy by 11.", at: "2026-05-25T08:04:00Z", reactions: [{ emoji: "🔥", count: 3 }] },
-    { id: "m3", authorId: "moaz",   body: "Voice note", at: "2026-05-25T08:10:00Z", kind: "voice" },
-    { id: "m4", authorId: "hagry",  body: "Hero option B mock attached.", at: "2026-05-25T08:21:00Z", kind: "image" },
-    { id: "m5", authorId: "usef",   body: "Linking the launch task here:", at: "2026-05-25T08:25:00Z", kind: "task", taskId: tasks[0].id },
-    { id: "m6", authorId: "osama",  body: "@bassel quick approval on tagline?", at: "2026-05-25T08:40:00Z", replies: 3 },
-    { id: "m7", authorId: "bassel", body: "Approved. Ship it.", at: "2026-05-25T08:44:00Z", reactions: [{ emoji: "✅", count: 4 }] },
-    { id: "m8", authorId: "moaz",   body: "Deploying to staging in 10.", at: "2026-05-25T08:55:00Z" },
+  "client-smg": [
+    { id: "m1", authorId: "bassel", body: "Liqui Moly brief intake call confirmed for Wednesday 11am. Usef joining.", at: "2026-05-25T08:02:00Z" },
+    { id: "m2", authorId: "usef",   body: "Pulled the top 5 lubricant brands deck — sharing in #ventures shortly.", at: "2026-05-25T08:11:00Z", reactions: [{ emoji: "🔥", count: 2 }] },
+    { id: "m3", authorId: "moaz",   body: "Corporate holding site QA pass in progress, sending checklist EOD.", at: "2026-05-25T08:24:00Z" },
+    { id: "m4", authorId: "osama",  body: "Liqui Moly digital — pulled last month's ad spend benchmarks.", at: "2026-05-25T08:40:00Z", kind: "image" },
+    { id: "m5", authorId: "bassel", body: "Approved. Push the proposal scope deck to Friday review.", at: "2026-05-25T08:44:00Z", reactions: [{ emoji: "✅", count: 3 }] },
   ],
-  "client-cairo-capital": [
-    { id: "a1", authorId: "usef",  body: "Cairo Capital weekly sync notes in Drive.", at: "2026-05-25T09:00:00Z" },
-    { id: "a2", authorId: "hagry", body: "Updated the brand deck.", at: "2026-05-25T09:14:00Z", reactions: [{ emoji: "👏", count: 2 }] },
-    { id: "a3", authorId: "ali",   body: "New CI direction attached, looks great.", at: "2026-05-25T09:30:00Z" },
+  "ventures-tourism": [
+    { id: "t1", authorId: "bassel", body: "Sharm onboarding cleared — 10/10 providers signed. Onto Hurghada next.", at: "2026-05-25T09:00:00Z" },
+    { id: "t2", authorId: "moaz",   body: "War-room dev env is up. Architecture doc in Drive.", at: "2026-05-25T09:14:00Z" },
+    { id: "t3", authorId: "bassel", body: "Investor deck v3 circulated — feedback by Thursday please.", at: "2026-05-25T09:30:00Z", replies: 4 },
   ],
 };
 
@@ -411,8 +481,8 @@ export const bodEod: BodEod[] = (() => {
         id: `${m.id}-${d}`,
         memberId: m.id,
         date: dayStr(d),
-        bod: { ship: "Ship Loop marketing updates and review April invoices.", blockers: d % 5 === 0 ? "Waiting on legal review" : "" },
-        eod: d === 0 ? undefined : { shipped: "Closed 4 tasks, reviewed 2 PRs.", blockedTomorrow: "" },
+        bod: { ship: "Push SMG proposal track and Tourism onboarding.", blockers: d % 5 === 0 ? "Waiting on Zaki Hashem" : "" },
+        eod: d === 0 ? undefined : { shipped: "Closed 3 tasks, reviewed 2 decks.", blockedTomorrow: "" },
       });
     }
   }
@@ -421,22 +491,22 @@ export const bodEod: BodEod[] = (() => {
 
 export interface InboxItem { id: string; source: "chat" | "task" | "system"; preview: string; at: string; unread: boolean; fromId?: string }
 export const inboxItems: InboxItem[] = [
-  { id: "i1", source: "chat",   preview: "@bassel quick approval on the Loop tagline?",  at: "2026-05-25T08:40:00Z", unread: true, fromId: "osama" },
-  { id: "i2", source: "task",   preview: "Moaz assigned you 'Review board deck'",         at: "2026-05-25T08:30:00Z", unread: true, fromId: "moaz" },
-  { id: "i3", source: "system", preview: "Saif hasn't submitted BOD today",               at: "2026-05-25T09:05:00Z", unread: true },
-  { id: "i4", source: "chat",   preview: "Usef: notes in Cairo Capital Drive folder",     at: "2026-05-25T07:55:00Z", unread: false, fromId: "usef" },
-  { id: "i5", source: "task",   preview: "Hagry marked 'Hero refresh' In Review",         at: "2026-05-24T18:11:00Z", unread: false, fromId: "hagry" },
+  { id: "i1", source: "chat",   preview: "@bassel — approve Liqui Moly proposal scope?",   at: "2026-05-25T08:40:00Z", unread: true, fromId: "usef" },
+  { id: "i2", source: "task",   preview: "Moaz assigned you 'QA pass — SMG corporate site'",at: "2026-05-25T08:30:00Z", unread: true, fromId: "moaz" },
+  { id: "i3", source: "system", preview: "Saif hasn't submitted BOD today",                 at: "2026-05-25T09:05:00Z", unread: true },
+  { id: "i4", source: "chat",   preview: "Osama: Liqui Moly ad spend benchmarks shared",    at: "2026-05-25T07:55:00Z", unread: false, fromId: "osama" },
+  { id: "i5", source: "task",   preview: "Hagry moved 'Corporate Website (EJB)' to In Progress", at: "2026-05-24T18:11:00Z", unread: false, fromId: "hagry" },
 ];
 
 export const files = [
-  { id: "f1", name: "Wasla — Brand Guidelines v3.pdf",    modified: "2d ago", ownerId: "hagry",  kind: "pdf" },
-  { id: "f2", name: "Loop Commerce Launch Plan.gdoc",     modified: "1d ago", ownerId: "bassel", kind: "doc" },
-  { id: "f3", name: "Q3 Forecast — EGP.gsheet",           modified: "4h ago", ownerId: "bassel", kind: "sheet" },
-  { id: "f4", name: "Board deck — May 2026.pptx",         modified: "3d ago", ownerId: "bassel", kind: "slide" },
-  { id: "f5", name: "Cairo Capital hero A.png",           modified: "5h ago", ownerId: "hagry",  kind: "image" },
-  { id: "f6", name: "Cairo Capital hero B.png",           modified: "5h ago", ownerId: "hagry",  kind: "image" },
-  { id: "f7", name: "Delta Pharma contract.pdf",          modified: "1w ago", ownerId: "usef",   kind: "pdf" },
-  { id: "f8", name: "Onboarding playbook.gdoc",           modified: "2w ago", ownerId: "ali",    kind: "doc" },
+  { id: "f1", name: "Wasla Ventures — Master Sheet.gsheet",         modified: "today",  ownerId: "bassel", kind: "sheet" },
+  { id: "f2", name: "Wasla Tourism — Investor Deck v3.pdf",         modified: "1d ago", ownerId: "bassel", kind: "pdf" },
+  { id: "f3", name: "HIX — Brand Identity WIP.fig",                 modified: "4h ago", ownerId: "usef",   kind: "image" },
+  { id: "f4", name: "SMG — Liqui Moly Proposal (draft).gdoc",       modified: "2d ago", ownerId: "bassel", kind: "doc" },
+  { id: "f5", name: "EJB Mobile App — Auth flow.png",               modified: "5h ago", ownerId: "hagry",  kind: "image" },
+  { id: "f6", name: "Sovereign Mandate CIM.pdf",                    modified: "3d ago", ownerId: "bassel", kind: "pdf" },
+  { id: "f7", name: "Tourism Providers — Tracker.gsheet",           modified: "1d ago", ownerId: "bassel", kind: "sheet" },
+  { id: "f8", name: "Wasla OS — V1 Roadmap.gdoc",                   modified: "1w ago", ownerId: "moaz",   kind: "doc" },
 ];
 
 export type SubStatus = "Active" | "Cutover" | "Cancelled";
@@ -452,15 +522,88 @@ export const subscriptionsSeed: Subscription[] = [
   { id: "s8", name: "BambooHR",      replacedBy: "Phase 9 (HR)",         status: "Active", monthly: 1800 },
 ];
 
-export interface Venture { id: string; name: string; status: "Active" | "Pilot" | "Paused"; mrr: number; metricLabel: string; metricValue: number; growthMoM: number; source: string; spark: number[] }
+export interface Venture {
+  id: string;
+  name: string;
+  status: "Active" | "Pilot" | "Paused";
+  mrr: number;
+  metricLabel: string;
+  metricValue: number;
+  growthMoM: number;
+  source: string;
+  spark: number[];
+  /** Pre-revenue ventures: progress markers shown instead of revenue. */
+  progress?: { label: string; value: string }[];
+  stage?: string;
+}
 function spark(seed: number, n = 30): number[] {
-  return Array.from({ length: n }, (_, i) => Math.round(50 + Math.sin((i + seed) / 3) * 18 + (i / 2) + seed));
+  return Array.from({ length: n }, (_, i) => Math.round(40 + Math.sin((i + seed) / 3) * 10 + (i / 3) + seed));
 }
 export const ventures: Venture[] = [
-  { id: "loop",       name: "Loop Commerce",                 status: "Active", mrr: 120_000, metricLabel: "Active users",  metricValue: 8_400, growthMoM: 18, source: "Loop Commerce Metrics / Summary!B2",   spark: spark(2) },
-  { id: "layer",      name: "Layer Studios",                 status: "Active", mrr:  95_000, metricLabel: "Projects",      metricValue: 12,    growthMoM:  5, source: "Layer Studios Metrics / Summary!B2",   spark: spark(8) },
-  { id: "studio-one", name: "Studio One",                    status: "Pilot",  mrr:  35_000, metricLabel: "Subscribers",   metricValue: 2_100, growthMoM: 24, source: "Studio One Metrics / Summary!B2",      spark: spark(5) },
-  { id: "mirage",     name: "Mirage Media (Joint Venture)",  status: "Active", mrr:  60_000, metricLabel: "Campaigns",     metricValue: 7,     growthMoM:  9, source: "Mirage Media Metrics / Summary!B2",    spark: spark(11) },
+  {
+    id: "tourism", name: "Wasla Tourism", status: "Pilot", mrr: 0,
+    metricLabel: "Providers", metricValue: 12, growthMoM: 0,
+    source: "Wasla Finance Master / Tourism!B2", spark: spark(2),
+    stage: "Pre-launch · Fundraising",
+    progress: [
+      { label: "Investor deck", value: "v3 circulated" },
+      { label: "Data room",     value: "60% complete" },
+      { label: "Providers",     value: "12 / 50" },
+    ],
+  },
+  {
+    id: "hix", name: "HIX", status: "Pilot", mrr: 0,
+    metricLabel: "Pilot SKUs", metricValue: 1, growthMoM: 0,
+    source: "Wasla Finance Master / HIX!B2", spark: spark(5),
+    stage: "Pilot · Pre-launch",
+    progress: [
+      { label: "Manufacturing", value: "FSM brief in progress" },
+      { label: "Brand identity",value: "In design" },
+      { label: "D2C store",     value: "30%" },
+    ],
+  },
+  {
+    id: "wasla-os", name: "Wasla OS", status: "Active", mrr: 0,
+    metricLabel: "Phase", metricValue: 1, growthMoM: 0,
+    source: "Wasla OS Roadmap / Status!B2", spark: spark(8),
+    stage: "Active build",
+    progress: [
+      { label: "V1 scope",      value: "Locked" },
+      { label: "Roadmap",       value: "16 weeks" },
+      { label: "Phase 1",       value: "In design" },
+    ],
+  },
+  {
+    id: "agriwasla", name: "AgriWasla", status: "Pilot", mrr: 0,
+    metricLabel: "Stage", metricValue: 1, growthMoM: 0,
+    source: "AgriWasla / Status!B2", spark: spark(11),
+    stage: "Build phase",
+    progress: [
+      { label: "Product design", value: "Active" },
+      { label: "Investors",      value: "Conversations ongoing" },
+    ],
+  },
+  {
+    id: "wasla-edu", name: "Wasla Education", status: "Pilot", mrr: 0,
+    metricLabel: "Stage", metricValue: 0, growthMoM: 0,
+    source: "Wasla Education / Status!B2", spark: spark(14),
+    stage: "Early stage · Pre-product",
+    progress: [{ label: "Status", value: "Pre-product" }],
+  },
+  {
+    id: "wasla-labs", name: "Wasla Labs", status: "Pilot", mrr: 0,
+    metricLabel: "Experiments", metricValue: 3, growthMoM: 0,
+    source: "Wasla Labs / Status!B2", spark: spark(17),
+    stage: "R&D & experimentation",
+    progress: [{ label: "Mode", value: "R&D" }, { label: "Live experiments", value: "3" }],
+  },
+  {
+    id: "firewood", name: "Firewood Egypt", status: "Pilot", mrr: 0,
+    metricLabel: "Stage", metricValue: 0, growthMoM: 0,
+    source: "Firewood Egypt / Status!B2", spark: spark(20),
+    stage: "Early stage",
+    progress: [{ label: "Status", value: "Early stage" }],
+  },
 ];
 
 export const financialMetrics = {
@@ -498,6 +641,11 @@ export function spaceById(id: string)  { return spaces.find(s => s.id === id) ??
 export function listById(id: string)   { return lists.find(l => l.id === id) }
 export function folderById(id: string) { return folders.find(f => f.id === id) }
 export function taskById(id: string)   { return tasks.find(t => t.id === id) }
+
+/** Returns spaces visible to a given user, honoring per-space ownerId visibility. */
+export function visibleSpacesFor(userId: string): Space[] {
+  return spaces.filter((s) => !s.ownerId || s.ownerId === userId);
+}
 
 export const pillarMeta: Record<Pillar, { label: string; color: string }> = {
   client:   { label: "Client Work",      color: "#3B82F6" },

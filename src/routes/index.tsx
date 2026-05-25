@@ -15,6 +15,7 @@ import { Layers } from "lucide-react";
 export const Route = createFileRoute("/")({ component: Home });
 
 function Sidebar() {
+  const { currentUserId } = useApp();
   return (
     <>
       <SidebarHeader title="Workspace" />
@@ -24,7 +25,7 @@ function Sidebar() {
           <div key={p} className="mb-2">
             <SidebarTreeItem label={pillarMeta[p].label} icon={Layers} />
             <div className="ml-3 border-l border-border/60 pl-1">
-              {spaces.filter((s) => s.pillar === p).map((s) => (
+              {spaces.filter((s) => s.pillar === p && (!s.ownerId || s.ownerId === currentUserId)).map((s) => (
                 <SidebarTreeItem key={s.id} label={s.name} count={tasks.filter((t) => t.spaceId === s.id).length} />
               ))}
             </div>
@@ -187,7 +188,7 @@ function Home() {
                       <p className="text-sm leading-snug">
                         <b className="font-semibold">{m.name}</b> <span className="text-muted-foreground">{previews[i]}</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground">{i + 1}h ago · #loop-commerce</p>
+                      <p className="text-[11px] text-muted-foreground">{i + 1}h ago · #ventures-tourism</p>
                     </div>
                     <ArrowUpRight className="size-3.5 text-muted-foreground" />
                   </div>

@@ -94,15 +94,27 @@ function FinancialPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ventures.map((v) => (
             <Card key={v.id} className="border-border p-5">
-              <div className="mb-3 flex items-start justify-between gap-2">
+              <div className="mb-1 flex items-start justify-between gap-2">
                 <h4 className="text-sm font-semibold leading-tight">{v.name}</h4>
                 <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${VENTURE_STATUS_STYLES[v.status]}`}>{v.status}</span>
               </div>
-              <div className="mb-3 grid grid-cols-3 gap-2 text-center">
-                <Mini label="MRR" value={egp(v.mrr).replace("EGP ", "")} suffix="EGP" />
-                <Mini label={v.metricLabel} value={new Intl.NumberFormat("en-US").format(v.metricValue)} />
-                <Mini label="MoM" value={`+${v.growthMoM}%`} accent />
-              </div>
+              {v.stage && <p className="mb-3 text-[11px] text-muted-foreground">{v.stage}</p>}
+              {v.mrr > 0 ? (
+                <div className="mb-3 grid grid-cols-3 gap-2 text-center">
+                  <Mini label="MRR" value={egp(v.mrr).replace("EGP ", "")} suffix="EGP" />
+                  <Mini label={v.metricLabel} value={new Intl.NumberFormat("en-US").format(v.metricValue)} />
+                  <Mini label="MoM" value={`+${v.growthMoM}%`} accent />
+                </div>
+              ) : (
+                <div className="mb-3 space-y-1.5">
+                  {(v.progress ?? []).map((p, i) => (
+                    <div key={i} className="flex items-center justify-between rounded-md border border-border/60 px-2.5 py-1.5 text-xs">
+                      <span className="text-muted-foreground">{p.label}</span>
+                      <span className="font-medium">{p.value}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               <Spark data={v.spark} color="#8B5CF6" />
               <SourceLine source={v.source} />
             </Card>
