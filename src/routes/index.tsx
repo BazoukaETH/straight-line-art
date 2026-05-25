@@ -175,9 +175,9 @@ function Home() {
               {bodEod.slice(0, 4).map((b, i) => {
                 const m = memberById(b.memberId);
                 const previews = [
-                  "@bassel can you approve the tagline?",
-                  "Replied to your comment on Hero option B",
-                  "Moved ‘Q3 invoices’ to In Review",
+                  "@bassel can you approve the Loop tagline?",
+                  "Replied to your comment on Cairo Capital hero B",
+                  "Moved 'April invoices' to In Review",
                   "@bassel new Drive folder shared",
                 ];
                 return (
