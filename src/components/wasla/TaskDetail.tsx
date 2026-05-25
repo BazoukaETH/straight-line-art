@@ -96,6 +96,11 @@ export function TaskDetail({ taskId }: { taskId: string }) {
                 <Avatar memberId={s.assigneeId} size={20} />
               </button>
             ))}
+            {children.length === 0 && (
+              <div className="rounded-md border border-dashed border-border/70 px-3 py-3 text-xs text-muted-foreground">
+                No subtasks. Break this down if it's bigger than one sitting.
+              </div>
+            )}
             <div className="flex items-center gap-2 px-2 py-1">
               <Plus className="size-3.5 text-muted-foreground" />
               <Input
