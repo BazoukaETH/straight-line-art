@@ -187,7 +187,7 @@ function Home() {
                       <p className="text-sm leading-snug">
                         <b className="font-semibold">{m.name}</b> <span className="text-muted-foreground">{previews[i]}</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground">{i + 1}h ago · #loop-commerce</p>
+                      <p className="text-[11px] text-muted-foreground">{i + 1}h ago · #ventures-tourism</p>
                     </div>
                     <ArrowUpRight className="size-3.5 text-muted-foreground" />
                   </div>

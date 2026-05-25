@@ -12,7 +12,7 @@ import { useState } from "react";
 export const Route = createFileRoute("/chat")({ component: ChatPage });
 
 function ChatPage() {
-  const [activeId, setActiveId] = useState<string>("loop-commerce");
+  const [activeId, setActiveId] = useState<string>("client-smg");
   const active = channels.find((c) => c.id === activeId) ?? channels[0];
   const msgs = channelMessages[activeId] ?? [];
   const { openTask } = useApp();
