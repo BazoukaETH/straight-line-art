@@ -258,6 +258,87 @@ export const files = [
   { id: "f8", name: "Onboarding playbook.gdoc",           modified: "2w ago", ownerId: "ali",    kind: "doc" },
 ];
 
+// ---- Subscriptions (Org-level) ----
+export type SubStatus = "Active" | "Cutover" | "Cancelled";
+export interface Subscription {
+  id: string;
+  name: string;
+  replacedBy: string;     // phase label
+  status: SubStatus;
+  cutoverDate?: string;
+  monthly: number;        // EGP
+}
+export const subscriptionsSeed: Subscription[] = [
+  { id: "s1", name: "ClickUp",       replacedBy: "Phase 1 (Tasks)",      status: "Active", monthly: 1500 },
+  { id: "s2", name: "Slack",         replacedBy: "Phase 1.5 (Chat)",     status: "Active", monthly: 1200 },
+  { id: "s3", name: "Notion",        replacedBy: "Phase 3 (Docs)",       status: "Active", monthly: 800  },
+  { id: "s4", name: "Loom",          replacedBy: "Phase 5 (Recordings)", status: "Active", monthly: 600  },
+  { id: "s5", name: "Calendly",      replacedBy: "Phase 6 (Scheduling)", status: "Active", monthly: 500  },
+  { id: "s6", name: "Typeform",      replacedBy: "Phase 7 (Forms)",      status: "Active", monthly: 900  },
+  { id: "s7", name: "HubSpot Free",  replacedBy: "Phase 8 (CRM)",        status: "Active", monthly: 0    },
+  { id: "s8", name: "BambooHR",      replacedBy: "Phase 9 (HR)",         status: "Active", monthly: 1800 },
+];
+
+// ---- Ventures KPI (Financial dashboard) ----
+export interface Venture {
+  id: string;
+  name: string;
+  status: "Active" | "Pilot" | "Paused";
+  mrr: number;     // EGP
+  metricLabel: string;
+  metricValue: number;
+  growthMoM: number;     // %
+  source: string;
+  spark: number[];       // 30 points
+}
+function spark(seed: number, n = 30): number[] {
+  return Array.from({ length: n }, (_, i) => Math.round(50 + Math.sin((i + seed) / 3) * 18 + (i / 2) + seed));
+}
+export const ventures: Venture[] = [
+  { id: "loop",       name: "Loop Commerce",                 status: "Active", mrr: 120_000, metricLabel: "Active users",  metricValue: 8_400, growthMoM: 18, source: "Loop Commerce Metrics / Summary!B2",   spark: spark(2) },
+  { id: "layer",      name: "Layer Studios",                 status: "Active", mrr:  95_000, metricLabel: "Projects",      metricValue: 12,    growthMoM:  5, source: "Layer Studios Metrics / Summary!B2",   spark: spark(8) },
+  { id: "studio-one", name: "Studio One",                    status: "Pilot",  mrr:  35_000, metricLabel: "Subscribers",   metricValue: 2_100, growthMoM: 24, source: "Studio One Metrics / Summary!B2",      spark: spark(5) },
+  { id: "mirage",     name: "Mirage Media (Joint Venture)",  status: "Active", mrr:  60_000, metricLabel: "Campaigns",     metricValue: 7,     growthMoM:  9, source: "Mirage Media Metrics / Summary!B2",    spark: spark(11) },
+];
+
+// ---- Financial mocks ----
+export const financialMetrics = {
+  cash:   { value: 4_250_000, trend: "+6% MoM",      source: "Wasla Finance Master / Cash!B2"    },
+  runway: { value: 14,        trend: "stable",       source: "Wasla Finance Master / Runway!B2"  },
+  mrr:    { value: 380_000,   trend: "+12% MoM",     source: "Wasla Finance Master / Revenue!B2" },
+  burn:   { value: 295_000,   trend: "-3% MoM",      source: "Wasla Finance Master / Burn!B2"    },
+};
+
+// Revenue by workspace, last 12 months (EGP, thousands shown directly)
+export const revenueByWorkspace: { month: string; "Wasla Solutions": number; "Paperwork Studio": number }[] = [
+  { month: "Jun", "Wasla Solutions": 240_000, "Paperwork Studio": 0 },
+  { month: "Jul", "Wasla Solutions": 260_000, "Paperwork Studio": 0 },
+  { month: "Aug", "Wasla Solutions": 250_000, "Paperwork Studio": 0 },
+  { month: "Sep", "Wasla Solutions": 275_000, "Paperwork Studio": 0 },
+  { month: "Oct", "Wasla Solutions": 290_000, "Paperwork Studio": 0 },
+  { month: "Nov", "Wasla Solutions": 310_000, "Paperwork Studio": 0 },
+  { month: "Dec", "Wasla Solutions": 305_000, "Paperwork Studio": 0 },
+  { month: "Jan", "Wasla Solutions": 320_000, "Paperwork Studio": 0 },
+  { month: "Feb", "Wasla Solutions": 335_000, "Paperwork Studio": 0 },
+  { month: "Mar", "Wasla Solutions": 350_000, "Paperwork Studio": 0 },
+  { month: "Apr", "Wasla Solutions": 365_000, "Paperwork Studio": 0 },
+  { month: "May", "Wasla Solutions": 380_000, "Paperwork Studio": 0 },
+];
+
+// EGP formatter
+export function egp(n: number): string {
+  return `EGP ${new Intl.NumberFormat("en-US").format(n)}`;
+}
+
+// Daily activity for sparklines (tasks shipped per day, last 14 days)
+export function dailyShipped(seed: number, n = 14): { d: number; v: number }[] {
+  return Array.from({ length: n }, (_, i) => ({
+    d: i,
+    v: Math.max(0, Math.round(4 + Math.sin((i + seed) / 2) * 2 + ((i + seed) % 4))),
+  }));
+}
+
+
 export function memberById(id: string) { return members.find(m => m.id === id) ?? members[0]; }
 export function spaceById(id: string) { return spaces.find(s => s.id === id) ?? spaces[0]; }
 export function taskById(id: string) { return tasks.find(t => t.id === id); }
