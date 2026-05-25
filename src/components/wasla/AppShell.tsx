@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { TaskSlideOver } from "./TaskSlideOver";
 import { CommandPalette } from "./CommandPalette";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
+import { QuickCreateModal } from "./QuickCreateModal";
+import { BulkActionBar } from "./BulkActionBar";
 import { toast } from "sonner";
 import type { ReactNode } from "react";
 
