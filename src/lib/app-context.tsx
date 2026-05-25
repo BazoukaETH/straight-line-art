@@ -34,6 +34,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [dark, setDark] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>(subscriptionsSeed);
+  const setSubStatus = (id: string, status: SubStatus) =>
+    setSubscriptions((list) => list.map((s) => (s.id === id ? { ...s, status, cutoverDate: status === "Cutover" ? new Date().toISOString().slice(0, 10) : s.cutoverDate } : s)));
 
   // Hydrate from localStorage after mount (avoid SSR mismatch)
   useEffect(() => {
