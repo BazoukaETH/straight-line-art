@@ -15,6 +15,7 @@ import { Avatar } from "@/components/wasla/Avatar";
 import { StatusPill } from "@/components/wasla/StatusPill";
 import { PriorityIcon } from "@/components/wasla/PriorityIcon";
 import { relativeDue } from "@/lib/task-utils";
+import { useTaskNav, routeForTask } from "@/lib/task-nav";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tasks")({ component: TasksPage });
