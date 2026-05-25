@@ -78,7 +78,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
               {breadcrumb ?? <span className="font-medium text-foreground">{titleFor(loc.pathname)}</span>}
             </div>
             <div className="flex items-center gap-1.5">
-              <Button size="sm" variant="ghost" className="gap-1.5" onClick={() => toast.success("Quick create coming soon")}>
+              <Button size="sm" variant="ghost" className="gap-1.5" onClick={() => openQuickCreate({ tab: "task" })}>
                 <Plus className="size-4" /> <span className="hidden sm:inline">New</span>
               </Button>
               <Button size="icon" variant="ghost" onClick={() => toast("3 unread notifications")} className="relative">
