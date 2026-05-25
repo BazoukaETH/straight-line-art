@@ -248,3 +248,12 @@ export function SidebarTreeItem({ label, count, active, indent = 0, icon: Icon =
     </button>
   );
 }
+
+function NavBridge() {
+  const nav = useNavigate();
+  useEffect(() => {
+    setNav((opts: any) => nav(opts));
+    return () => setNav(null);
+  }, [nav]);
+  return null;
+}
