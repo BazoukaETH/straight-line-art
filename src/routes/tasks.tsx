@@ -286,7 +286,7 @@ function CalendarView({ tasks }: { tasks: Task[] }) {
           <div key={i} className="min-h-[110px] bg-card p-1.5">
             {valid && <div className={cn("mb-1 text-[11px]", isToday ? "font-bold text-accent" : "text-muted-foreground")}>{dayNum}</div>}
             {dayTasks.slice(0, 3).map((t) => (
-              <button key={t.id} onClick={() => openTask(t.id)} className="mb-1 block w-full truncate rounded bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] px-1.5 py-0.5 text-left text-[11px] text-accent hover:bg-[color-mix(in_oklab,var(--accent)_22%,transparent)]">
+              <button key={t.id} onClick={() => goTask(t.id)} className="mb-1 block w-full truncate rounded bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] px-1.5 py-0.5 text-left text-[11px] text-accent hover:bg-[color-mix(in_oklab,var(--accent)_22%,transparent)]">
                 {t.title}
               </button>
             ))}
