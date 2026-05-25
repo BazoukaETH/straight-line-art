@@ -27,6 +27,7 @@ import { Route as OrgMembersRouteImport } from './routes/org.members'
 import { Route as OrgFinancialRouteImport } from './routes/org.financial'
 import { Route as SpaceSpaceIdListListIdRouteImport } from './routes/space.$spaceId.list.$listId'
 import { Route as SpaceSpaceIdFolderFolderIdRouteImport } from './routes/space.$spaceId.folder.$folderId'
+import { Route as SpaceSpaceIdListListIdTaskTaskIdRouteImport } from './routes/space.$spaceId.list.$listId.task.$taskId'
 
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
@@ -119,6 +120,12 @@ const SpaceSpaceIdFolderFolderIdRoute =
     path: '/folder/$folderId',
     getParentRoute: () => SpaceSpaceIdRoute,
   } as any)
+const SpaceSpaceIdListListIdTaskTaskIdRoute =
+  SpaceSpaceIdListListIdTaskTaskIdRouteImport.update({
+    id: '/task/$taskId',
+    path: '/task/$taskId',
+    getParentRoute: () => SpaceSpaceIdListListIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -138,7 +145,8 @@ export interface FileRoutesByFullPath {
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org/': typeof OrgIndexRoute
   '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
-  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRoute
+  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRouteWithChildren
+  '/space/$spaceId/list/$listId/task/$taskId': typeof SpaceSpaceIdListListIdTaskTaskIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -157,7 +165,8 @@ export interface FileRoutesByTo {
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org': typeof OrgIndexRoute
   '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
-  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRoute
+  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRouteWithChildren
+  '/space/$spaceId/list/$listId/task/$taskId': typeof SpaceSpaceIdListListIdTaskTaskIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -178,7 +187,8 @@ export interface FileRoutesById {
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/org/': typeof OrgIndexRoute
   '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
-  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRoute
+  '/space/$spaceId/list/$listId': typeof SpaceSpaceIdListListIdRouteWithChildren
+  '/space/$spaceId/list/$listId/task/$taskId': typeof SpaceSpaceIdListListIdTaskTaskIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
     | '/org/'
     | '/space/$spaceId/folder/$folderId'
     | '/space/$spaceId/list/$listId'
+    | '/space/$spaceId/list/$listId/task/$taskId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
     | '/org'
     | '/space/$spaceId/folder/$folderId'
     | '/space/$spaceId/list/$listId'
+    | '/space/$spaceId/list/$listId/task/$taskId'
   id:
     | '__root__'
     | '/'
@@ -240,6 +252,7 @@ export interface FileRouteTypes {
     | '/org/'
     | '/space/$spaceId/folder/$folderId'
     | '/space/$spaceId/list/$listId'
+    | '/space/$spaceId/list/$listId/task/$taskId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -384,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SpaceSpaceIdFolderFolderIdRouteImport
       parentRoute: typeof SpaceSpaceIdRoute
     }
+    '/space/$spaceId/list/$listId/task/$taskId': {
+      id: '/space/$spaceId/list/$listId/task/$taskId'
+      path: '/task/$taskId'
+      fullPath: '/space/$spaceId/list/$listId/task/$taskId'
+      preLoaderRoute: typeof SpaceSpaceIdListListIdTaskTaskIdRouteImport
+      parentRoute: typeof SpaceSpaceIdListListIdRoute
+    }
   }
 }
 
@@ -405,14 +425,29 @@ const OrgRouteChildren: OrgRouteChildren = {
 
 const OrgRouteWithChildren = OrgRoute._addFileChildren(OrgRouteChildren)
 
+interface SpaceSpaceIdListListIdRouteChildren {
+  SpaceSpaceIdListListIdTaskTaskIdRoute: typeof SpaceSpaceIdListListIdTaskTaskIdRoute
+}
+
+const SpaceSpaceIdListListIdRouteChildren: SpaceSpaceIdListListIdRouteChildren =
+  {
+    SpaceSpaceIdListListIdTaskTaskIdRoute:
+      SpaceSpaceIdListListIdTaskTaskIdRoute,
+  }
+
+const SpaceSpaceIdListListIdRouteWithChildren =
+  SpaceSpaceIdListListIdRoute._addFileChildren(
+    SpaceSpaceIdListListIdRouteChildren,
+  )
+
 interface SpaceSpaceIdRouteChildren {
   SpaceSpaceIdFolderFolderIdRoute: typeof SpaceSpaceIdFolderFolderIdRoute
-  SpaceSpaceIdListListIdRoute: typeof SpaceSpaceIdListListIdRoute
+  SpaceSpaceIdListListIdRoute: typeof SpaceSpaceIdListListIdRouteWithChildren
 }
 
 const SpaceSpaceIdRouteChildren: SpaceSpaceIdRouteChildren = {
   SpaceSpaceIdFolderFolderIdRoute: SpaceSpaceIdFolderFolderIdRoute,
-  SpaceSpaceIdListListIdRoute: SpaceSpaceIdListListIdRoute,
+  SpaceSpaceIdListListIdRoute: SpaceSpaceIdListListIdRouteWithChildren,
 }
 
 const SpaceSpaceIdRouteWithChildren = SpaceSpaceIdRoute._addFileChildren(
