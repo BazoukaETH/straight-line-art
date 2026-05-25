@@ -28,10 +28,10 @@ function OrgPage() {
   const [active, setActive] = useState<TabId>("dashboard");
 
   useEffect(() => {
-    if (role === "member") nav({ to: "/" });
+    if (role !== "founder") nav({ to: "/" });
   }, [role, nav]);
 
-  if (role === "member") return null;
+  if (role !== "founder") return null;
 
   return (
     <AppShell
