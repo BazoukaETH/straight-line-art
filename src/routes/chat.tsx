@@ -64,7 +64,7 @@ function ChatPage() {
                       <div className="px-3 py-2 text-xs text-muted-foreground">hero-option-b.png</div>
                     </div>
                   ) : m.kind === "task" && m.taskId ? (
-                    <button onClick={() => openTask(m.taskId!)} className="block w-96 rounded-lg border border-border bg-card p-3 text-left transition hover:border-foreground/20">
+                    <button onClick={() => goTask(m.taskId!)} className="block w-96 rounded-lg border border-border bg-card p-3 text-left transition hover:border-foreground/20">
                       <div className="mb-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Task · {m.taskId}</div>
                       <div className="mb-2 text-sm font-semibold">{taskById(m.taskId!)?.title}</div>
                       <div className="flex items-center justify-between">
