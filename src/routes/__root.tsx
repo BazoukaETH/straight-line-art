@@ -51,8 +51,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Wasla OS — Internal operating system" },
-      { name: "description", content: "Wasla OS: a calm, founder-grade internal operating system for Wasla Ventures." },
+      { title: "Wasla OS" },
+      { name: "description", content: "Pixel Perfect Replica is a web application that implements a detailed user interface prototype based on provided screenshots." },
+      { property: "og:title", content: "Wasla OS" },
+      { name: "twitter:title", content: "Wasla OS" },
+      { property: "og:description", content: "Pixel Perfect Replica is a web application that implements a detailed user interface prototype based on provided screenshots." },
+      { name: "twitter:description", content: "Pixel Perfect Replica is a web application that implements a detailed user interface prototype based on provided screenshots." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c6b1d742-42d7-414a-a465-362a1781195b/id-preview-04f8270b--75e3aae1-ae90-4697-924e-1a6f5f40d356.lovable.app-1779718069839.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c6b1d742-42d7-414a-a465-362a1781195b/id-preview-04f8270b--75e3aae1-ae90-4697-924e-1a6f5f40d356.lovable.app-1779718069839.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
