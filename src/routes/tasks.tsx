@@ -23,7 +23,6 @@ export const Route = createFileRoute("/tasks")({ component: TasksPage });
 
 const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"];
 
-}
 
 function TasksPage() {
   const { currentUserId, openQuickCreate } = useApp();
