@@ -9,7 +9,8 @@ import { useTasks } from "@/lib/tasks-store";
 import { TaskCard } from "@/components/wasla/TaskCard";
 import { ListSettingsDialog } from "@/components/wasla/ListSettingsDialog";
 import { spaces, type Status, type Task, memberById, type CustomField } from "@/lib/mock-data";
-import { Plus, Settings, Filter, Search, Star, Share2, Sliders, Eye, EyeOff } from "lucide-react";
+import { Plus, Settings, Filter, Search, Star, Share2, Sliders, Eye, EyeOff, Hash } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/wasla/Avatar";
 import { StatusPill } from "@/components/wasla/StatusPill";
