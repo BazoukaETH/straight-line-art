@@ -20,7 +20,14 @@ import { BulkActionBar } from "./BulkActionBar";
 import { toast } from "sonner";
 import { FounderQuickAccess } from "./FounderQuickAccess";
 import { setNav } from "@/lib/nav-bridge";
-import { useEffect, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+
+
+const LS_COLLAPSED = "wasla.sidebar.collapsed";
+
+type SidebarCtx = { collapsed: boolean; toggle: () => void; setCollapsed: (b: boolean) => void };
+const SidebarCollapseCtx = createContext<SidebarCtx>({ collapsed: false, toggle: () => {}, setCollapsed: () => {} });
+export const useSidebarCollapse = () => useContext(SidebarCollapseCtx);
 
 type NavItem = { to: string; icon: typeof Home; label: string; founderOnly?: boolean };
 
@@ -58,8 +65,25 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
   const me = memberById(currentUserId);
   const inOrg = loc.pathname.startsWith("/org");
   const items = inOrg ? orgNav : workspaceNav.filter((i) => !i.founderOnly || role === "founder");
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem(LS_COLLAPSED) === "1";
+  });
+  useEffect(() => { localStorage.setItem(LS_COLLAPSED, collapsed ? "1" : "0"); }, [collapsed]);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        setCollapsed((c) => !c);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  const sidebarCtx: SidebarCtx = { collapsed, toggle: () => setCollapsed((c) => !c), setCollapsed };
 
   return (
+    <SidebarCollapseCtx.Provider value={sidebarCtx}>
     <TooltipProvider delayDuration={200}>
       <div className="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">
         {/* Top header strip with workspace switcher + top bar */}
@@ -182,7 +206,12 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
 
           {/* Contextual sidebar */}
           {sidebar && (
-            <aside className="hidden lg:flex h-full w-[260px] shrink-0 flex-col border-r border-border/60 bg-sidebar">
+            <aside
+              className={cn(
+                "hidden lg:flex h-full shrink-0 flex-col border-r border-border/60 bg-sidebar transition-[width] duration-200",
+                collapsed ? "w-[48px]" : "w-[260px]",
+              )}
+            >
               {sidebar}
             </aside>
           )}
@@ -212,6 +241,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
         <BulkActionBar />
       </div>
     </TooltipProvider>
+    </SidebarCollapseCtx.Provider>
   );
 }
 
