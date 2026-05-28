@@ -3,7 +3,7 @@ import { Avatar } from "./Avatar";
 import { PriorityIcon } from "./PriorityIcon";
 import { SpaceTag } from "./PillarTag";
 import { SubtaskBadge } from "./SubtaskBadge";
-import { spaceById, tasks as allTasks, type Task } from "@/lib/mock-data";
+import { spaceById, type Task } from "@/lib/mock-data";
 import { useTasks } from "@/lib/tasks-store";
 import { routeForTask } from "@/lib/task-nav";
 import { getChildren } from "@/lib/task-utils";
@@ -11,10 +11,9 @@ import { getChildren } from "@/lib/task-utils";
 export function TaskCard({ task }: { task: Task }) {
   const sp = spaceById(task.spaceId);
   const r = routeForTask(task);
-  // Prefer store tasks if available, fall back to seed pool.
-  let pool: Task[] = allTasks;
-  try { pool = useTasks().tasks; } catch { /* outside provider */ }
+  const { tasks: pool } = useTasks();
   const subCount = getChildren(pool, task.id).length;
+
   return (
     <Link
       to={r.to as any}
