@@ -65,8 +65,25 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
   const me = memberById(currentUserId);
   const inOrg = loc.pathname.startsWith("/org");
   const items = inOrg ? orgNav : workspaceNav.filter((i) => !i.founderOnly || role === "founder");
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem(LS_COLLAPSED) === "1";
+  });
+  useEffect(() => { localStorage.setItem(LS_COLLAPSED, collapsed ? "1" : "0"); }, [collapsed]);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        setCollapsed((c) => !c);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  const sidebarCtx: SidebarCtx = { collapsed, toggle: () => setCollapsed((c) => !c), setCollapsed };
 
   return (
+    <SidebarCollapseCtx.Provider value={sidebarCtx}>
     <TooltipProvider delayDuration={200}>
       <div className="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">
         {/* Top header strip with workspace switcher + top bar */}
