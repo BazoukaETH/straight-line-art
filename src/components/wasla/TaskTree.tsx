@@ -19,7 +19,8 @@ import { parseSmartInput } from "@/lib/task-utils";
 import { toast } from "sonner";
 
 const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"];
-const PRIORITIES: Priority[] = ["urgent", "high", "normal", "low"];
+import { SubtaskBadge } from "./SubtaskBadge";
+
 
 interface TaskTreeProps {
   rootTasks: Task[];           // top-level tasks (parentId undefined relative to scope)
