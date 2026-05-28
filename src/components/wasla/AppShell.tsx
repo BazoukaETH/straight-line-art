@@ -20,7 +20,14 @@ import { BulkActionBar } from "./BulkActionBar";
 import { toast } from "sonner";
 import { FounderQuickAccess } from "./FounderQuickAccess";
 import { setNav } from "@/lib/nav-bridge";
-import { useEffect, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
+
+const LS_COLLAPSED = "wasla.sidebar.collapsed";
+
+type SidebarCtx = { collapsed: boolean; toggle: () => void; setCollapsed: (b: boolean) => void };
+const SidebarCollapseCtx = createContext<SidebarCtx>({ collapsed: false, toggle: () => {}, setCollapsed: () => {} });
+export const useSidebarCollapse = () => useContext(SidebarCollapseCtx);
 
 type NavItem = { to: string; icon: typeof Home; label: string; founderOnly?: boolean };
 
