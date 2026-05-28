@@ -659,3 +659,77 @@ function SmartSearch() {
 }
 
 export { pillarColorForSpace };
+
+/* =================== QUICK LINKS =================== */
+function QuickLinks() {
+  const items = [
+    { icon: Inbox,         label: "Inbox",             count: 3, to: "/inbox" as const },
+    { icon: Reply,         label: "Replies",           count: 1, to: "/inbox" as const },
+    { icon: AtSign,        label: "Assigned Comments", count: 2, to: "/inbox" as const },
+    { icon: CheckSquare,   label: "My Tasks",          count: null, to: "/tasks" as const },
+  ];
+  const [moreOpen, setMoreOpen] = useState(false);
+
+  const [favOpen, setFavOpen] = useState(true);
+  const [chanOpen, setChanOpen] = useState(true);
+  const [dmOpen, setDmOpen] = useState(true);
+
+  const channels = ["#general", "#design", "#dev", "#clients"];
+  const dms = ["Moaz Sawy", "Usef Shazly", "Ali Amir"];
+
+  return (
+    <div className="mb-2 space-y-0.5">
+      {items.map((it) => (
+        <Link
+          key={it.label}
+          to={it.to}
+          className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-[12px] text-foreground/80 hover:bg-muted/60"
+        >
+          <it.icon className="size-3.5 text-muted-foreground" />
+          <span className="flex-1 truncate text-left">{it.label}</span>
+          {it.count !== null && it.count > 0 && (
+            <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">{it.count}</span>
+          )}
+        </Link>
+      ))}
+      <button
+        onClick={() => setMoreOpen((v) => !v)}
+        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-[12px] text-muted-foreground hover:bg-muted/60"
+      >
+        <MoreHorizontal className="size-3.5" />
+        <span className="flex-1 text-left">More</span>
+      </button>
+
+      {/* CHANNELS */}
+      <CollapsibleHeader label="Channels" open={chanOpen} onToggle={() => setChanOpen((v) => !v)} />
+      {chanOpen && channels.map((c) => (
+        <button key={c} className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-[12px] text-foreground/80 hover:bg-muted/60">
+          <Hash className="size-3 text-muted-foreground" />
+          <span className="truncate">{c.replace(/^#/, "")}</span>
+        </button>
+      ))}
+
+      {/* DMs */}
+      <CollapsibleHeader label="Direct Messages" open={dmOpen} onToggle={() => setDmOpen((v) => !v)} />
+      {dmOpen && dms.map((n) => (
+        <button key={n} className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-[12px] text-foreground/80 hover:bg-muted/60">
+          <MessageCircle className="size-3 text-muted-foreground" />
+          <span className="truncate">{n}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function CollapsibleHeader({ label, open, onToggle }: { label: string; open: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="mt-2 flex w-full items-center gap-1 rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground hover:bg-muted/40"
+    >
+      <ChevronDown className={cn("size-3 transition-transform", !open && "-rotate-90")} />
+      <span className="flex-1 text-left">{label}</span>
+      <Plus className="size-3 opacity-0 group-hover:opacity-100" />
+    </button>
+  );
+}
