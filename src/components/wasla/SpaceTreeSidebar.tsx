@@ -8,7 +8,7 @@ import { useRecents, pushRecent } from "@/lib/recents";
 import { useSidebarCollapse } from "./AppShell";
 import {
   ChevronRight, Inbox, FolderOpen, List as ListIcon, Star, Layers,
-  CheckSquare, Plus, Search, ChevronsLeft, ChevronsRight, MoreHorizontal, X,
+  CheckSquare, Plus, Search, ChevronsLeft, ChevronsRight, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
