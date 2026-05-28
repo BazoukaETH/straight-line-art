@@ -5,9 +5,10 @@ import { useTasks } from "@/lib/tasks-store";
 import { spaces, pillarMeta, spaceById, type Pillar } from "@/lib/mock-data";
 import { useFavorites } from "@/lib/favorites";
 import { SidebarHeader } from "./AppShell";
-import { ChevronRight, Inbox, FolderOpen, List as ListIcon, Star, Layers, CheckSquare } from "lucide-react";
+import { ChevronRight, Inbox, FolderOpen, List as ListIcon, Star, Layers, CheckSquare, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
 
 /** Pick the pillar color for any node by spaceId. */
 function pillarColorForSpace(spaceId: string | undefined): string {
@@ -114,7 +115,20 @@ export function SpaceTreeSidebar() {
           <span className="flex-1 text-left font-medium">My Work</span>
         </Link>
 
+        <div className="mb-1 mt-3 flex items-center justify-between px-2">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Spaces</span>
+          <button
+            onClick={() => toast("Use ⌘N to create a new Space")}
+            className="flex size-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+            aria-label="New space"
+            title="New space"
+          >
+            <Plus className="size-3" />
+          </button>
+        </div>
+
         {(Object.keys(pillarMeta) as Pillar[]).map((p) => (
+
           <div key={p} className="mb-2">
             <div className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider" style={{ color: pillarMeta[p].color }}>
               {pillarMeta[p].label}

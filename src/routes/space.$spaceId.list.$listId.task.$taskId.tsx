@@ -8,7 +8,7 @@ import { spaceById, folderById, pillarMeta } from "@/lib/mock-data";
 import { useTasks } from "@/lib/tasks-store";
 import { usePageTitle } from "@/lib/page-title";
 import { Button } from "@/components/ui/button";
-import { Share2, X } from "lucide-react";
+import { Share2, X, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/space/$spaceId/list/$listId/task/$taskId")({ component: TaskPage });
@@ -17,7 +17,7 @@ function TaskPage() {
   const childMatches = useChildMatches();
   if (childMatches.length > 0) return <Outlet />;
   const { spaceId, listId, taskId } = Route.useParams();
-  const { tasks, lists } = useTasks();
+  const { tasks, lists, updateTask } = useTasks();
   const router = useRouter();
   const space = spaceById(spaceId);
   const list = lists.find((l) => l.id === listId);
@@ -26,7 +26,6 @@ function TaskPage() {
   usePageTitle(task ? `${space.name} · ${task.title}` : space.name);
 
   const crumbs = [
-    { label: "Tasks", to: "/tasks" },
     { label: pillarMeta[space.pillar].label },
     { label: space.name, to: "/space/$spaceId", params: { spaceId } as any },
     ...(folder ? [{ label: folder.name, to: "/space/$spaceId/folder/$folderId", params: { spaceId, folderId: folder.id } as any }] : []),
@@ -35,9 +34,10 @@ function TaskPage() {
   ];
 
   const created = task?.createdAt ? new Date(task.createdAt) : null;
+  const isDone = task?.status === "Done";
 
   return (
-    <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground truncate max-w-md">{task?.title}</span>}>
+    <AppShell sidebar={<SpaceTreeSidebar />}>
       <PageHeader
         crumbs={crumbs}
         rightSlot={task && (
@@ -47,6 +47,14 @@ function TaskPage() {
                 Created {created.toLocaleDateString("en-US", { day: "numeric", month: "short" })}
               </span>
             )}
+            <Button
+              size="sm"
+              variant={isDone ? "secondary" : "default"}
+              className="gap-1.5 h-8"
+              onClick={() => { updateTask(task.id, { status: isDone ? "To Do" : "Done" }); toast.success(isDone ? "Reopened" : "Marked done"); }}
+            >
+              <CheckCircle2 className="size-3.5" /> {isDone ? "Reopen" : "Mark Done"}
+            </Button>
             <Button size="icon" variant="ghost" className="size-8" aria-label="Share" onClick={() => { navigator.clipboard?.writeText(window.location.href); toast.success("Link copied"); }}>
               <Share2 className="size-4" />
             </Button>
@@ -57,6 +65,7 @@ function TaskPage() {
           </div>
         )}
       />
+
       <TaskDetail taskId={taskId} />
     </AppShell>
   );

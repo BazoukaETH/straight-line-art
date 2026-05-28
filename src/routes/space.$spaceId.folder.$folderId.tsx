@@ -38,11 +38,11 @@ function FolderPage() {
   return (
     <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground">{space.name} / {folder?.name}</span>}>
       <PageHeader crumbs={[
-        { label: "Tasks", to: "/tasks" },
         { label: meta.label },
         { label: space.name, to: "/space/$spaceId", params: { spaceId } },
         { label: folder?.name ?? "Folder" },
       ]} />
+
       <div className="px-6 py-5">
         <div className="mb-5 flex items-center justify-between gap-3">
           <h1 className="text-2xl font-bold">{folder?.name ?? "Folder"}</h1>
