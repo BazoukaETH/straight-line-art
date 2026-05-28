@@ -237,6 +237,10 @@ function ExpandedTree({ onCollapse }: { onCollapse: () => void }) {
       </div>
 
       <div className="flex-1 overflow-y-auto px-1.5 py-2 scrollbar-thin text-sm">
+        {/* QUICK LINKS */}
+        <QuickLinks />
+
+
         {/* RECENT */}
         {recents.length > 0 && (
           <Section label="Recent">
