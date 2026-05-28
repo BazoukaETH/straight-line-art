@@ -5,9 +5,10 @@ import { useTasks } from "@/lib/tasks-store";
 import { spaces, pillarMeta, spaceById, type Pillar } from "@/lib/mock-data";
 import { useFavorites } from "@/lib/favorites";
 import { SidebarHeader } from "./AppShell";
-import { ChevronRight, Inbox, FolderOpen, List as ListIcon, Star, Layers, CheckSquare } from "lucide-react";
+import { ChevronRight, Inbox, FolderOpen, List as ListIcon, Star, Layers, CheckSquare, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
 
 /** Pick the pillar color for any node by spaceId. */
 function pillarColorForSpace(spaceId: string | undefined): string {
