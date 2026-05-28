@@ -176,6 +176,10 @@ function Home() {
             </div>
           </Card>
 
+          {role === "founder" && <Signals />}
+
+
+
           <Card className="border-border p-5">
             <h3 className="mb-3 text-sm font-semibold">Mentions & replies</h3>
             <div className="space-y-3">
