@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { FounderQuickAccess } from "./FounderQuickAccess";
 import { setNav } from "@/lib/nav-bridge";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+
 
 const LS_COLLAPSED = "wasla.sidebar.collapsed";
 
