@@ -23,7 +23,6 @@ function SubtaskPage() {
   usePageTitle(sub ? `${space.name} · ${sub.title}` : space.name);
 
   const crumbs = [
-    { label: "Tasks", to: "/tasks" },
     { label: pillarMeta[space.pillar].label },
     { label: space.name, to: "/space/$spaceId", params: { spaceId } as any },
     ...(folder ? [{ label: folder.name, to: "/space/$spaceId/folder/$folderId", params: { spaceId, folderId: folder.id } as any }] : []),
@@ -34,7 +33,8 @@ function SubtaskPage() {
   ];
 
   return (
-    <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground truncate max-w-md">{sub?.title}</span>}>
+    <AppShell sidebar={<SpaceTreeSidebar />}>
+
       <PageHeader
         crumbs={crumbs}
         rightSlot={sub && <div className="ml-2"><PageActionsMenu kind="task" id={sub.id} label={sub.title} /></div>}
