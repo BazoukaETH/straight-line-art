@@ -220,6 +220,8 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
           {/* Main */}
           <div className="flex h-full flex-1 flex-col overflow-hidden">
             <main key={loc.pathname} className="wasla-fade-in flex-1 overflow-y-auto scrollbar-thin">{children}</main>
+            <SmartCapture />
+
 
             {/* Mobile bottom tabs */}
             <nav className="md:hidden flex h-14 shrink-0 items-center justify-around border-t border-border bg-card">
