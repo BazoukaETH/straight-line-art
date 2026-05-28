@@ -1,25 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type DragEvent } from "react";
-import { AppShell, SidebarHeader } from "@/components/wasla/AppShell";
+import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/lib/app-context";
 import { useTasks } from "@/lib/tasks-store";
-import { TaskTree } from "@/components/wasla/TaskTree";
 import { TaskCard } from "@/components/wasla/TaskCard";
 import { ListSettingsDialog } from "@/components/wasla/ListSettingsDialog";
-import { spaces, type Status, type Task, pillarMeta, memberById, type CustomField } from "@/lib/mock-data";
-import { ChevronRight, Plus, Settings, Filter, ArrowDownAZ, Inbox, FolderOpen, List as ListIcon, Hash } from "lucide-react";
+import { spaces, type Status, type Task, memberById, type CustomField } from "@/lib/mock-data";
+import { Plus, Settings, Filter, Search, Star, Share2, Sliders, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/wasla/Avatar";
 import { StatusPill } from "@/components/wasla/StatusPill";
 import { PriorityIcon } from "@/components/wasla/PriorityIcon";
 import { relativeDue } from "@/lib/task-utils";
 import { useTaskNav, routeForTask } from "@/lib/task-nav";
+import { HierarchicalTaskList, GroupByPill, type GroupKey } from "@/components/wasla/HierarchicalTaskList";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tasks")({ component: TasksPage });
+
 
 const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"];
 
