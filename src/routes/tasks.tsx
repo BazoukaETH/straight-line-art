@@ -1,154 +1,78 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type DragEvent } from "react";
-import { AppShell, SidebarHeader } from "@/components/wasla/AppShell";
+import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/lib/app-context";
 import { useTasks } from "@/lib/tasks-store";
-import { TaskTree } from "@/components/wasla/TaskTree";
 import { TaskCard } from "@/components/wasla/TaskCard";
 import { ListSettingsDialog } from "@/components/wasla/ListSettingsDialog";
-import { spaces, type Status, type Task, pillarMeta, memberById, type CustomField } from "@/lib/mock-data";
-import { ChevronRight, Plus, Settings, Filter, ArrowDownAZ, Inbox, FolderOpen, List as ListIcon, Hash } from "lucide-react";
+import { spaces, type Status, type Task, memberById, type CustomField } from "@/lib/mock-data";
+import { Plus, Settings, Filter, Search, Star, Share2, Sliders, Eye, EyeOff, Hash } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/wasla/Avatar";
 import { StatusPill } from "@/components/wasla/StatusPill";
 import { PriorityIcon } from "@/components/wasla/PriorityIcon";
 import { relativeDue } from "@/lib/task-utils";
 import { useTaskNav, routeForTask } from "@/lib/task-nav";
+import { HierarchicalTaskList, GroupByPill, type GroupKey } from "@/components/wasla/HierarchicalTaskList";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tasks")({ component: TasksPage });
 
 const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"];
 
-function SidebarTree({ onSelectList, activeListId }: { onSelectList: (id: string | "my") => void; activeListId: string | "my" }) {
-  const { tasks, lists, folders, moveTask } = useTasks();
-  const { currentUserId } = useApp();
-  const [open, setOpen] = useState<Record<string, boolean>>(() => {
-    try { return JSON.parse(localStorage.getItem("wasla.tree") || "{}"); } catch { return {}; }
-  });
-  useEffect(() => { localStorage.setItem("wasla.tree", JSON.stringify(open)); }, [open]);
-
-  const toggle = (k: string) => setOpen((s) => ({ ...s, [k]: !s[k] }));
-  const handleDrop = (e: DragEvent, listId: string) => {
-    e.preventDefault();
-    const id = e.dataTransfer.getData("text/task-id");
-    if (id) { moveTask(id, listId); toast.success("Task moved"); }
-  };
-
-  return (
-    <>
-      <SidebarHeader title="Workspaces" />
-      <div className="flex-1 overflow-y-auto px-1.5 py-2 scrollbar-thin text-sm">
-        <button
-          onClick={() => onSelectList("my")}
-          className={cn("mb-2 flex w-full items-center gap-2 rounded-md px-2 py-1.5", activeListId === "my" ? "bg-muted text-foreground" : "hover:bg-muted/60 text-foreground/80")}
-        >
-          <Inbox className="size-3.5 text-muted-foreground" /> <span className="flex-1 text-left font-medium">My Work</span>
-        </button>
-
-        {(Object.keys(pillarMeta) as Array<keyof typeof pillarMeta>).map((p) => (
-          <div key={p} className="mb-2">
-            <div className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider" style={{ color: pillarMeta[p].color }}>{pillarMeta[p].label}</div>
-            {spaces.filter((s) => s.pillar === p && (!s.ownerId || s.ownerId === currentUserId)).map((s) => {
-              const spaceFolders = folders.filter((f) => f.spaceId === s.id);
-              const directLists = lists.filter((l) => l.spaceId === s.id && !l.folderId);
-              const opn = open[`s:${s.id}`];
-              return (
-                <div key={s.id} className="mb-0.5">
-                  <div className="flex w-full items-center gap-1 rounded px-1.5 py-1 hover:bg-muted/60">
-                    <button onClick={() => toggle(`s:${s.id}`)} aria-label="Toggle" className="shrink-0">
-                      <ChevronRight className={cn("size-3 text-muted-foreground transition-transform", opn && "rotate-90")} />
-                    </button>
-                    <Link to="/space/$spaceId" params={{ spaceId: s.id }} className="flex flex-1 items-center gap-1 min-w-0">
-                      <span className="flex-1 truncate text-left text-[13px] font-medium">{s.name}</span>
-                      <span className="text-[10px] text-muted-foreground">{tasks.filter((t) => t.spaceId === s.id).length}</span>
-                    </Link>
-                  </div>
-                  {opn && (
-                    <div className="ml-2 border-l border-border/60 pl-1">
-                      {spaceFolders.map((f) => {
-                        const fOpen = open[`f:${f.id}`];
-                        return (
-                          <div key={f.id}>
-                            <div className="flex w-full items-center gap-1 rounded px-1.5 py-1 hover:bg-muted/60">
-                              <button onClick={() => toggle(`f:${f.id}`)} aria-label="Toggle" className="shrink-0">
-                                <ChevronRight className={cn("size-3 text-muted-foreground transition-transform", fOpen && "rotate-90")} />
-                              </button>
-                              <Link to="/space/$spaceId/folder/$folderId" params={{ spaceId: s.id, folderId: f.id }} className="flex flex-1 items-center gap-1 min-w-0">
-                                <FolderOpen className="size-3.5 text-muted-foreground" />
-                                <span className="flex-1 truncate text-left text-[12px]">{f.name}</span>
-                              </Link>
-                            </div>
-                            {fOpen && (
-                              <div className="ml-2 border-l border-border/60 pl-1">
-                                {lists.filter((l) => l.folderId === f.id).map((l) => (
-                                  <Link
-                                    key={l.id}
-                                    to="/space/$spaceId/list/$listId"
-                                    params={{ spaceId: s.id, listId: l.id }}
-                                    onDragOver={(e) => e.preventDefault()}
-                                    onDrop={(e) => handleDrop(e, l.id)}
-                                    className={cn("flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-[12px]", activeListId === l.id ? "bg-muted text-foreground" : "hover:bg-muted/60 text-foreground/80")}
-                                  >
-                                    <ListIcon className="size-3 text-muted-foreground" />
-                                    <span className="flex-1 truncate text-left">{l.name}</span>
-                                    <span className="text-[10px] text-muted-foreground">{tasks.filter((t) => t.listId === l.id && !t.parentId).length}</span>
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                      {directLists.map((l) => (
-                        <Link
-                          key={l.id}
-                          to="/space/$spaceId/list/$listId"
-                          params={{ spaceId: s.id, listId: l.id }}
-                          onDragOver={(e) => e.preventDefault()}
-                          onDrop={(e) => handleDrop(e, l.id)}
-                          className={cn("flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-[12px]", activeListId === l.id ? "bg-muted text-foreground" : "hover:bg-muted/60 text-foreground/80")}
-                        >
-                          <ListIcon className="size-3 text-muted-foreground" />
-                          <span className="flex-1 truncate text-left">{l.name}</span>
-                          <span className="text-[10px] text-muted-foreground">{tasks.filter((t) => t.listId === l.id && !t.parentId).length}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
 
 function TasksPage() {
-  const { currentUserId, openQuickCreate } = useApp();
+
+  const { openQuickCreate } = useApp();
   const { tasks, lists, folders } = useTasks();
   const [activeListId, setActiveListId] = useState<string | "my">("my");
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  // Group/subgroup state, persisted per scope
+  const scopeKey = activeListId === "my" ? "workspace" : `list:${activeListId}`;
+  const groupStorageKey = `wasla.tasks.group.${scopeKey}`;
+  const [group, setGroup] = useState<GroupKey>(() => {
+    try {
+      const v = localStorage.getItem(groupStorageKey) as GroupKey | null;
+      if (v) return v;
+    } catch {}
+    return activeListId === "my" ? "space" : "status";
+  });
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(groupStorageKey) as GroupKey | null;
+      setGroup(v ?? (activeListId === "my" ? "space" : "status"));
+    } catch {}
+  }, [groupStorageKey, activeListId]);
+  useEffect(() => { try { localStorage.setItem(groupStorageKey, group); } catch {} }, [groupStorageKey, group]);
+
+  // Filters
+  const [showSubtasks, setShowSubtasks] = useState<"collapse" | "show" | "separate">("collapse");
+  const [showClosed, setShowClosed] = useState(false);
+  const [assigneeFilter, setAssigneeFilter] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   const activeList = activeListId !== "my" ? lists.find((l) => l.id === activeListId) : null;
   const activeFolder = activeList ? folders.find((f) => f.id === activeList.folderId) : null;
   const activeSpace = activeList ? spaces.find((s) => s.id === activeList.spaceId) : null;
 
   const scopedTasks = useMemo(() => {
-    if (activeListId === "my") return tasks.filter((t) => t.assigneeId === currentUserId);
-    return tasks.filter((t) => t.listId === activeListId);
-  }, [tasks, activeListId, currentUserId]);
+    let arr = activeListId === "my" ? tasks : tasks.filter((t) => t.listId === activeListId);
+    if (!showClosed) arr = arr.filter((t) => t.status !== "Done");
+    if (assigneeFilter) arr = arr.filter((t) => t.assigneeId === assigneeFilter);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      arr = arr.filter((t) => t.title.toLowerCase().includes(q));
+    }
+    if (showSubtasks === "collapse") arr = arr.filter((t) => !t.parentId);
+    return arr;
+  }, [tasks, activeListId, showClosed, assigneeFilter, search, showSubtasks]);
 
-  const rootTasks = useMemo(() => {
-    if (activeListId === "my") return scopedTasks.filter((t) => !t.parentId);
-    const ids = new Set(scopedTasks.map((t) => t.id));
-    return scopedTasks.filter((t) => !t.parentId || !ids.has(t.parentId!));
-  }, [scopedTasks, activeListId]);
+  const viewTitle = activeListId === "my" ? "Wasla Ventures" : (activeList?.name ?? "Tasks");
 
   return (
     <AppShell
@@ -156,7 +80,7 @@ function TasksPage() {
       breadcrumb={
         <div className="flex items-center gap-1.5">
           <span>Tasks</span>
-          {activeListId === "my" ? <><span className="text-border">/</span><span className="font-medium text-foreground">My Work</span></> :
+          {activeListId === "my" ? <><span className="text-border">/</span><span className="font-medium text-foreground">All</span></> :
             <>
               <span className="text-border">/</span><span>{activeSpace?.name}</span>
               {activeFolder && <><span className="text-border">/</span><span>{activeFolder.name}</span></>}
@@ -166,23 +90,18 @@ function TasksPage() {
       }
     >
       <div className="px-6 py-5">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="truncate text-xl font-semibold">{activeListId === "my" ? "My Work" : activeList?.name}</h1>
-              {activeList && (
-                <Button size="icon" variant="ghost" className="size-7" onClick={() => setSettingsOpen(true)}><Settings className="size-3.5" /></Button>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {activeListId === "my" ? `${scopedTasks.length} tasks assigned to you across spaces` :
-                `${activeSpace?.name}${activeFolder ? ` / ${activeFolder.name}` : ""} · ${scopedTasks.length} tasks`}
-            </p>
+        {/* Header strip */}
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <h1 className="truncate text-xl font-semibold">{viewTitle}</h1>
+            <button className="text-muted-foreground hover:text-amber-500" title="Star view"><Star className="size-4" /></button>
+            {activeList && (
+              <Button size="icon" variant="ghost" className="size-7" onClick={() => setSettingsOpen(true)}><Settings className="size-3.5" /></Button>
+            )}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="gap-1.5"><Filter className="size-3.5" /> Filter</Button>
-            <Button variant="ghost" size="sm" className="gap-1.5"><ArrowDownAZ className="size-3.5" /> Sort</Button>
-            <Button size="sm" className="gap-1.5" onClick={() => openQuickCreate({ listId: activeListId === "my" ? lists[0].id : activeListId, tab: "task" })}><Plus className="size-3.5" /> New task</Button>
+            <Button variant="ghost" size="sm" className="gap-1.5"><Sliders className="size-3.5" /> Customize</Button>
+            <Button variant="ghost" size="sm" className="gap-1.5"><Share2 className="size-3.5" /> Share</Button>
           </div>
         </div>
 
@@ -196,12 +115,39 @@ function TasksPage() {
             <TabsTrigger value="add" className="text-muted-foreground" onClick={(e: any) => { e.preventDefault(); toast("Custom views coming soon"); }}>+</TabsTrigger>
           </TabsList>
 
+          {/* Toolbar */}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <GroupByPill value={group} onChange={setGroup} />
+            <SubtasksToggle value={showSubtasks} onChange={setShowSubtasks} />
+            <Button variant="outline" size="sm" className="h-7 gap-1 rounded-full text-xs"><Filter className="size-3" /> Filter</Button>
+            <button
+              onClick={() => setShowClosed((v) => !v)}
+              className={cn("inline-flex h-7 items-center gap-1 rounded-full border px-3 text-xs", showClosed ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground hover:bg-muted")}
+            >
+              {showClosed ? <Eye className="size-3" /> : <EyeOff className="size-3" />} Closed
+            </button>
+            <AssigneeFilterChip value={assigneeFilter} onChange={setAssigneeFilter} />
+            <div className="relative ml-auto">
+              <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search"
+                className="h-7 w-44 rounded-full border border-border bg-background pl-7 pr-2 text-xs focus:outline-none focus:ring-1 focus:ring-accent"
+              />
+            </div>
+            <Button size="sm" className="h-7 gap-1 rounded-full text-xs" onClick={() => openQuickCreate({ listId: activeListId === "my" ? lists[0].id : activeListId, tab: "task" })}>
+              <Plus className="size-3" /> Add Task
+            </Button>
+          </div>
+
           <TabsContent value="list" className="mt-4">
-            <TaskTree
-              rootTasks={rootTasks}
-              allTasks={scopedTasks}
-              listId={activeListId === "my" ? undefined : activeListId}
-              emptyAction={<Button size="sm" onClick={() => openQuickCreate({ listId: activeListId === "my" ? lists[0].id : activeListId, tab: "task" })}><Plus className="size-3.5 mr-1" /> Add task</Button>}
+            <HierarchicalTaskList
+              tasks={scopedTasks}
+              allTasks={tasks}
+              primary={group}
+              secondary={group === "space" ? "status" : undefined}
+              scopeLabel={activeListId === "my" ? "Workspace" : activeSpace?.name}
             />
           </TabsContent>
 
@@ -226,6 +172,42 @@ function TasksPage() {
     </AppShell>
   );
 }
+
+// ============ Toolbar bits ============
+function SubtasksToggle({ value, onChange }: { value: "collapse" | "show" | "separate"; onChange: (v: "collapse" | "show" | "separate") => void }) {
+  const labels = { collapse: "Hide", show: "Show", separate: "Separate" } as const;
+  const next = value === "collapse" ? "show" : value === "show" ? "separate" : "collapse";
+  return (
+    <button
+      onClick={() => onChange(next)}
+      className="inline-flex h-7 items-center gap-1 rounded-full border border-border px-3 text-xs text-muted-foreground hover:bg-muted"
+      title="Cycle subtasks display"
+    >
+      Subtasks: <span className="font-semibold text-foreground">{labels[value]}</span>
+    </button>
+  );
+}
+
+function AssigneeFilterChip({ value, onChange }: { value: string | null; onChange: (v: string | null) => void }) {
+  const m = value ? memberById(value) : null;
+  return (
+    <div className="inline-flex items-center gap-1">
+      {m ? (
+        <button onClick={() => onChange(null)} className="inline-flex h-7 items-center gap-1.5 rounded-full bg-accent/15 px-2 text-xs text-foreground">
+          <Avatar memberId={m.id} size={18} /> {m.name.split(" ")[0]} <span className="text-muted-foreground">×</span>
+        </button>
+      ) : (
+        <Button variant="outline" size="sm" className="h-7 gap-1 rounded-full text-xs" onClick={() => {
+          // simple cycle: pick a different demo assignee
+          toast("Use a member's avatar in a task row to filter; or pick from filter menu (V2)");
+        }}>
+          <Avatar memberId={"bassel"} size={18} /> Assignee
+        </Button>
+      )}
+    </div>
+  );
+}
+
 
 // ============ Board ============
 function BoardView({ tasks }: { tasks: Task[] }) {

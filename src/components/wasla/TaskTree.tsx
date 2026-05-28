@@ -18,8 +18,12 @@ import { SmartTaskInput } from "./SmartTaskInput";
 import { parseSmartInput } from "@/lib/task-utils";
 import { toast } from "sonner";
 
+import { SubtaskBadge } from "./SubtaskBadge";
+
 const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"];
 const PRIORITIES: Priority[] = ["urgent", "high", "normal", "low"];
+
+
 
 interface TaskTreeProps {
   rootTasks: Task[];           // top-level tasks (parentId undefined relative to scope)
@@ -153,6 +157,9 @@ function TaskNode({ task, allTasks, depth, expanded, setExpanded, visibleIds }: 
             {task.title}
           </Link>
         )}
+
+        <SubtaskBadge count={children.length} onClick={() => setExpanded((s: any) => ({ ...s, [task.id]: !s[task.id] }))} />
+
 
         {depCount > 0 && (
           <span title={`${depCount} dependencies`} className="inline-flex items-center gap-0.5 rounded bg-muted px-1 text-[10px] text-muted-foreground">

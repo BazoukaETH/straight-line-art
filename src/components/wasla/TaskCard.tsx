@@ -2,12 +2,18 @@ import { Link } from "@tanstack/react-router";
 import { Avatar } from "./Avatar";
 import { PriorityIcon } from "./PriorityIcon";
 import { SpaceTag } from "./PillarTag";
+import { SubtaskBadge } from "./SubtaskBadge";
 import { spaceById, type Task } from "@/lib/mock-data";
+import { useTasks } from "@/lib/tasks-store";
 import { routeForTask } from "@/lib/task-nav";
+import { getChildren } from "@/lib/task-utils";
 
 export function TaskCard({ task }: { task: Task }) {
   const sp = spaceById(task.spaceId);
   const r = routeForTask(task);
+  const { tasks: pool } = useTasks();
+  const subCount = getChildren(pool, task.id).length;
+
   return (
     <Link
       to={r.to as any}
@@ -18,7 +24,10 @@ export function TaskCard({ task }: { task: Task }) {
         <SpaceTag name={sp.name} pillar={sp.pillar} />
         <PriorityIcon priority={task.priority} />
       </div>
-      <p className="mb-3 line-clamp-2 text-sm font-medium leading-snug text-foreground">{task.title}</p>
+      <p className="mb-2 line-clamp-2 text-sm font-medium leading-snug text-foreground">{task.title}</p>
+      <div className="mb-2 flex items-center gap-1.5">
+        <SubtaskBadge count={subCount} />
+      </div>
       <div className="flex items-center justify-between">
         <span className="text-[11px] text-muted-foreground">{task.id}</span>
         <Avatar memberId={task.assigneeId} size={22} />
@@ -26,3 +35,4 @@ export function TaskCard({ task }: { task: Task }) {
     </Link>
   );
 }
+
