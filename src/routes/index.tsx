@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { useApp } from "@/lib/app-context";
+import { DailyBrief } from "@/components/wasla/DailyBrief";
 import { bodEod, memberById, pillarMeta, spaces, tasks, formatCairoDate } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,7 +39,7 @@ function Sidebar() {
 }
 
 function Home() {
-  const { currentUserId } = useApp();
+  const { currentUserId, role } = useApp();
   const me = memberById(currentUserId);
   const today = formatCairoDate();
   const [bodSubmitted, setBodSubmitted] = useState(false);
@@ -59,6 +60,10 @@ function Home() {
             <h1 className="text-2xl font-semibold tracking-tight">Good morning, {me.name.split(" ")[0]}</h1>
             <p className="text-sm text-muted-foreground">{today}</p>
           </div>
+
+          {role === "founder" && <DailyBrief />}
+
+
 
           {/* BOD */}
           <Card className="overflow-hidden border-border p-0">
