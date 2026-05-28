@@ -158,6 +158,9 @@ function TaskNode({ task, allTasks, depth, expanded, setExpanded, visibleIds }: 
           </Link>
         )}
 
+        <SubtaskBadge count={children.length} onClick={() => setExpanded((s: any) => ({ ...s, [task.id]: !s[task.id] }))} />
+
+
         {depCount > 0 && (
           <span title={`${depCount} dependencies`} className="inline-flex items-center gap-0.5 rounded bg-muted px-1 text-[10px] text-muted-foreground">
             <Link2 className="size-3" />{depCount}
