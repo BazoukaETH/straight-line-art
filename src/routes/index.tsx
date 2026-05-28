@@ -61,6 +61,10 @@ function Home() {
             <p className="text-sm text-muted-foreground">{today}</p>
           </div>
 
+          {role === "founder" && <DailyBrief />}
+
+
+
           {/* BOD */}
           <Card className="overflow-hidden border-border p-0">
             <div className="flex items-center gap-2 border-b border-border/60 bg-muted/40 px-5 py-3">
