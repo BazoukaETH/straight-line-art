@@ -3,6 +3,7 @@ import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/App
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { useApp } from "@/lib/app-context";
 import { DailyBrief } from "@/components/wasla/DailyBrief";
+import { Signals } from "@/components/wasla/Signals";
 import { bodEod, memberById, pillarMeta, spaces, tasks, formatCairoDate } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -175,6 +176,10 @@ function Home() {
               })}
             </div>
           </Card>
+
+          {role === "founder" && <Signals />}
+
+
 
           <Card className="border-border p-5">
             <h3 className="mb-3 text-sm font-semibold">Mentions & replies</h3>
