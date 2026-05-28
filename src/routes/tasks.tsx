@@ -26,7 +26,7 @@ const STATUSES: Status[] = ["Backlog", "To Do", "In Progress", "In Review", "Blo
 
 
 function TasksPage() {
-function TasksPage() {
+
   const { openQuickCreate } = useApp();
   const { tasks, lists, folders } = useTasks();
   const [activeListId, setActiveListId] = useState<string | "my">("my");
