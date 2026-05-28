@@ -46,7 +46,7 @@ function useRecentRecorder() {
   const { tasks, lists, folders } = useTasks();
   useEffect(() => {
     const p = loc.pathname;
-    let m;
+    let m: RegExpMatchArray | null;
     if ((m = p.match(/^\/space\/([^/]+)\/list\/([^/]+)\/task\/([^/]+)(?:\/subtask\/([^/]+))?/))) {
       const tid = m[4] ?? m[3];
       const t = tasks.find((x) => x.id === tid);
