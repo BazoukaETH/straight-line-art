@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AppShell } from "@/components/wasla/AppShell";
+import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { inboxItems, memberById } from "@/lib/mock-data";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";

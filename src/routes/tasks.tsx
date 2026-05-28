@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type DragEvent } from "react";
-import { AppShell } from "@/components/wasla/AppShell";
+import { AppShell, SidebarHeader } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";

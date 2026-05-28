@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AppShell } from "@/components/wasla/AppShell";
+import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { files, memberById, pillarMeta, spaces, type Pillar } from "@/lib/mock-data";
 import { Avatar } from "@/components/wasla/Avatar";
