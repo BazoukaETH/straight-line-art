@@ -241,6 +241,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
         <BulkActionBar />
       </div>
     </TooltipProvider>
+    </SidebarCollapseCtx.Provider>
   );
 }
 
