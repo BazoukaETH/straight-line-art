@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/AppShell";
+import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { useApp } from "@/lib/app-context";
 import { bodEod, memberById, pillarMeta, spaces, tasks, formatCairoDate } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
@@ -50,7 +51,7 @@ function Home() {
   const blocked = my.filter((t) => t.status === "Blocked").slice(0, 2);
 
   return (
-    <AppShell sidebar={<Sidebar />} breadcrumb={<span className="font-medium text-foreground">Home</span>}>
+    <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground">Home</span>}>
       <div className="grid gap-6 px-6 py-6 lg:grid-cols-5">
         {/* Left column */}
         <div className="space-y-6 lg:col-span-3">

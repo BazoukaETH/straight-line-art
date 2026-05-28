@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/AppShell";
+import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { files, memberById, pillarMeta, spaces, type Pillar } from "@/lib/mock-data";
 import { Avatar } from "@/components/wasla/Avatar";
 import { FileText, FileImage, FileSpreadsheet, Presentation, Layers, Search } from "lucide-react";
@@ -33,7 +34,7 @@ function Sidebar() {
 
 function FilesPage() {
   return (
-    <AppShell sidebar={<Sidebar />} breadcrumb={<><span>Files</span><span className="text-border">/</span><span className="font-medium text-foreground">All</span></>}>
+    <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<><span>Files</span><span className="text-border">/</span><span className="font-medium text-foreground">All</span></>}>
       <div className="px-6 py-5">
         <div className="mb-5 flex items-center justify-between">
           <div>
