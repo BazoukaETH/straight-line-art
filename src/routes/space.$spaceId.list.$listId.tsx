@@ -48,12 +48,12 @@ function ListPage() {
   }, [scopedTasks]);
 
   const crumbs = [
-    { label: "Tasks", to: "/tasks" },
     { label: pillarMeta[space.pillar].label },
     { label: space.name, to: "/space/$spaceId", params: { spaceId } as any },
     ...(folder ? [{ label: folder.name, to: "/space/$spaceId/folder/$folderId", params: { spaceId, folderId: folder.id } as any }] : []),
     { label: list?.name ?? "List" },
   ];
+
 
   return (
     <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground">{space.name} / {list?.name}</span>}>
