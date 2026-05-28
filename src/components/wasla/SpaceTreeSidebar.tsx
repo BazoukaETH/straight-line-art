@@ -46,29 +46,38 @@ function useRecentRecorder() {
   const { tasks, lists, folders } = useTasks();
   useEffect(() => {
     const p = loc.pathname;
-    let m: RegExpMatchArray | null;
-    if ((m = p.match(/^\/space\/([^/]+)\/list\/([^/]+)\/task\/([^/]+)(?:\/subtask\/([^/]+))?/))) {
-      const tid = m[4] ?? m[3];
+    const mTask = p.match(/^\/space\/([^/]+)\/list\/([^/]+)\/task\/([^/]+)(?:\/subtask\/([^/]+))?/);
+    if (mTask) {
+      const tid = mTask[4] ?? mTask[3];
       const t = tasks.find((x) => x.id === tid);
       if (t) {
         const l = lists.find((x) => x.id === t.listId);
         pushRecent({ kind: "task", id: t.id, label: t.title, parent: l?.name, href: p });
       }
-    } else if ((m = p.match(/^\/space\/([^/]+)\/list\/([^/]+)/))) {
-      const l = lists.find((x) => x.id === m[2]);
+      return;
+    }
+    const mList = p.match(/^\/space\/([^/]+)\/list\/([^/]+)/);
+    if (mList) {
+      const l = lists.find((x) => x.id === mList[2]);
       if (l) {
         const s = spaceById(l.spaceId);
         pushRecent({ kind: "list", id: l.id, label: l.name, parent: s.name, href: p });
       }
-    } else if ((m = p.match(/^\/space\/([^/]+)\/folder\/([^/]+)/))) {
-      const f = folders.find((x) => x.id === m[2]);
+      return;
+    }
+    const mFolder = p.match(/^\/space\/([^/]+)\/folder\/([^/]+)/);
+    if (mFolder) {
+      const f = folders.find((x) => x.id === mFolder[2]);
       if (f) {
         const s = spaceById(f.spaceId);
         pushRecent({ kind: "folder", id: f.id, label: f.name, parent: s.name, href: p });
       }
-    } else if ((m = p.match(/^\/space\/([^/]+)/))) {
+      return;
+    }
+    const mSpace = p.match(/^\/space\/([^/]+)/);
+    if (mSpace) {
       try {
-        const s = spaceById(m[1]);
+        const s = spaceById(mSpace[1]);
         pushRecent({ kind: "space", id: s.id, label: s.name, parent: pillarMeta[s.pillar].label, href: p });
       } catch { /* ignore */ }
     }
