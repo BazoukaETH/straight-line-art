@@ -206,7 +206,12 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
 
           {/* Contextual sidebar */}
           {sidebar && (
-            <aside className="hidden lg:flex h-full w-[260px] shrink-0 flex-col border-r border-border/60 bg-sidebar">
+            <aside
+              className={cn(
+                "hidden lg:flex h-full shrink-0 flex-col border-r border-border/60 bg-sidebar transition-[width] duration-200",
+                collapsed ? "w-[48px]" : "w-[260px]",
+              )}
+            >
               {sidebar}
             </aside>
           )}
