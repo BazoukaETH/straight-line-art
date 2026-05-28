@@ -118,7 +118,7 @@ export function SpaceTreeSidebar() {
         <div className="mb-1 mt-3 flex items-center justify-between px-2">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Spaces</span>
           <button
-            onClick={() => { useApp.getState?.(); toast("Use ⌘N to create a new Space"); }}
+            onClick={() => toast("Use ⌘N to create a new Space")}
             className="flex size-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
             aria-label="New space"
             title="New space"
