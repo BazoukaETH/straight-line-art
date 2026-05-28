@@ -39,7 +39,7 @@ function Sidebar() {
 }
 
 function Home() {
-  const { currentUserId } = useApp();
+  const { currentUserId, role } = useApp();
   const me = memberById(currentUserId);
   const today = formatCairoDate();
   const [bodSubmitted, setBodSubmitted] = useState(false);
