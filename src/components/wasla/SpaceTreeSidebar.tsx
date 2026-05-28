@@ -9,7 +9,9 @@ import { useSidebarCollapse } from "./AppShell";
 import {
   ChevronRight, Inbox, FolderOpen, List as ListIcon, Star, Layers,
   CheckSquare, Plus, Search, ChevronsLeft, ChevronsRight, X,
+  Reply, AtSign, Hash, MessageCircle, MoreHorizontal, ChevronDown,
 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
