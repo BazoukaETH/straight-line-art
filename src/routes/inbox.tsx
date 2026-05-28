@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/AppShell";
+import { AppShell } from "@/components/wasla/AppShell";
+import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { inboxItems, memberById } from "@/lib/mock-data";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Avatar } from "@/components/wasla/Avatar";
@@ -27,7 +28,7 @@ const iconFor = { chat: MessageSquare, task: CheckSquare, system: Cog } as const
 
 function InboxPage() {
   return (
-    <AppShell sidebar={<Sidebar />} breadcrumb={<span className="font-medium text-foreground">Inbox</span>}>
+    <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground">Inbox</span>}>
       <div className="px-6 py-5">
         <div className="mb-4 flex items-center justify-between">
           <div>

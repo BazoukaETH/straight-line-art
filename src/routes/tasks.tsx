@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type DragEvent } from "react";
-import { AppShell, SidebarHeader } from "@/components/wasla/AppShell";
+import { AppShell } from "@/components/wasla/AppShell";
+import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/lib/app-context";
@@ -151,7 +152,7 @@ function TasksPage() {
 
   return (
     <AppShell
-      sidebar={<SidebarTree activeListId={activeListId} onSelectList={setActiveListId} />}
+      sidebar={<SpaceTreeSidebar />}
       breadcrumb={
         <div className="flex items-center gap-1.5">
           <span>Tasks</span>
