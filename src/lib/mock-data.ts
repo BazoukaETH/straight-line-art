@@ -24,6 +24,41 @@ export const workspaces: Workspace[] = [
   { id: "paperwork-studio", name: "Paperwork Studio", comingSoon: true },
 ];
 
+export interface SpaceProfile {
+  // common
+  ownerId?: string;
+  status?: "active" | "paused" | "churned" | "pilot";
+  health?: "green" | "yellow" | "red";
+  notes?: string;
+  links?: { label: string; url: string }[];
+
+  // client-only
+  type?: "retainer" | "project" | "one-time";
+  startDate?: string;
+  contractValue?: number;
+  currency?: "EGP" | "USD";
+  renewalDate?: string;
+  industry?: string;
+  contacts?: {
+    id: string;
+    name: string;
+    role: string;
+    email?: string;
+    phone?: string;
+    primary?: boolean;
+  }[];
+
+  // venture-only
+  stage?: string;
+  mrr?: number;
+  progress?: { label: string; value: string }[];
+  investors?: { name: string; status: string }[];
+  partners?: { name: string; role: string }[];
+
+  // internal-only
+  purpose?: string;
+}
+
 export interface Space {
   id: string;
   name: string;
@@ -31,7 +66,9 @@ export interface Space {
   members: number;
   /** If set, space is only visible to this user id. */
   ownerId?: string;
+  profile?: SpaceProfile;
 }
+
 
 export interface Folder {
   id: string;
