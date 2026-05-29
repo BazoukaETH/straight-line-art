@@ -669,9 +669,8 @@ function WonCreateClientButton({ task }: { task: any }) {
 }
 
 /* ---------- Discussed in ---------- */
-import { readDiscussed, type DiscussedMap } from "@/lib/chat-store";
-import { channels as allChannels } from "@/lib/mock-data";
-import { MessageSquare as MsgIcon } from "lucide-react";
+
+
 
 function DiscussedInSection({ taskId }: { taskId: string }) {
   const nav = useNavigate();
