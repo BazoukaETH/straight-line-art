@@ -89,14 +89,58 @@ export function QuickCreateModal() {
           <DialogTitle className="text-base flex items-center gap-2"><Sparkles className="size-4 text-accent" /> Quick Create</DialogTitle>
         </DialogHeader>
         <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <TabsList className="m-3 grid grid-cols-6">
+          <TabsList className="m-3 grid grid-cols-7">
             <TabsTrigger value="task">Task</TabsTrigger>
             <TabsTrigger value="subtask">Subtask</TabsTrigger>
             <TabsTrigger value="list">List</TabsTrigger>
             <TabsTrigger value="folder">Folder</TabsTrigger>
             <TabsTrigger value="space">Space</TabsTrigger>
             <TabsTrigger value="channel">Channel</TabsTrigger>
+            <TabsTrigger value="template" className="text-[11px]">From template</TabsTrigger>
           </TabsList>
+
+          {tab === "template" && (
+            <TabsContent value="template" className="px-5 pb-4 space-y-2 mt-0">
+              <p className="text-[11px] text-muted-foreground">Pick a template to prefill a new task.</p>
+              <div className="grid gap-2">
+                {templates.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      setTemplateId(t.id);
+                      setTitle(t.name);
+                      setTab("task");
+                    }}
+                    className="rounded-lg border border-border bg-card p-3 text-left transition hover:border-foreground/20 hover:shadow-sm"
+                  >
+                    <div className="mb-1 flex items-center justify-between">
+                      <span className="text-sm font-semibold text-foreground">{t.name}</span>
+                      {t.tags?.length ? (
+                        <span className="text-[10px] text-muted-foreground">{t.tags.join(" · ")}</span>
+                      ) : null}
+                    </div>
+                    {t.description && (
+                      <p className="mb-2 line-clamp-2 text-xs text-muted-foreground">{t.description}</p>
+                    )}
+                    {t.subtasks?.length ? (
+                      <ul className="space-y-0.5 text-[11px] text-muted-foreground">
+                        {t.subtasks.slice(0, 4).map((s, i) => (
+                          <li key={i} className="flex items-center gap-1.5">
+                            <span className="size-1 rounded-full bg-muted-foreground/60" />
+                            {s}
+                          </li>
+                        ))}
+                        {t.subtasks.length > 4 && (
+                          <li className="pl-3 text-[11px] text-muted-foreground/70">+{t.subtasks.length - 4} more</li>
+                        )}
+                      </ul>
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+            </TabsContent>
+          )}
 
           {(tab === "task" || tab === "subtask") && (
             <TabsContent value={tab} className="px-5 pb-4 space-y-3 mt-0">

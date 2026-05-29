@@ -3,7 +3,7 @@ import { roleToUser, workspaces, subscriptionsSeed, type Role, type Subscription
 import { TasksProvider } from "./tasks-store";
 import { navigateToTask } from "./nav-bridge";
 
-type QuickCreateTab = "task" | "subtask" | "list" | "folder" | "space" | "channel";
+type QuickCreateTab = "task" | "subtask" | "list" | "folder" | "space" | "channel" | "template";
 
 interface AppCtx {
   role: Role;
