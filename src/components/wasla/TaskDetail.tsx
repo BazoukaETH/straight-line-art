@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useTasks } from "@/lib/tasks-store";
-import { memberById, listById, spaceById, taskById, members } from "@/lib/mock-data";
+import { memberById, listById, spaceById, taskById, members, channels as allChannels, channelMessages } from "@/lib/mock-data";
 import { Avatar } from "./Avatar";
 import { StatusPill } from "./StatusPill";
 import { PriorityIcon } from "./PriorityIcon";
