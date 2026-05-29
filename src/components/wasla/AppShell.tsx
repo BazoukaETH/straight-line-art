@@ -3,8 +3,9 @@ import {
   Home, CheckSquare, Inbox, MessageSquare, BarChart3, Files,
   Search, Plus, Bell, Command, Sun, Moon, ChevronRight,
   BookOpen, Video, CalendarPlus, ClipboardList, Users, Briefcase,
-  Globe, CreditCard, Settings as SettingsIcon, ArrowLeft, TrendingUp,
+  Globe, CreditCard, Settings as SettingsIcon, ArrowLeft, TrendingUp, Contact2,
 } from "lucide-react";
+
 import { useApp } from "@/lib/app-context";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar } from "./Avatar";
