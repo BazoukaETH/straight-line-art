@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasksRouteImport } from './routes/tasks'
-import { Route as SpacesRouteImport } from './routes/spaces'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as OrgRouteImport } from './routes/org'
 import { Route as InboxRouteImport } from './routes/inbox'
@@ -34,11 +33,6 @@ import { Route as SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRouteImport } 
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SpacesRoute = SpacesRouteImport.update({
-  id: '/spaces',
-  path: '/spaces',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -148,7 +142,6 @@ export interface FileRoutesByFullPath {
   '/inbox': typeof InboxRoute
   '/org': typeof OrgRouteWithChildren
   '/settings': typeof SettingsRoute
-  '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
   '/org/financial': typeof OrgFinancialRoute
   '/org/members': typeof OrgMembersRoute
@@ -170,7 +163,6 @@ export interface FileRoutesByTo {
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
   '/settings': typeof SettingsRoute
-  '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
   '/org/financial': typeof OrgFinancialRoute
   '/org/members': typeof OrgMembersRoute
@@ -194,7 +186,6 @@ export interface FileRoutesById {
   '/inbox': typeof InboxRoute
   '/org': typeof OrgRouteWithChildren
   '/settings': typeof SettingsRoute
-  '/spaces': typeof SpacesRoute
   '/tasks': typeof TasksRoute
   '/org/financial': typeof OrgFinancialRoute
   '/org/members': typeof OrgMembersRoute
@@ -219,7 +210,6 @@ export interface FileRouteTypes {
     | '/inbox'
     | '/org'
     | '/settings'
-    | '/spaces'
     | '/tasks'
     | '/org/financial'
     | '/org/members'
@@ -241,7 +231,6 @@ export interface FileRouteTypes {
     | '/founder'
     | '/inbox'
     | '/settings'
-    | '/spaces'
     | '/tasks'
     | '/org/financial'
     | '/org/members'
@@ -264,7 +253,6 @@ export interface FileRouteTypes {
     | '/inbox'
     | '/org'
     | '/settings'
-    | '/spaces'
     | '/tasks'
     | '/org/financial'
     | '/org/members'
@@ -288,7 +276,6 @@ export interface RootRouteChildren {
   InboxRoute: typeof InboxRoute
   OrgRoute: typeof OrgRouteWithChildren
   SettingsRoute: typeof SettingsRoute
-  SpacesRoute: typeof SpacesRoute
   TasksRoute: typeof TasksRoute
   PeopleIdRoute: typeof PeopleIdRoute
   PillarPillarIdRoute: typeof PillarPillarIdRoute
@@ -302,13 +289,6 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/spaces': {
-      id: '/spaces'
-      path: '/spaces'
-      fullPath: '/spaces'
-      preLoaderRoute: typeof SpacesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -517,7 +497,6 @@ const rootRouteChildren: RootRouteChildren = {
   InboxRoute: InboxRoute,
   OrgRoute: OrgRouteWithChildren,
   SettingsRoute: SettingsRoute,
-  SpacesRoute: SpacesRoute,
   TasksRoute: TasksRoute,
   PeopleIdRoute: PeopleIdRoute,
   PillarPillarIdRoute: PillarPillarIdRoute,

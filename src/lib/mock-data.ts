@@ -427,18 +427,18 @@ export const taskTemplates: TaskTemplate[] = [
 // ============ CHANNELS / MESSAGES ============
 export interface Channel { id: string; name: string; pillar: Pillar; unread?: number }
 export const channels: Channel[] = [
-  { id: "client-smg",       name: "client-smg",       pillar: "client",  unread: 4 },
-  { id: "client-ejb",       name: "client-ejb",       pillar: "client",  unread: 1 },
-  { id: "client-clutch",    name: "client-clutch",    pillar: "client" },
-  { id: "client-mw",        name: "client-mw",        pillar: "client" },
-  { id: "client-leads",     name: "client-leads",     pillar: "client" },
-  { id: "ventures-tourism", name: "ventures-tourism", pillar: "ventures", unread: 6 },
-  { id: "ventures-hix",     name: "ventures-hix",     pillar: "ventures", unread: 2 },
-  { id: "ventures-os",      name: "ventures-os",      pillar: "ventures" },
-  { id: "ventures-agri",    name: "ventures-agri",    pillar: "ventures" },
-  { id: "internal-ops",     name: "internal-ops",     pillar: "internal" },
-  { id: "internal-fundraise",name:"internal-fundraise",pillar: "internal" },
-  { id: "internal-marketing",name:"internal-marketing",pillar: "internal" },
+  { id: "client-smg",       name: "smg",       pillar: "client",  unread: 4 },
+  { id: "client-ejb",       name: "ejb",       pillar: "client",  unread: 1 },
+  { id: "client-clutch",    name: "clutch",    pillar: "client" },
+  { id: "client-mw",        name: "mw",        pillar: "client" },
+  { id: "client-leads",     name: "leads",     pillar: "client" },
+  { id: "ventures-tourism", name: "tourism",   pillar: "ventures", unread: 6 },
+  { id: "ventures-hix",     name: "hix",       pillar: "ventures", unread: 2 },
+  { id: "ventures-os",      name: "os",        pillar: "ventures" },
+  { id: "ventures-agri",    name: "agri",      pillar: "ventures" },
+  { id: "internal-ops",     name: "ops",       pillar: "internal" },
+  { id: "internal-fundraise",name:"fundraise", pillar: "internal" },
+  { id: "internal-marketing",name:"marketing", pillar: "internal" },
 ];
 
 export interface Message {
@@ -648,9 +648,9 @@ export function visibleSpacesFor(userId: string): Space[] {
 }
 
 export const pillarMeta: Record<Pillar, { label: string; color: string }> = {
-  client:   { label: "Client Work",      color: "#3B82F6" },
-  ventures: { label: "Wasla Ventures",   color: "#8B5CF6" },
-  internal: { label: "Wasla Internal",   color: "#10B981" },
+  client:   { label: "Client Services", color: "#3B82F6" },
+  ventures: { label: "Venture Builds",  color: "#8B5CF6" },
+  internal: { label: "Internal",        color: "#10B981" },
 };
 
 export const roleToUser: Record<Role, string> = {
