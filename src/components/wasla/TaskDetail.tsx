@@ -667,3 +667,69 @@ function WonCreateClientButton({ task }: { task: any }) {
     </Dialog>
   );
 }
+
+/* ---------- Discussed in ---------- */
+import { readDiscussed, type DiscussedMap } from "@/lib/chat-store";
+import { channels as allChannels } from "@/lib/mock-data";
+import { MessageSquare as MsgIcon } from "lucide-react";
+
+function DiscussedInSection({ taskId }: { taskId: string }) {
+  const nav = useNavigate();
+  const [map, setMap] = useState<DiscussedMap>({});
+  useEffect(() => {
+    const load = () => setMap(readDiscussed());
+    load();
+    window.addEventListener("storage", load);
+    window.addEventListener("wasla.chat.changed", load);
+    return () => {
+      window.removeEventListener("storage", load);
+      window.removeEventListener("wasla.chat.changed", load);
+    };
+  }, []);
+  const refs = map[taskId] ?? [];
+
+  const fromAgo = (iso: string) => {
+    const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.round(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.round(diff / 3600)}h ago`;
+    return `${Math.round(diff / 86400)}d ago`;
+  };
+
+  return (
+    <section>
+      <div className="mb-2 flex items-center gap-2">
+        <MsgIcon className="size-4 text-muted-foreground" />
+        <h3 className="text-sm font-semibold">Discussed in</h3>
+      </div>
+      {refs.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-xs text-muted-foreground">
+          Not discussed in chat yet.
+        </div>
+      ) : (
+        <ul className="overflow-hidden rounded-lg border border-border bg-card">
+          {refs.map((r, i) => {
+            const ch = allChannels.find((c) => c.id === r.channelId);
+            const msg = (require("@/lib/mock-data").channelMessages?.[r.channelId] as any[] | undefined)?.find?.((m: any) => m.id === r.messageId);
+            const preview = msg?.body ? (msg.body.length > 70 ? msg.body.slice(0, 70) + "…" : msg.body) : "View in channel";
+            return (
+              <button
+                key={i}
+                onClick={() => {
+                  nav({ to: "/chat", search: { channel: r.channelId, m: r.messageId } as any });
+                  setTimeout(() => toast("Scrolling to message coming soon"), 50);
+                }}
+                className="flex w-full items-center gap-3 border-b border-border/60 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-muted/40"
+              >
+                <span className="font-medium text-accent">#{ch?.name ?? r.channelId}</span>
+                <span className="flex-1 truncate text-foreground/80">"{preview}"</span>
+                <span className="text-[11px] text-muted-foreground">{fromAgo(r.at)}</span>
+                <span className="text-muted-foreground">→</span>
+              </button>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}
