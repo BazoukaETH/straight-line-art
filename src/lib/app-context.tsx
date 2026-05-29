@@ -113,7 +113,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setRoleState(readLS<Role>(LS_ROLE, "founder", ["founder", "manager", "member"]));
     setWorkspaceIdState(readLS<string>(LS_WS, workspaces[0].id, workspaces.map(w => w.id)));
+    seedDiscussedOnce();
   }, []);
+
 
   const setRole = (r: Role) => {
     setRoleState(r);
