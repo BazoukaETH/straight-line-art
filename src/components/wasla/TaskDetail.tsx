@@ -25,6 +25,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Trophy } from "lucide-react";
 import { useApp } from "@/lib/app-context";
 import { useNavigate } from "@tanstack/react-router";
+import { readDiscussed, type DiscussedMap } from "@/lib/chat-store";
+import { MessageSquare as MsgIcon } from "lucide-react";
+
 
 
 const STATUSES = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"] as const;
