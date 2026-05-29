@@ -270,10 +270,11 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     tasks, lists, folders, templates,
     createTask, updateTask, deleteTask, moveTask, bulkUpdate, bulkDelete, duplicateTasks,
     addDependency, removeDependency,
-    createList, createFolder,
+    createList, createFolder, createSpace,
     addCustomField, removeCustomField,
     saveTemplateFromTask, applyTemplate,
-  }), [tasks, lists, folders, templates, createTask, updateTask, deleteTask, moveTask, bulkUpdate, bulkDelete, duplicateTasks, addDependency, removeDependency, createList, createFolder, addCustomField, removeCustomField, saveTemplateFromTask, applyTemplate]);
+  }), [tasks, lists, folders, templates, createTask, updateTask, deleteTask, moveTask, bulkUpdate, bulkDelete, duplicateTasks, addDependency, removeDependency, createList, createFolder, createSpace, addCustomField, removeCustomField, saveTemplateFromTask, applyTemplate]);
+
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
