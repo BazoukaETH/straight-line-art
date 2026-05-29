@@ -577,12 +577,8 @@ function ActivityRail({ task }: { task: any }) {
 }
 
 /* ---------- Won → Create Client ---------- */
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trophy } from "lucide-react";
-import { useApp } from "@/lib/app-context";
-import { useNavigate } from "@tanstack/react-router";
+
+
 
 function WonCreateClientButton({ task }: { task: any }) {
   const { createSpace } = useTasks();
