@@ -510,7 +510,11 @@ export const taskTemplates: TaskTemplate[] = [
 ];
 
 // ============ CHANNELS / MESSAGES ============
-export interface Channel { id: string; name: string; pillar: Pillar; unread?: number }
+export interface Channel { id: string; name: string; pillar: Pillar; unread?: number; postTaskUpdates?: boolean }
+export function channelHomeSpaceId(channelId: string): string {
+  return channelId.split("-").slice(1).join("-");
+}
+
 export const channels: Channel[] = [
   { id: "client-smg",       name: "smg",       pillar: "client",  unread: 4 },
   { id: "client-ejb",       name: "ejb",       pillar: "client",  unread: 1 },
