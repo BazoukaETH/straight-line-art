@@ -191,6 +191,20 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     return f;
   }, []);
 
+  const createSpace = useCallback((input: { name: string; pillar: Space["pillar"]; profile?: SpaceProfile }): Space => {
+    const slug = input.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `space-${genId("S")}`;
+    let id = slug;
+    let i = 2;
+    while (spacesArr.some((s) => s.id === id)) { id = `${slug}-${i++}`; }
+    const sp: Space = { id, name: input.name, pillar: input.pillar, members: 1, profile: input.profile };
+    spacesArr.push(sp);
+    // Seed a default list so the space is usable
+    const list: List = { id: `l-${id}`, name: "Tasks", spaceId: id };
+    setLists((cur) => [...cur, list]);
+    return sp;
+  }, []);
+
+
   const addCustomField = useCallback((listId: string, field: Omit<CustomField, "id">) => {
     setLists((cur) => cur.map((l) => l.id === listId
       ? { ...l, customFields: [...(l.customFields ?? []), { ...field, id: `cf-${genId("CF")}` }] }
