@@ -145,7 +145,26 @@ export const members: Member[] = [
 // ============ SPACES ============
 export const spaces: Space[] = [
   // Client Work
-  { id: "smg",       name: "SMG",       pillar: "client",   members: 5 },
+  { id: "smg", name: "SMG", pillar: "client", members: 5, profile: {
+    ownerId: "bassel",
+    type: "retainer",
+    status: "active",
+    health: "green",
+    startDate: "2025-09-01",
+    contractValue: 240000,
+    currency: "EGP",
+    renewalDate: "2026-09-01",
+    industry: "Holding / Automotive",
+    contacts: [
+      { id: "c-smg-1", name: "Ahmed Salah", role: "Group Marketing Director", email: "ahmed.salah@smg-eg.com", primary: true },
+      { id: "c-smg-2", name: "Mariam Saber", role: "Liqui Moly Brand Lead", email: "mariam@smg-eg.com" },
+    ],
+    links: [
+      { label: "Drive folder", url: "https://drive.google.com/drive/folders/SMG-PLACEHOLDER" },
+      { label: "Contract", url: "https://drive.google.com/file/d/SMG-CONTRACT-PLACEHOLDER" },
+    ],
+    notes: "Multi-project holding. Decision-maker is Ahmed. Mariam owns Liqui Moly day-to-day. Prefers WhatsApp for quick approvals.",
+  } },
   { id: "ejb",       name: "EJB",       pillar: "client",   members: 3 },
   { id: "clutch",    name: "Clutch",    pillar: "client",   members: 2 },
   { id: "mw",        name: "MW",        pillar: "client",   members: 2 },
@@ -153,7 +172,30 @@ export const spaces: Space[] = [
   { id: "proposals", name: "Proposals", pillar: "client",   members: 2 },
   { id: "archived",  name: "Archived",  pillar: "client",   members: 0 },
   // Wasla Ventures
-  { id: "tourism",   name: "Wasla Tourism",   pillar: "ventures", members: 4 },
+  { id: "tourism", name: "Wasla Tourism", pillar: "ventures", members: 4, profile: {
+    ownerId: "bassel",
+    status: "pilot",
+    health: "green",
+    stage: "Pre-launch · Fundraising",
+    mrr: 0,
+    progress: [
+      { label: "Investor deck", value: "v3 circulated" },
+      { label: "Data room", value: "60% complete" },
+      { label: "Providers", value: "12 / 50" },
+    ],
+    investors: [
+      { name: "Hassan Salama", status: "Committed F&F" },
+      { name: "Sovereign Mandate", status: "In conversation" },
+    ],
+    partners: [
+      { name: "Zaki Hashem", role: "Legal advisor" },
+    ],
+    links: [
+      { label: "Investor deck v3", url: "https://drive.google.com/file/d/TOURISM-DECK-PLACEHOLDER" },
+      { label: "Data room", url: "https://drive.google.com/drive/folders/TOURISM-DATAROOM-PLACEHOLDER" },
+    ],
+    notes: "Multi-vertical tourism platform: ticketing + accommodation + mobility + experiences. Friends & family round in flight.",
+  } },
   { id: "hix",       name: "HIX",             pillar: "ventures", members: 4 },
   { id: "wasla-os",  name: "Wasla OS",        pillar: "ventures", members: 3 },
   { id: "agriwasla", name: "AgriWasla",       pillar: "ventures", members: 2 },
@@ -162,10 +204,16 @@ export const spaces: Space[] = [
   { id: "firewood",  name: "Firewood Egypt",  pillar: "ventures", members: 1 },
   // Wasla Internal
   { id: "marketing", name: "Marketing & Growth",   pillar: "internal", members: 3 },
-  { id: "operations",name: "Operations",            pillar: "internal", members: 3 },
+  { id: "operations", name: "Operations", pillar: "internal", members: 3, profile: {
+    ownerId: "bassel",
+    status: "active",
+    purpose: "Run the operating spine of Wasla Ventures: hiring, finance, legal, HQ, tools.",
+    notes: "Cross-cutting. Touches every other space.",
+  } },
   { id: "fundraise", name: "Fundraise & Strategy",  pillar: "internal", members: 2 },
   { id: "personal-bassel", name: "Personal — Bassel", pillar: "internal", members: 1, ownerId: "bassel" },
 ];
+
 
 // ============ FOLDERS ============
 export const folders: Folder[] = [
