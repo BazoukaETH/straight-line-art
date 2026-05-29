@@ -54,6 +54,8 @@ export function TaskDetail({ taskId }: { taskId: string }) {
       <div className="space-y-6 px-6 py-5 min-w-0">
         {/* Title block */}
         <TitleBlock task={task} code={code} onRename={(t) => updateTask(task.id, { title: t })} />
+        {(space.id === "leads" || space.id === "proposals") && <WonCreateClientButton task={task} />}
+
 
         {/* Properties grid */}
         <PropertiesGrid task={task} updateTask={updateTask} />
