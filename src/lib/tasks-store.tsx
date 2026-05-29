@@ -47,12 +47,14 @@ interface TasksCtx {
   // Lists / Folders / CustomFields
   createList: (name: string, spaceId: string, folderId?: string) => List;
   createFolder: (name: string, spaceId: string) => Folder;
+  createSpace: (input: { name: string; pillar: Space["pillar"]; profile?: SpaceProfile }) => Space;
   addCustomField: (listId: string, field: Omit<CustomField, "id">) => void;
   removeCustomField: (listId: string, fieldId: string) => void;
   // Templates
   saveTemplateFromTask: (taskId: string, name: string) => void;
   applyTemplate: (templateId: string, input: NewTaskInput) => Task;
 }
+
 
 const Ctx = createContext<TasksCtx | null>(null);
 
