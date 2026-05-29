@@ -11,7 +11,9 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Plus, FolderOpen, List as ListIcon, ChevronRight, FolderPlus } from "lucide-react";
 import { useApp } from "@/lib/app-context";
 import { TaskTree } from "@/components/wasla/TaskTree";
+import { SpaceProfile } from "@/components/wasla/SpaceProfile";
 import { usePageTitle, useStickyState } from "@/lib/page-title";
+
 import { useMemo } from "react";
 
 export const Route = createFileRoute("/space/$spaceId")({ component: SpacePage });
