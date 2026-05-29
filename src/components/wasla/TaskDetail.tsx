@@ -19,6 +19,13 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTaskNav } from "@/lib/task-nav";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Trophy } from "lucide-react";
+import { useApp } from "@/lib/app-context";
+import { useNavigate } from "@tanstack/react-router";
+
 
 const STATUSES = ["Backlog", "To Do", "In Progress", "In Review", "Blocked", "Done"] as const;
 const PRIORITIES = ["urgent", "high", "normal", "low"] as const;
