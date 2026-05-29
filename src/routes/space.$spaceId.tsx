@@ -69,12 +69,18 @@ function SpacePage() {
 
         <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <TabsList>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="tasks">Tasks</TabsTrigger>
             <TabsTrigger value="files">Files</TabsTrigger>
             <TabsTrigger value="members">Members</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="profile" className="mt-5">
+            <SpaceProfile space={space} />
+          </TabsContent>
+
 
           <TabsContent value="overview" className="mt-5 space-y-6">
             {spaceFolders.length > 0 && (
