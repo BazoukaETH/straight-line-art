@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
-  Home, CheckSquare, Inbox, MessageSquare, Layers, BarChart3, Files,
+  Home, CheckSquare, Inbox, MessageSquare, BarChart3, Files,
   Search, Plus, Bell, Command, Sun, Moon, ChevronRight,
   BookOpen, Video, CalendarPlus, ClipboardList, Users, Briefcase,
   Globe, CreditCard, Settings as SettingsIcon, ArrowLeft, TrendingUp,
@@ -8,7 +8,7 @@ import {
 import { useApp } from "@/lib/app-context";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar } from "./Avatar";
-import { memberById, type Role } from "@/lib/mock-data";
+import { memberById, inboxItems, type Role } from "@/lib/mock-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,6 @@ const workspaceNav: NavItem[] = [
   { to: "/tasks", icon: CheckSquare, label: "Tasks" },
   { to: "/inbox", icon: Inbox, label: "Inbox" },
   { to: "/chat", icon: MessageSquare, label: "Chat" },
-  { to: "/spaces", icon: Layers, label: "Spaces" },
   { to: "/founder", icon: BarChart3, label: "Founder Dashboard", founderOnly: true },
   { to: "/files", icon: Files, label: "Files" },
 ];
@@ -66,6 +65,8 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
   const me = memberById(currentUserId);
   const inOrg = loc.pathname.startsWith("/org");
   const items = inOrg ? orgNav : workspaceNav.filter((i) => !i.founderOnly || role === "founder");
+  const unreadCount = inboxItems.filter((i) => i.unread).length;
+  const showDevTools = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("devTools");
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem(LS_COLLAPSED) === "1";
@@ -107,25 +108,31 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
               <Button size="sm" variant="ghost" className="gap-1.5" onClick={() => openQuickCreate({ tab: "task" })}>
                 <Plus className="size-4" /> <span className="hidden sm:inline">New</span>
               </Button>
-              <Button size="icon" variant="ghost" onClick={() => toast("3 unread notifications")} className="relative">
+              <Button size="icon" variant="ghost" onClick={() => nav({ to: "/inbox" })} className="relative">
                 <Bell className="size-4" />
-                <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-destructive" />
+                {unreadCount > 0 && (
+                  <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </Button>
               <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => setCommandOpen(true)}>
                 <Command className="size-3.5" /> ⌘K
               </Button>
               <div className="mx-2 h-6 w-px bg-border" />
-              <div className="hidden sm:flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">View as</span>
-                <Select value={role} onValueChange={(v) => setRole(v as Role)}>
-                  <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="founder">Founder</SelectItem>
-                    <SelectItem value="manager">Manager</SelectItem>
-                    <SelectItem value="member">Member</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {showDevTools && (
+                <div className="hidden sm:flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">View as</span>
+                  <Select value={role} onValueChange={(v) => setRole(v as Role)}>
+                    <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="founder">Founder</SelectItem>
+                      <SelectItem value="manager">Manager</SelectItem>
+                      <SelectItem value="member">Member</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="md:hidden"><FounderQuickAccess variant="mobile" /></div>
               <Avatar memberId={me.id} size={28} status />
             </div>
@@ -225,8 +232,8 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
 
             {/* Mobile bottom tabs */}
             <nav className="md:hidden flex h-14 shrink-0 items-center justify-around border-t border-border bg-card">
-              {[Home, CheckSquare, MessageSquare, Inbox, Layers].map((Icon, i) => {
-                const paths = ["/", "/tasks", "/chat", "/inbox", "/spaces"];
+              {[Home, CheckSquare, MessageSquare, Inbox].map((Icon, i) => {
+                const paths = ["/", "/tasks", "/chat", "/inbox"];
                 const active = loc.pathname === paths[i];
                 return (
                   <Link key={i} to={paths[i]} className={cn("flex flex-col items-center gap-0.5 text-[10px]", active ? "text-accent" : "text-muted-foreground")}>
