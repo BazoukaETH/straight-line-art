@@ -712,7 +712,7 @@ function DiscussedInSection({ taskId }: { taskId: string }) {
         <ul className="overflow-hidden rounded-lg border border-border bg-card">
           {refs.map((r, i) => {
             const ch = allChannels.find((c) => c.id === r.channelId);
-            const msg = (require("@/lib/mock-data").channelMessages?.[r.channelId] as any[] | undefined)?.find?.((m: any) => m.id === r.messageId);
+            const msg = (channelMessages[r.channelId] ?? []).find((m) => m.id === r.messageId);
             const preview = msg?.body ? (msg.body.length > 70 ? msg.body.slice(0, 70) + "…" : msg.body) : "View in channel";
             return (
               <button
