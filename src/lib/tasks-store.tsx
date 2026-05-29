@@ -3,14 +3,18 @@ import {
   tasks as seedTasks,
   lists as seedLists,
   folders as seedFolders,
+  spaces as spacesArr,
   taskTemplates,
   type Task,
   type List,
   type Folder,
+  type Space,
+  type SpaceProfile,
   type Status,
   type Priority,
   type CustomField,
 } from "./mock-data";
+
 
 interface NewTaskInput {
   title: string;
@@ -43,12 +47,14 @@ interface TasksCtx {
   // Lists / Folders / CustomFields
   createList: (name: string, spaceId: string, folderId?: string) => List;
   createFolder: (name: string, spaceId: string) => Folder;
+  createSpace: (input: { name: string; pillar: Space["pillar"]; profile?: SpaceProfile }) => Space;
   addCustomField: (listId: string, field: Omit<CustomField, "id">) => void;
   removeCustomField: (listId: string, fieldId: string) => void;
   // Templates
   saveTemplateFromTask: (taskId: string, name: string) => void;
   applyTemplate: (templateId: string, input: NewTaskInput) => Task;
 }
+
 
 const Ctx = createContext<TasksCtx | null>(null);
 
@@ -185,6 +191,20 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     return f;
   }, []);
 
+  const createSpace = useCallback((input: { name: string; pillar: Space["pillar"]; profile?: SpaceProfile }): Space => {
+    const slug = input.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `space-${genId("S")}`;
+    let id = slug;
+    let i = 2;
+    while (spacesArr.some((s) => s.id === id)) { id = `${slug}-${i++}`; }
+    const sp: Space = { id, name: input.name, pillar: input.pillar, members: 1, profile: input.profile };
+    spacesArr.push(sp);
+    // Seed a default list so the space is usable
+    const list: List = { id: `l-${id}`, name: "Tasks", spaceId: id };
+    setLists((cur) => [...cur, list]);
+    return sp;
+  }, []);
+
+
   const addCustomField = useCallback((listId: string, field: Omit<CustomField, "id">) => {
     setLists((cur) => cur.map((l) => l.id === listId
       ? { ...l, customFields: [...(l.customFields ?? []), { ...field, id: `cf-${genId("CF")}` }] }
@@ -250,10 +270,11 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     tasks, lists, folders, templates,
     createTask, updateTask, deleteTask, moveTask, bulkUpdate, bulkDelete, duplicateTasks,
     addDependency, removeDependency,
-    createList, createFolder,
+    createList, createFolder, createSpace,
     addCustomField, removeCustomField,
     saveTemplateFromTask, applyTemplate,
-  }), [tasks, lists, folders, templates, createTask, updateTask, deleteTask, moveTask, bulkUpdate, bulkDelete, duplicateTasks, addDependency, removeDependency, createList, createFolder, addCustomField, removeCustomField, saveTemplateFromTask, applyTemplate]);
+  }), [tasks, lists, folders, templates, createTask, updateTask, deleteTask, moveTask, bulkUpdate, bulkDelete, duplicateTasks, addDependency, removeDependency, createList, createFolder, createSpace, addCustomField, removeCustomField, saveTemplateFromTask, applyTemplate]);
+
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -11,7 +11,9 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Plus, FolderOpen, List as ListIcon, ChevronRight, FolderPlus } from "lucide-react";
 import { useApp } from "@/lib/app-context";
 import { TaskTree } from "@/components/wasla/TaskTree";
+import { SpaceProfile } from "@/components/wasla/SpaceProfile";
 import { usePageTitle, useStickyState } from "@/lib/page-title";
+
 import { useMemo } from "react";
 
 export const Route = createFileRoute("/space/$spaceId")({ component: SpacePage });
@@ -67,12 +69,18 @@ function SpacePage() {
 
         <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <TabsList>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="tasks">Tasks</TabsTrigger>
             <TabsTrigger value="files">Files</TabsTrigger>
             <TabsTrigger value="members">Members</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="profile" className="mt-5">
+            <SpaceProfile space={space} />
+          </TabsContent>
+
 
           <TabsContent value="overview" className="mt-5 space-y-6">
             {spaceFolders.length > 0 && (

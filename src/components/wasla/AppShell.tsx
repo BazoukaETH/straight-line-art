@@ -3,8 +3,9 @@ import {
   Home, CheckSquare, Inbox, MessageSquare, BarChart3, Files,
   Search, Plus, Bell, Command, Sun, Moon, ChevronRight,
   BookOpen, Video, CalendarPlus, ClipboardList, Users, Briefcase,
-  Globe, CreditCard, Settings as SettingsIcon, ArrowLeft, TrendingUp,
+  Globe, CreditCard, Settings as SettingsIcon, ArrowLeft, TrendingUp, Contact2,
 } from "lucide-react";
+
 import { useApp } from "@/lib/app-context";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar } from "./Avatar";
@@ -37,9 +38,11 @@ const workspaceNav: NavItem[] = [
   { to: "/tasks", icon: CheckSquare, label: "Tasks" },
   { to: "/inbox", icon: Inbox, label: "Inbox" },
   { to: "/chat", icon: MessageSquare, label: "Chat" },
+  { to: "/clients", icon: Contact2, label: "Clients" },
   { to: "/founder", icon: BarChart3, label: "Founder Dashboard", founderOnly: true },
   { to: "/files", icon: Files, label: "Files" },
 ];
+
 
 const comingSoonNav: { icon: typeof BookOpen; label: string; tooltip: string }[] = [
   { icon: BookOpen,      label: "Docs",       tooltip: "Coming in Phase 3. Replaces Notion." },

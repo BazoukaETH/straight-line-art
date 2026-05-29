@@ -15,6 +15,7 @@ import { Route as OrgRouteImport } from './routes/org'
 import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as FounderRouteImport } from './routes/founder'
 import { Route as FilesRouteImport } from './routes/files'
+import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrgIndexRouteImport } from './routes/org.index'
@@ -58,6 +59,11 @@ const FounderRoute = FounderRouteImport.update({
 const FilesRoute = FilesRouteImport.update({
   id: '/files',
   path: '/files',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClientsRoute = ClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatRoute = ChatRouteImport.update({
@@ -137,6 +143,7 @@ const SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/clients': typeof ClientsRoute
   '/files': typeof FilesRoute
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/clients': typeof ClientsRoute
   '/files': typeof FilesRoute
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
+  '/clients': typeof ClientsRoute
   '/files': typeof FilesRoute
   '/founder': typeof FounderRoute
   '/inbox': typeof InboxRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/chat'
+    | '/clients'
     | '/files'
     | '/founder'
     | '/inbox'
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/chat'
+    | '/clients'
     | '/files'
     | '/founder'
     | '/inbox'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/chat'
+    | '/clients'
     | '/files'
     | '/founder'
     | '/inbox'
@@ -271,6 +283,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRoute
+  ClientsRoute: typeof ClientsRoute
   FilesRoute: typeof FilesRoute
   FounderRoute: typeof FounderRoute
   InboxRoute: typeof InboxRoute
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/files'
       fullPath: '/files'
       preLoaderRoute: typeof FilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clients': {
+      id: '/clients'
+      path: '/clients'
+      fullPath: '/clients'
+      preLoaderRoute: typeof ClientsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -492,6 +512,7 @@ const SpaceSpaceIdRouteWithChildren = SpaceSpaceIdRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
+  ClientsRoute: ClientsRoute,
   FilesRoute: FilesRoute,
   FounderRoute: FounderRoute,
   InboxRoute: InboxRoute,
