@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { roleToUser, workspaces, subscriptionsSeed, type Role, type Subscription, type SubStatus } from "./mock-data";
 import { TasksProvider } from "./tasks-store";
 import { navigateToTask } from "./nav-bridge";
+import { seedDiscussedOnce } from "./chat-store";
+
 
 type QuickCreateTab = "task" | "subtask" | "list" | "folder" | "space" | "channel" | "template";
 
@@ -111,7 +113,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setRoleState(readLS<Role>(LS_ROLE, "founder", ["founder", "manager", "member"]));
     setWorkspaceIdState(readLS<string>(LS_WS, workspaces[0].id, workspaces.map(w => w.id)));
+    seedDiscussedOnce();
   }, []);
+
 
   const setRole = (r: Role) => {
     setRoleState(r);

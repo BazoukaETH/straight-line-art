@@ -510,7 +510,11 @@ export const taskTemplates: TaskTemplate[] = [
 ];
 
 // ============ CHANNELS / MESSAGES ============
-export interface Channel { id: string; name: string; pillar: Pillar; unread?: number }
+export interface Channel { id: string; name: string; pillar: Pillar; unread?: number; postTaskUpdates?: boolean }
+export function channelHomeSpaceId(channelId: string): string {
+  return channelId.split("-").slice(1).join("-");
+}
+
 export const channels: Channel[] = [
   { id: "client-smg",       name: "smg",       pillar: "client",  unread: 4 },
   { id: "client-ejb",       name: "ejb",       pillar: "client",  unread: 1 },
@@ -581,7 +585,11 @@ export const inboxItems: InboxItem[] = [
   { id: "i3", source: "system", preview: "Saif hasn't submitted BOD today",                 at: "2026-05-25T09:05:00Z", unread: true },
   { id: "i4", source: "chat",   preview: "Osama: Liqui Moly ad spend benchmarks shared",    at: "2026-05-25T07:55:00Z", unread: false, fromId: "osama" },
   { id: "i5", source: "task",   preview: "Hagry moved 'Corporate Website (EJB)' to In Progress", at: "2026-05-24T18:11:00Z", unread: false, fromId: "hagry" },
+  { id: "i6", source: "task",   preview: "Bassel commented on 'Investor deck' — @bassel can you review?", at: "2026-05-25T10:15:00Z", unread: true, fromId: "bassel" },
+  { id: "i7", source: "chat",   preview: "Moaz mentioned you in #ventures-tourism — 'war room dev env is up'", at: "2026-05-25T09:14:00Z", unread: true, fromId: "moaz" },
+  { id: "i8", source: "task",   preview: "Task you watch moved: 'Onboard accommodation providers' → In Progress", at: "2026-05-24T14:00:00Z", unread: false, fromId: "bassel" },
 ];
+
 
 export const files = [
   { id: "f1", name: "Wasla Ventures — Master Sheet.gsheet",         modified: "today",  ownerId: "bassel", kind: "sheet" },
