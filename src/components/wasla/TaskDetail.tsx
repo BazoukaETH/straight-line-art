@@ -15,7 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { getChildren } from "@/lib/task-utils";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTaskNav } from "@/lib/task-nav";
 import { cn } from "@/lib/utils";
