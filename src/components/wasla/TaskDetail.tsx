@@ -575,3 +575,88 @@ function ActivityRail({ task }: { task: any }) {
     </aside>
   );
 }
+
+/* ---------- Won → Create Client ---------- */
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Trophy } from "lucide-react";
+import { useApp } from "@/lib/app-context";
+import { useNavigate } from "@tanstack/react-router";
+
+function WonCreateClientButton({ task }: { task: any }) {
+  const { createSpace } = useTasks();
+  const { currentUserId } = useApp();
+  const nav = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState(task.title);
+  const [type, setType] = useState<"retainer" | "project" | "one-time">("project");
+  const [value, setValue] = useState<string>("");
+  const [owner, setOwner] = useState(currentUserId);
+
+  const submit = () => {
+    const sp = createSpace({
+      name: name.trim() || task.title,
+      pillar: "client",
+      profile: {
+        ownerId: owner,
+        type,
+        status: "active",
+        health: "green",
+        contractValue: value ? Number(value) : undefined,
+        currency: "EGP",
+      },
+    });
+    setOpen(false);
+    toast.success(`Client "${sp.name}" created`, {
+      action: { label: "Open", onClick: () => nav({ to: "/space/$spaceId", params: { spaceId: sp.id } }) },
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline" className="gap-1.5">
+          <Trophy className="size-3.5" /> Won → Create Client
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader><DialogTitle>Create client from this proposal</DialogTitle></DialogHeader>
+        <div className="space-y-3 py-2">
+          <div className="space-y-1.5">
+            <Label className="text-xs">Client name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Engagement type</Label>
+            <Select value={type} onValueChange={(v) => setType(v as any)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="retainer">Retainer</SelectItem>
+                <SelectItem value="project">Project</SelectItem>
+                <SelectItem value="one-time">One-time</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Contract value (EGP)</Label>
+            <Input type="number" inputMode="numeric" value={value} onChange={(e) => setValue(e.target.value)} placeholder="240000" />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Owner</Label>
+            <Select value={owner} onValueChange={setOwner}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {members.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={submit}>Create client</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
