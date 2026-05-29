@@ -3,14 +3,18 @@ import {
   tasks as seedTasks,
   lists as seedLists,
   folders as seedFolders,
+  spaces as spacesArr,
   taskTemplates,
   type Task,
   type List,
   type Folder,
+  type Space,
+  type SpaceProfile,
   type Status,
   type Priority,
   type CustomField,
 } from "./mock-data";
+
 
 interface NewTaskInput {
   title: string;
