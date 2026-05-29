@@ -115,7 +115,11 @@ export function TaskDetail({ taskId }: { taskId: string }) {
 
         {/* Attachments */}
         <AttachmentsSection task={task} />
+
+        {/* Discussed in */}
+        <DiscussedInSection taskId={task.id} />
       </div>
+
 
       {/* Right rail: Activity */}
       <ActivityRail task={task} />
