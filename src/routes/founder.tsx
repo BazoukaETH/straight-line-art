@@ -11,14 +11,14 @@ type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; disabl
 
 const navItems: NavItem[] = [
   { to: "/founder",              label: "Command Center", icon: LayoutDashboard },
-  { to: "/founder/ventures",     label: "Ventures",       icon: Rocket,       disabled: true },
-  { to: "/founder/pipeline",     label: "Pipeline",       icon: Briefcase,    disabled: true },
+  { to: "/founder/ventures",     label: "Ventures",       icon: Rocket },
+  { to: "/founder/pipeline",     label: "Pipeline",       icon: Briefcase },
   { to: "/founder/clients",      label: "Clients",        icon: Contact2,     disabled: true },
   { to: "/founder/finance",      label: "Finance",        icon: DollarSign,   disabled: true },
   { to: "/founder/team",         label: "Team",           icon: Users,        disabled: true },
-  { to: "/founder/network",      label: "Network",        icon: Globe,        disabled: true },
+  { to: "/founder/network",      label: "Network",        icon: Globe },
   { to: "/founder/market-intel", label: "Market Intel",   icon: BarChart3,    disabled: true },
-  { to: "/founder/initiatives",  label: "Initiatives",    icon: Target,       disabled: true },
+  { to: "/founder/initiatives",  label: "Initiatives",    icon: Target },
   { to: "/founder/documents",    label: "Documents",      icon: FileText,     disabled: true },
   { to: "/founder/settings",     label: "Settings",       icon: SettingsIcon, disabled: true },
 ];
