@@ -91,53 +91,64 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
     <SidebarCollapseCtx.Provider value={sidebarCtx}>
     <TooltipProvider delayDuration={200}>
       <div className="flex h-screen w-screen flex-col overflow-hidden bg-background text-foreground">
-        {/* Top header strip with workspace switcher + top bar */}
-        <div className="flex h-14 shrink-0 items-stretch border-b border-border bg-card/60 backdrop-blur">
+        {/* Top header strip with workspace switcher + top bar — slim, single-line */}
+        <div className="flex h-11 shrink-0 items-stretch border-b border-border bg-card/60 backdrop-blur">
           {/* Switcher cell */}
-          <div className="flex w-[280px] shrink-0 items-center border-r border-border/60 pl-3 pr-2">
+          <div className="flex w-[220px] shrink-0 items-center border-r border-border/60 pl-2.5 pr-1.5">
             <WorkspaceSwitcher />
           </div>
           {/* Top bar */}
-          <header className="flex flex-1 items-center justify-between px-5">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <header className="flex flex-1 items-center justify-between gap-2 px-3 min-w-0">
+            {/* Left: breadcrumb (truncates instead of wrapping) */}
+            <div className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground whitespace-nowrap overflow-hidden">
               {inOrg && (
-                <Button size="sm" variant="ghost" className="gap-1.5 -ml-2" onClick={() => nav({ to: "/" })}>
-                  <ArrowLeft className="size-3.5" /> Back to Wasla Solutions
+                <Button size="sm" variant="ghost" className="h-7 gap-1 -ml-1.5 px-1.5 text-xs shrink-0" onClick={() => nav({ to: "/" })}>
+                  <ArrowLeft className="size-3.5" /> Back
                 </Button>
               )}
-              {breadcrumb ?? <span className="font-medium text-foreground">{titleFor(loc.pathname)}</span>}
+              <div className="truncate font-medium text-foreground">
+                {breadcrumb ?? <span>{titleFor(loc.pathname)}</span>}
+              </div>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Button size="sm" variant="ghost" className="gap-1.5" onClick={() => openQuickCreate({ tab: "task" })}>
-                <Plus className="size-4" /> <span className="hidden sm:inline">New</span>
-              </Button>
-              <Button size="icon" variant="ghost" onClick={() => nav({ to: "/inbox" })} className="relative">
+            {/* Right: actions (never wraps) */}
+            <div className="flex shrink-0 items-center gap-1 flex-nowrap whitespace-nowrap">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => openQuickCreate({ tab: "task" })}>
+                    <Plus className="size-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>New</TooltipContent>
+              </Tooltip>
+              <Button size="icon" variant="ghost" onClick={() => nav({ to: "/inbox" })} className="relative h-7 w-7">
                 <Bell className="size-4" />
                 {unreadCount > 0 && (
-                  <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
+                  <span className="absolute right-0 top-0 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
               </Button>
-              <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => setCommandOpen(true)}>
-                <Command className="size-3.5" /> ⌘K
+              <Button size="sm" variant="outline" className="h-7 gap-1 px-2 text-[11px]" onClick={() => setCommandOpen(true)}>
+                <Command className="size-3" /> ⌘K
               </Button>
-              <div className="mx-2 h-6 w-px bg-border" />
               {showDevTools && (
-                <div className="hidden sm:flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">View as</span>
-                  <Select value={role} onValueChange={(v) => setRole(v as Role)}>
-                    <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="founder">Founder</SelectItem>
-                      <SelectItem value="manager">Manager</SelectItem>
-                      <SelectItem value="member">Member</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <>
+                  <div className="mx-1 h-5 w-px bg-border" />
+                  <div className="hidden sm:flex items-center gap-1.5">
+                    <span className="text-[11px] text-muted-foreground">View as</span>
+                    <Select value={role} onValueChange={(v) => setRole(v as Role)}>
+                      <SelectTrigger className="h-7 w-[100px] text-[11px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="founder">Founder</SelectItem>
+                        <SelectItem value="manager">Manager</SelectItem>
+                        <SelectItem value="member">Member</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
               )}
               <div className="md:hidden"><FounderQuickAccess variant="mobile" /></div>
-              <Avatar memberId={me.id} size={28} status />
+              <Avatar memberId={me.id} size={26} status />
             </div>
           </header>
         </div>
@@ -215,12 +226,12 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
             </div>
           </aside>
 
-          {/* Contextual sidebar */}
+          {/* Contextual sidebar — narrower default + smooth collapse */}
           {sidebar && (
             <aside
               className={cn(
                 "hidden lg:flex h-full shrink-0 flex-col border-r border-border/60 bg-sidebar transition-[width] duration-200",
-                collapsed ? "w-[48px]" : "w-[260px]",
+                collapsed ? "w-[44px]" : "w-[220px]",
               )}
             >
               {sidebar}
@@ -228,7 +239,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
           )}
 
           {/* Main */}
-          <div className="flex h-full flex-1 flex-col overflow-hidden">
+          <div className="flex h-full flex-1 flex-col overflow-hidden min-w-0">
             <main key={loc.pathname} className="wasla-fade-in flex-1 overflow-y-auto scrollbar-thin">{children}</main>
             <SmartCapture />
 
