@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, ChevronDown, Plus, MoreHorizontal, Flag, CalendarIcon, UserPlus, Circle } from "lucide-react";
+import { ChevronRight, ChevronDown, Plus, MoreHorizontal, Flag, CalendarIcon, UserPlus, Circle, MessageSquare, ArrowUpFromLine, GitBranch, Copy, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   type Task, type Status, type Priority, spaceById, memberById, listById, members, pillarMeta,
@@ -14,6 +14,12 @@ import { PriorityIcon } from "./PriorityIcon";
 import { Avatar } from "./Avatar";
 import { SubtaskBadge } from "./SubtaskBadge";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem, ContextMenuSeparator,
+  ContextMenuSub, ContextMenuSubTrigger, ContextMenuSubContent,
+} from "@/components/ui/context-menu";
+import { Textarea } from "@/components/ui/textarea";
+import { useApp as useAppCtx } from "@/lib/app-context";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -254,11 +260,12 @@ function StatusGroupRows({
 }: { tasks: Task[]; allTasks: Task[]; status: Status | undefined; listId: string | undefined }) {
   return (
     <div>
-      <div className="grid grid-cols-[1fr_140px_120px_60px_32px] gap-2 border-b border-border bg-muted/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <div className="grid grid-cols-[1fr_140px_120px_60px_180px_32px] gap-2 border-b border-border bg-muted/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
         <div>Name</div>
         <div>Assignee</div>
         <div>Due date</div>
         <div>Priority</div>
+        <div>Latest comment</div>
         <div className="text-right"><Plus className="ml-auto size-3" /></div>
       </div>
       {tasks.map((t) => (
@@ -283,10 +290,12 @@ function TaskRowNode({ task, allTasks, depth }: { task: Task; allTasks: Task[]; 
 
   return (
     <>
-      <div
-        className="group grid grid-cols-[1fr_140px_120px_60px_32px] items-center gap-2 border-b border-border/60 px-3 py-1.5 text-sm hover:bg-muted/30"
-        style={{ paddingLeft: 12 + depth * 20 }}
-      >
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <div
+            className="group grid grid-cols-[1fr_140px_120px_60px_180px_32px] items-center gap-2 border-b border-border/60 px-3 py-1.5 text-sm hover:bg-muted/30"
+            style={{ paddingLeft: 12 + depth * 20 }}
+          >
         <div className="flex min-w-0 items-center gap-1.5">
           <button
             onClick={() => setOpen((o) => !o)}
@@ -376,12 +385,171 @@ function TaskRowNode({ task, allTasks, depth }: { task: Task; allTasks: Task[]; 
             </PopoverContent>
           </Popover>
         </div>
+        <LatestCommentCell task={task} />
         <div />
-      </div>
+          </div>
+        </ContextMenuTrigger>
+        <TaskContextMenu task={task} allTasks={allTasks} />
+      </ContextMenu>
       {open && children.map((c) => (
         <TaskRowNode key={c.id} task={c} allTasks={allTasks} depth={depth + 1} />
       ))}
     </>
+  );
+}
+
+/* ============================ Latest comment cell ============================ */
+function LatestCommentCell({ task }: { task: Task }) {
+  const { updateTask } = useTasks();
+  const { currentUserId } = useAppCtx();
+  const comments = task.comments ?? [];
+  const latest = comments.length > 0 ? comments[comments.length - 1] : null;
+  const [draft, setDraft] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const submit = () => {
+    const body = draft.trim();
+    if (!body) return;
+    const newComment = {
+      id: `c-${task.id}-${Date.now()}`,
+      authorId: currentUserId,
+      body,
+      at: new Date().toISOString(),
+    };
+    updateTask(task.id, { comments: [...comments, newComment] });
+    setDraft("");
+    toast.success("Comment added");
+  };
+
+  return (
+    <div onClick={(e) => e.stopPropagation()}>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            className={cn(
+              "flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-left text-xs hover:bg-muted",
+              !latest && "text-muted-foreground"
+            )}
+          >
+            <MessageSquare className="size-3 shrink-0 text-muted-foreground" />
+            <span className="flex-1 truncate">
+              {latest ? latest.body : "Add comment"}
+            </span>
+            {comments.length > 1 && (
+              <span className="shrink-0 rounded-full bg-muted px-1.5 text-[10px] font-semibold text-muted-foreground">
+                {comments.length}
+              </span>
+            )}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[360px] p-0" align="end">
+          <div className="border-b border-border px-3 py-2">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Comments</div>
+            <div className="truncate text-xs text-foreground/70">{task.title}</div>
+          </div>
+          <div className="max-h-[260px] space-y-3 overflow-y-auto p-3">
+            {comments.length === 0 ? (
+              <div className="text-center text-xs text-muted-foreground">No comments yet. Be the first.</div>
+            ) : (
+              comments.map((c) => {
+                const author = memberById(c.authorId);
+                return (
+                  <div key={c.id} className="flex gap-2">
+                    <Avatar memberId={author.id} size={24} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xs font-semibold">{author.name}</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(c.at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      </div>
+                      <div className="text-xs text-foreground/85">{c.body}</div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+          <div className="border-t border-border bg-muted/30 p-2">
+            <Textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder="Write a comment…"
+              rows={2}
+              className="resize-none text-xs"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); submit(); }
+              }}
+            />
+            <div className="mt-1.5 flex items-center justify-between">
+              <span className="text-[10px] text-muted-foreground">⌘+Enter to send</span>
+              <Button size="sm" className="h-6 px-2 text-[11px]" onClick={submit} disabled={!draft.trim()}>
+                Comment
+              </Button>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
+/* ============================ Task context menu ============================ */
+function TaskContextMenu({ task, allTasks }: { task: Task; allTasks: Task[] }) {
+  const { moveTask, updateTask, deleteTask, duplicateTasks } = useTasks();
+
+  const hasParent = !!task.parentId;
+  const sameListSiblings = allTasks.filter(
+    (t) => t.listId === task.listId && t.id !== task.id && t.parentId !== task.id
+  );
+
+  const promote = () => {
+    moveTask(task.id, task.listId, undefined);
+    toast.success("Promoted to top-level task");
+  };
+  const makeSubtaskOf = (parent: Task) => {
+    moveTask(task.id, parent.listId, parent.id);
+    toast.success(`Now subtask of "${parent.title}"`);
+  };
+
+  return (
+    <ContextMenuContent className="w-56">
+      {hasParent && (
+        <ContextMenuItem onClick={promote}>
+          <ArrowUpFromLine className="mr-2 size-3.5" />
+          Promote to top-level task
+        </ContextMenuItem>
+      )}
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>
+          <GitBranch className="mr-2 size-3.5" />
+          Make subtask of…
+        </ContextMenuSubTrigger>
+        <ContextMenuSubContent className="max-h-72 w-64 overflow-y-auto">
+          {sameListSiblings.length === 0 ? (
+            <ContextMenuItem disabled>No eligible parent in this list</ContextMenuItem>
+          ) : (
+            sameListSiblings.map((p) => (
+              <ContextMenuItem key={p.id} onClick={() => makeSubtaskOf(p)} className="text-xs">
+                <span className="truncate">{p.title}</span>
+              </ContextMenuItem>
+            ))
+          )}
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+      <ContextMenuSeparator />
+      <ContextMenuItem onClick={() => { duplicateTasks([task.id]); toast.success("Duplicated"); }}>
+        <Copy className="mr-2 size-3.5" />
+        Duplicate
+      </ContextMenuItem>
+      <ContextMenuItem
+        onClick={() => { deleteTask(task.id); toast.success("Deleted"); }}
+        className="text-destructive focus:text-destructive"
+      >
+        <Trash2 className="mr-2 size-3.5" />
+        Delete
+      </ContextMenuItem>
+    </ContextMenuContent>
   );
 }
 
