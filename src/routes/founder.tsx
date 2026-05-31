@@ -1,9 +1,10 @@
 import { createFileRoute, Outlet, useNavigate, useLocation, Link } from "@tanstack/react-router";
-import { AppShell } from "@/components/wasla/AppShell";
+import { AppShell, useSidebarCollapse } from "@/components/wasla/AppShell";
 import { useApp } from "@/lib/app-context";
 import { organization } from "@/lib/mock-data";
-import { LayoutDashboard, Rocket, Briefcase, Contact2, DollarSign, Users, Globe, BarChart3, Target, Bot, FileText, Settings as SettingsIcon } from "lucide-react";
+import { LayoutDashboard, Rocket, Briefcase, Contact2, DollarSign, Users, Globe, BarChart3, Target, Bot, FileText, Settings as SettingsIcon, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useEffect } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const Route = createFileRoute("/founder")({ component: FounderLayout });
 
@@ -24,10 +25,78 @@ const navItems: NavItem[] = [
   { to: "/founder/settings",     label: "Settings",       icon: SettingsIcon },
 ];
 
+function FounderSidebar() {
+  const { collapsed, toggle } = useSidebarCollapse();
+  const loc = useLocation();
+
+  if (collapsed) {
+    return (
+      <div className="flex h-full flex-col items-center gap-1 py-3">
+        <button
+          onClick={toggle}
+          className="mb-1 flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          title="Expand (⌘B)"
+          aria-label="Expand sidebar"
+        >
+          <ChevronsRight className="size-3.5" />
+        </button>
+        {navItems.map((item) => {
+          const active = loc.pathname === item.to;
+          return (
+            <Tooltip key={item.to}>
+              <TooltipTrigger asChild>
+                <Link
+                  to={item.to}
+                  className={`flex size-8 items-center justify-center rounded-md transition-colors ${active ? "bg-muted text-foreground" : "text-foreground/70 hover:bg-muted/60 hover:text-foreground"}`}
+                >
+                  <item.icon className="size-3.5" />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">{item.label}</TooltipContent>
+            </Tooltip>
+          );
+        })}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex items-center justify-between gap-2 px-3 pb-2 pt-3">
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          {organization.name} · Founder
+        </div>
+        <button
+          onClick={toggle}
+          className="flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          title="Collapse (⌘B)"
+          aria-label="Collapse sidebar"
+        >
+          <ChevronsLeft className="size-3.5" />
+        </button>
+      </div>
+      <div className="flex-1 overflow-y-auto px-1.5 pb-3 scrollbar-thin">
+        {navItems.map((item) => {
+          const active = loc.pathname === item.to;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-[13px] ${active ? "bg-muted text-foreground font-medium" : "text-foreground/75 hover:bg-muted/60"}`}
+            >
+              <item.icon className="size-3.5 text-muted-foreground shrink-0" />
+              <span className="flex-1 truncate">{item.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function FounderLayout() {
   const { role } = useApp();
   const nav = useNavigate();
-  const loc = useLocation();
 
   useEffect(() => {
     if (role !== "founder") nav({ to: "/" });
@@ -36,28 +105,7 @@ function FounderLayout() {
   if (role !== "founder") return null;
 
   return (
-    <AppShell
-      sidebar={
-        <div className="px-2 py-3">
-          <div className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            {organization.name} · Founder
-          </div>
-          {navItems.map((item) => {
-            const active = loc.pathname === item.to;
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm ${active ? "bg-muted text-foreground" : "text-foreground/75 hover:bg-muted/60"}`}
-              >
-                <item.icon className="size-3.5 text-muted-foreground" />
-                <span className="flex-1">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      }
-    >
+    <AppShell sidebar={<FounderSidebar />}>
       <Outlet />
     </AppShell>
   );
