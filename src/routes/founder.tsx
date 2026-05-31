@@ -2,25 +2,26 @@ import { createFileRoute, Outlet, useNavigate, useLocation, Link } from "@tansta
 import { AppShell } from "@/components/wasla/AppShell";
 import { useApp } from "@/lib/app-context";
 import { organization } from "@/lib/mock-data";
-import { LayoutDashboard, Rocket, Briefcase, Contact2, DollarSign, Users, Globe, BarChart3, Target, FileText, Settings as SettingsIcon } from "lucide-react";
+import { LayoutDashboard, Rocket, Briefcase, Contact2, DollarSign, Users, Globe, BarChart3, Target, Bot, FileText, Settings as SettingsIcon } from "lucide-react";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/founder")({ component: FounderLayout });
 
-type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; disabled?: boolean };
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard };
 
 const navItems: NavItem[] = [
   { to: "/founder",              label: "Command Center", icon: LayoutDashboard },
   { to: "/founder/ventures",     label: "Ventures",       icon: Rocket },
   { to: "/founder/pipeline",     label: "Pipeline",       icon: Briefcase },
-  { to: "/founder/clients",      label: "Clients",        icon: Contact2,     disabled: true },
-  { to: "/founder/finance",      label: "Finance",        icon: DollarSign,   disabled: true },
-  { to: "/founder/team",         label: "Team",           icon: Users,        disabled: true },
+  { to: "/founder/clients",      label: "Clients",        icon: Contact2 },
+  { to: "/founder/finance",      label: "Finance",        icon: DollarSign },
+  { to: "/founder/team",         label: "Team",           icon: Users },
   { to: "/founder/network",      label: "Network",        icon: Globe },
-  { to: "/founder/market-intel", label: "Market Intel",   icon: BarChart3,    disabled: true },
+  { to: "/founder/market-intel", label: "Market Intel",   icon: BarChart3 },
   { to: "/founder/initiatives",  label: "Initiatives",    icon: Target },
-  { to: "/founder/documents",    label: "Documents",      icon: FileText,     disabled: true },
-  { to: "/founder/settings",     label: "Settings",       icon: SettingsIcon, disabled: true },
+  { to: "/founder/ai-agents",    label: "AI Agents",      icon: Bot },
+  { to: "/founder/documents",    label: "Documents",      icon: FileText },
+  { to: "/founder/settings",     label: "Settings",       icon: SettingsIcon },
 ];
 
 function FounderLayout() {
@@ -43,19 +44,6 @@ function FounderLayout() {
           </div>
           {navItems.map((item) => {
             const active = loc.pathname === item.to;
-            if (item.disabled) {
-              return (
-                <div
-                  key={item.to}
-                  title="Coming soon — being ported"
-                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm cursor-not-allowed text-muted-foreground/40"
-                >
-                  <item.icon className="size-3.5" />
-                  <span className="flex-1">{item.label}</span>
-                  <span className="text-[9px] uppercase tracking-wider">soon</span>
-                </div>
-              );
-            }
             return (
               <Link
                 key={item.to}

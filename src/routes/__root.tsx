@@ -11,6 +11,9 @@ import {
 import appCss from "../styles.css?url";
 import { AppProvider } from "@/lib/app-context";
 import { Toaster } from "@/components/ui/sonner";
+import { SalaryProvider } from "@/contexts/SalaryContext";
+import { HiringProvider } from "@/contexts/HiringContext";
+import { UserProvider } from "@/contexts/UserContext";
 
 function NotFoundComponent() {
   return (
@@ -94,8 +97,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AppProvider>
-        <Outlet />
-        <Toaster position="bottom-right" />
+        <UserProvider>
+          <SalaryProvider>
+            <HiringProvider>
+              <Outlet />
+              <Toaster position="bottom-right" />
+            </HiringProvider>
+          </SalaryProvider>
+        </UserProvider>
       </AppProvider>
     </QueryClientProvider>
   );
