@@ -1,20 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation } from "@tanstack/react-router";
-import { ChevronDown, Check, Plus, Settings as SettingsIcon } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { ChevronDown, Check, Plus } from "lucide-react";
 import { useApp } from "@/lib/app-context";
-import { organization, workspaces, members } from "@/lib/mock-data";
+import { workspaces } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export function WorkspaceSwitcher() {
-  const { workspaceId, setWorkspaceId, role, currentUserId } = useApp();
+  const { workspaceId, setWorkspaceId } = useApp();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const nav = useNavigate();
-  const loc = useLocation();
-  const inOrg = loc.pathname.startsWith("/org");
-  const me = members.find((m) => m.id === currentUserId);
-  const canSeeOrg = role === "founder" || !!me?.orgFounder;
 
   const current = workspaces.find((w) => w.id === workspaceId) ?? workspaces[0];
 
