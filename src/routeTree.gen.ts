@@ -29,7 +29,6 @@ import { Route as FounderNetworkRouteImport } from './routes/founder.network'
 import { Route as FounderMarketIntelRouteImport } from './routes/founder.market-intel'
 import { Route as FounderInitiativesRouteImport } from './routes/founder.initiatives'
 import { Route as FounderFinanceRouteImport } from './routes/founder.finance'
-import { Route as FounderDocumentsRouteImport } from './routes/founder.documents'
 import { Route as FounderClientsRouteImport } from './routes/founder.clients'
 import { Route as FounderAiAgentsRouteImport } from './routes/founder.ai-agents'
 import { Route as SpaceSpaceIdListListIdRouteImport } from './routes/space.$spaceId.list.$listId'
@@ -139,11 +138,6 @@ const FounderFinanceRoute = FounderFinanceRouteImport.update({
   path: '/finance',
   getParentRoute: () => FounderRoute,
 } as any)
-const FounderDocumentsRoute = FounderDocumentsRouteImport.update({
-  id: '/documents',
-  path: '/documents',
-  getParentRoute: () => FounderRoute,
-} as any)
 const FounderClientsRoute = FounderClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
@@ -199,7 +193,6 @@ export interface FileRoutesByFullPath {
   '/tasks': typeof TasksRoute
   '/founder/ai-agents': typeof FounderAiAgentsRoute
   '/founder/clients': typeof FounderClientsRoute
-  '/founder/documents': typeof FounderDocumentsRoute
   '/founder/finance': typeof FounderFinanceRoute
   '/founder/initiatives': typeof FounderInitiativesRoute
   '/founder/market-intel': typeof FounderMarketIntelRoute
@@ -229,7 +222,6 @@ export interface FileRoutesByTo {
   '/tasks': typeof TasksRoute
   '/founder/ai-agents': typeof FounderAiAgentsRoute
   '/founder/clients': typeof FounderClientsRoute
-  '/founder/documents': typeof FounderDocumentsRoute
   '/founder/finance': typeof FounderFinanceRoute
   '/founder/initiatives': typeof FounderInitiativesRoute
   '/founder/market-intel': typeof FounderMarketIntelRoute
@@ -261,7 +253,6 @@ export interface FileRoutesById {
   '/tasks': typeof TasksRoute
   '/founder/ai-agents': typeof FounderAiAgentsRoute
   '/founder/clients': typeof FounderClientsRoute
-  '/founder/documents': typeof FounderDocumentsRoute
   '/founder/finance': typeof FounderFinanceRoute
   '/founder/initiatives': typeof FounderInitiativesRoute
   '/founder/market-intel': typeof FounderMarketIntelRoute
@@ -294,7 +285,6 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/founder/ai-agents'
     | '/founder/clients'
-    | '/founder/documents'
     | '/founder/finance'
     | '/founder/initiatives'
     | '/founder/market-intel'
@@ -324,7 +314,6 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/founder/ai-agents'
     | '/founder/clients'
-    | '/founder/documents'
     | '/founder/finance'
     | '/founder/initiatives'
     | '/founder/market-intel'
@@ -355,7 +344,6 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/founder/ai-agents'
     | '/founder/clients'
-    | '/founder/documents'
     | '/founder/finance'
     | '/founder/initiatives'
     | '/founder/market-intel'
@@ -532,13 +520,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderFinanceRouteImport
       parentRoute: typeof FounderRoute
     }
-    '/founder/documents': {
-      id: '/founder/documents'
-      path: '/documents'
-      fullPath: '/founder/documents'
-      preLoaderRoute: typeof FounderDocumentsRouteImport
-      parentRoute: typeof FounderRoute
-    }
     '/founder/clients': {
       id: '/founder/clients'
       path: '/clients'
@@ -625,7 +606,6 @@ const FounderTeamRouteWithChildren = FounderTeamRoute._addFileChildren(
 interface FounderRouteChildren {
   FounderAiAgentsRoute: typeof FounderAiAgentsRoute
   FounderClientsRoute: typeof FounderClientsRoute
-  FounderDocumentsRoute: typeof FounderDocumentsRoute
   FounderFinanceRoute: typeof FounderFinanceRoute
   FounderInitiativesRoute: typeof FounderInitiativesRoute
   FounderMarketIntelRoute: typeof FounderMarketIntelRoute
@@ -640,7 +620,6 @@ interface FounderRouteChildren {
 const FounderRouteChildren: FounderRouteChildren = {
   FounderAiAgentsRoute: FounderAiAgentsRoute,
   FounderClientsRoute: FounderClientsRoute,
-  FounderDocumentsRoute: FounderDocumentsRoute,
   FounderFinanceRoute: FounderFinanceRoute,
   FounderInitiativesRoute: FounderInitiativesRoute,
   FounderMarketIntelRoute: FounderMarketIntelRoute,
@@ -715,3 +694,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
