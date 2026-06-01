@@ -68,7 +68,7 @@ function FounderSidebar() {
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-2 border-b border-border/50 px-2.5 py-2">
         <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground truncate">
-          {organization.name} · Founder
+          {organization.name}
         </div>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -105,6 +105,7 @@ function FounderSidebar() {
 function FounderLayout() {
   const { role } = useApp();
   const nav = useNavigate();
+  const loc = useLocation();
 
   useEffect(() => {
     if (role !== "founder") nav({ to: "/" });
@@ -112,8 +113,14 @@ function FounderLayout() {
 
   if (role !== "founder") return null;
 
+  const activeItem = navItems
+    .slice()
+    .sort((a, b) => b.to.length - a.to.length)
+    .find((item) => loc.pathname === item.to || loc.pathname.startsWith(item.to + "/"));
+  const breadcrumb = activeItem?.label ?? "Founder";
+
   return (
-    <AppShell sidebar={<FounderSidebar />}>
+    <AppShell sidebar={<FounderSidebar />} breadcrumb={breadcrumb}>
       <Outlet />
     </AppShell>
   );
