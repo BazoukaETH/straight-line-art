@@ -33,52 +33,24 @@ export function WorkspaceSwitcher() {
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "flex h-12 w-[220px] items-center gap-2.5 rounded-lg border border-border bg-card px-3 text-left transition hover:bg-muted/60",
+          "flex h-8 w-[220px] items-center gap-2 rounded-lg px-3 text-left transition hover:bg-muted/60",
         )}
       >
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#0B2545] text-sm font-bold text-white">W</div>
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-[10px] font-semibold uppercase tracking-wider text-muted-foreground leading-none mb-0.5">
-            {inOrg ? "Organization" : "Workspace"}
-          </div>
-          <div className="truncate text-sm font-semibold leading-tight">
-            {inOrg ? organization.name : current.name}
-          </div>
+        <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-[#0B2545] text-xs font-bold text-white">W</div>
+        <div className="min-w-0 flex-1 truncate text-sm font-semibold leading-tight">
+          {current.name}
         </div>
         <ChevronDown className="size-4 text-muted-foreground" />
       </button>
 
       {open && (
         <div className="absolute left-0 top-[calc(100%+6px)] z-50 w-[280px] overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
-          {/* ORG */}
-          <div className="px-3 pt-3 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Organization
-          </div>
-          <button
-            disabled={!canSeeOrg}
-            onClick={() => { if (canSeeOrg) { setOpen(false); nav({ to: "/org" }); } }}
-            className={cn(
-              "flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition",
-              canSeeOrg ? "hover:bg-muted/60" : "cursor-not-allowed text-muted-foreground",
-            )}
-          >
-            <div className="flex size-6 items-center justify-center rounded-md bg-[#0B2545] text-[10px] font-bold text-white">W</div>
-            <span className="flex-1 font-medium">{organization.name}</span>
-            {canSeeOrg ? (
-              <SettingsIcon className="size-3.5 text-muted-foreground" />
-            ) : (
-              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">Founders only</span>
-            )}
-          </button>
-
-          <div className="my-1 h-px bg-border" />
-
           {/* WORKSPACES */}
-          <div className="px-3 pt-2 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="px-3 pt-3 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Workspaces
           </div>
           {workspaces.map((w) => {
-            const active = !inOrg && w.id === workspaceId;
+            const active = w.id === workspaceId;
             const disabled = !!w.comingSoon;
             return (
               <button
@@ -88,7 +60,6 @@ export function WorkspaceSwitcher() {
                   if (disabled) return;
                   setWorkspaceId(w.id);
                   setOpen(false);
-                  if (inOrg) nav({ to: "/" });
                   toast.success(`Switched to ${w.name}`);
                 }}
                 className={cn(
@@ -112,17 +83,13 @@ export function WorkspaceSwitcher() {
             );
           })}
 
-          {canSeeOrg && (
-            <>
-              <div className="my-1 h-px bg-border" />
-              <button
-                onClick={() => { setOpen(false); toast("New workspace flow coming soon"); }}
-                className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-foreground/80 hover:bg-muted/60"
-              >
-                <Plus className="size-4" /> New workspace
-              </button>
-            </>
-          )}
+          <div className="my-1 h-px bg-border" />
+          <button
+            onClick={() => { setOpen(false); toast("New workspace flow coming soon"); }}
+            className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-foreground/80 hover:bg-muted/60"
+          >
+            <Plus className="size-4" /> New workspace
+          </button>
         </div>
       )}
     </div>
