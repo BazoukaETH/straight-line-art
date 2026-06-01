@@ -419,6 +419,10 @@ const Finance = () => {
                   </div>
                 ))}
               </div>
+              <div className="mt-3 pt-3 border-t border-border/40 flex items-center justify-between text-[11px]">
+                <span className="text-muted-foreground">SaaS subscriptions <span className="text-muted-foreground/60">({activeSubs.length} active)</span></span>
+                <button onClick={() => setPage("subscriptions")} className="font-semibold text-foreground hover:text-secondary">{fmtF(subsMonthlySpend)}<span className="text-muted-foreground/60 font-normal"> / mo</span></button>
+              </div>
             </div>
           </div>
 
