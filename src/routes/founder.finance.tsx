@@ -4,8 +4,11 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pencil, Check, X, Plus, Trash2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Pencil, Check, X, Plus, Trash2, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import {
   MONEY_IN_SEED, MONEY_OUT_SEED, CASH_ACCOUNTS_SEED, EXCHANGE_RATES_SEED, PROJECTIONS_SEED,
   FY26_REVENUE_PLAN, FY26_BURN_PLAN,
@@ -16,6 +19,14 @@ import {
   calculateInvoiceAging, calculateClientConcentration, calculateActualVsPlan, calculateRecurringVsOneTime,
 } from "@/lib/finance-calculations";
 import { useSalaries } from "@/contexts/SalaryContext";
+import { useApp } from "@/lib/app-context";
+import { egp } from "@/lib/mock-data";
+
+const SUB_STATUS_STYLES: Record<string, string> = {
+  Active:    "bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] text-accent",
+  Cutover:   "bg-[color-mix(in_oklab,var(--warning)_18%,transparent)] text-[color:var(--warning)]",
+  Cancelled: "bg-muted text-muted-foreground",
+};
 
 const PC = ["hsl(220,95%,47%)", "hsl(168,100%,42%)", "hsl(36,90%,53%)", "hsl(250,60%,60%)", "hsl(350,75%,50%)", "hsl(160,80%,40%)"];
 
