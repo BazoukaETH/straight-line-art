@@ -44,7 +44,7 @@ export function WorkspaceSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute left-0 top-[calc(100%+6px)] z-50 w-[280px] overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
+        <div className="absolute left-0 top-[calc(100%+6px)] z-[100] w-[280px] overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl">
           {/* WORKSPACES */}
           <div className="px-3 pt-3 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             Workspaces
