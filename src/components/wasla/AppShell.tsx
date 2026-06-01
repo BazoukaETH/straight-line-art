@@ -142,7 +142,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
                 </>
               )}
               {items.map((item) => {
-                const active = loc.pathname === item.to || (item.to !== "/" && item.to !== "/org" && loc.pathname.startsWith(item.to));
+                const active = loc.pathname === item.to || (item.to !== "/" && loc.pathname.startsWith(item.to));
                 return (
                   <Tooltip key={item.to}>
                     <TooltipTrigger asChild>
@@ -223,7 +223,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
 
 function titleFor(path: string) {
   if (path === "/") return "Home";
-  if (path === "/org") return "Organization";
+  
   return path.replace(/^\//, "").replace(/\//g, " / ").replace(/^\w/, (c) => c.toUpperCase());
 }
 
