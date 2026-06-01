@@ -33,11 +33,11 @@ type NavItem = { to: string; icon: typeof Home; label: string; founderOnly?: boo
 
 const workspaceNav: NavItem[] = [
   { to: "/", icon: Home, label: "Home" },
+  { to: "/founder", icon: BarChart3, label: "Founder Dashboard", founderOnly: true },
   { to: "/tasks", icon: CheckSquare, label: "Tasks" },
   { to: "/inbox", icon: Inbox, label: "Inbox" },
   { to: "/chat", icon: MessageSquare, label: "Chat" },
   { to: "/clients", icon: Contact2, label: "Clients" },
-  { to: "/founder", icon: BarChart3, label: "Founder Dashboard", founderOnly: true },
   { to: "/files", icon: Files, label: "Files" },
 ];
 
