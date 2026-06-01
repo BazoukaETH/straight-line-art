@@ -19,7 +19,6 @@ import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { QuickCreateModal } from "./QuickCreateModal";
 import { BulkActionBar } from "./BulkActionBar";
 
-import { FounderQuickAccess } from "./FounderQuickAccess";
 import { setNav } from "@/lib/nav-bridge";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
@@ -62,10 +61,16 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
         e.preventDefault();
         setCollapsed((c) => !c);
       }
+      if (role === "founder" && (e.key === "f" || e.key === "F") && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const t = e.target as HTMLElement;
+        if (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable) return;
+        e.preventDefault();
+        nav({ to: "/founder" });
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [role, nav]);
   const sidebarCtx: SidebarCtx = { collapsed, toggle: () => setCollapsed((c) => !c), setCollapsed };
 
   return (
@@ -109,7 +114,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
               </Button>
               {showDevTools && (
                 <>
-                  <div className="mx-1 h-5 w-px bg-border" />
+              <div className="mx-1 h-5 w-px bg-border" />
                   <div className="hidden sm:flex items-center gap-1.5">
                     <span className="text-[11px] text-muted-foreground">View as</span>
                     <Select value={role} onValueChange={(v) => setRole(v as Role)}>
@@ -123,7 +128,6 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
                   </div>
                 </>
               )}
-              <div className="md:hidden"><FounderQuickAccess variant="mobile" /></div>
               <Avatar memberId={me.id} size={26} status />
             </div>
           </header>
@@ -133,14 +137,6 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
           {/* Left rail */}
           <aside className="hidden md:flex h-full w-[60px] flex-col items-center justify-between border-r border-border/60 bg-[color:var(--rail)] py-4 text-[color:var(--rail-foreground)]">
             <div className="flex flex-col items-center gap-1 overflow-y-auto px-1 scrollbar-thin">
-              {role === "founder" && (
-                <>
-                  <div className="mb-1 w-full px-0.5">
-                    <FounderQuickAccess variant="mobile" />
-                  </div>
-                  <div className="mb-1 h-px w-7 bg-white/15" />
-                </>
-              )}
               {items.map((item) => {
                 const active = loc.pathname === item.to || (item.to !== "/" && loc.pathname.startsWith(item.to));
                 return (
