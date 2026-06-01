@@ -521,7 +521,7 @@ export const channels: Channel[] = [
   { id: "client-clutch",    name: "clutch",    pillar: "client" },
   { id: "client-mw",        name: "mw",        pillar: "client" },
   { id: "client-leads",     name: "leads",     pillar: "client" },
-  { id: "ventures-tourism", name: "tourism",   pillar: "ventures", unread: 6 },
+  { id: "tourism",        name: "tourism",   pillar: "ventures", unread: 6 },
   { id: "ventures-hix",     name: "hix",       pillar: "ventures", unread: 2 },
   { id: "ventures-os",      name: "os",        pillar: "ventures" },
   { id: "ventures-agri",    name: "agri",      pillar: "ventures" },
@@ -548,7 +548,7 @@ export const channelMessages: Record<string, Message[]> = {
     { id: "m4", authorId: "osama",  body: "Liqui Moly digital — pulled last month's ad spend benchmarks.", at: "2026-05-25T08:40:00Z", kind: "image" },
     { id: "m5", authorId: "bassel", body: "Approved. Push the proposal scope deck to Friday review.", at: "2026-05-25T08:44:00Z", reactions: [{ emoji: "✅", count: 3 }] },
   ],
-  "ventures-tourism": [
+  "tourism": [
     { id: "t1", authorId: "bassel", body: "Sharm onboarding cleared — 10/10 providers signed. Onto Hurghada next.", at: "2026-05-25T09:00:00Z" },
     { id: "t2", authorId: "moaz",   body: "War-room dev env is up. Architecture doc in Drive.", at: "2026-05-25T09:14:00Z" },
     { id: "t3", authorId: "bassel", body: "Investor deck v3 circulated — feedback by Thursday please.", at: "2026-05-25T09:30:00Z", replies: 4 },
@@ -586,7 +586,7 @@ export const inboxItems: InboxItem[] = [
   { id: "i4", source: "chat",   preview: "Osama: Liqui Moly ad spend benchmarks shared",    at: "2026-05-25T07:55:00Z", unread: false, fromId: "osama" },
   { id: "i5", source: "task",   preview: "Hagry moved 'Corporate Website (EJB)' to In Progress", at: "2026-05-24T18:11:00Z", unread: false, fromId: "hagry" },
   { id: "i6", source: "task",   preview: "Bassel commented on 'Investor deck' — @bassel can you review?", at: "2026-05-25T10:15:00Z", unread: true, fromId: "bassel" },
-  { id: "i7", source: "chat",   preview: "Moaz mentioned you in #ventures-tourism — 'war room dev env is up'", at: "2026-05-25T09:14:00Z", unread: true, fromId: "moaz" },
+  { id: "i7", source: "chat",   preview: "Moaz mentioned you in #tourism — 'war room dev env is up'", at: "2026-05-25T09:14:00Z", unread: true, fromId: "moaz" },
   { id: "i8", source: "task",   preview: "Task you watch moved: 'Onboard accommodation providers' → In Progress", at: "2026-05-24T14:00:00Z", unread: false, fromId: "bassel" },
 ];
 

@@ -12,32 +12,9 @@ import { TaskCard } from "@/components/wasla/TaskCard";
 import { Avatar } from "@/components/wasla/Avatar";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Pencil, Sunrise, Sunset, Calendar, AlertCircle, ArrowUpRight } from "lucide-react";
-import { Layers } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Home });
 
-function Sidebar() {
-  const { currentUserId } = useApp();
-  return (
-    <>
-      <SidebarHeader title="Workspace" />
-      <div className="flex-1 overflow-y-auto px-2 py-2 scrollbar-thin">
-        <div className="mb-2 px-2 pt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Pillars</div>
-        {(Object.keys(pillarMeta) as Array<keyof typeof pillarMeta>).map((p) => (
-          <div key={p} className="mb-2">
-            <SidebarTreeItem label={pillarMeta[p].label} icon={Layers} />
-            <div className="ml-3 border-l border-border/60 pl-1">
-              {spaces.filter((s) => s.pillar === p && (!s.ownerId || s.ownerId === currentUserId)).map((s) => (
-                <SidebarTreeItem key={s.id} label={s.name} count={tasks.filter((t) => t.spaceId === s.id).length} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
 
 function Home() {
   const { currentUserId, role } = useApp();
@@ -45,7 +22,8 @@ function Home() {
   const today = formatCairoDate();
   const [bodSubmitted, setBodSubmitted] = useState(false);
   const [bodText, setBodText] = useState("Ship the Loop Commerce marketing site refresh and review the May board deck.");
-  const isEvening = new Date().getHours() >= 17;
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
   const my = tasks.filter((t) => t.assigneeId === currentUserId);
   const now = my.filter((t) => t.status === "In Progress").slice(0, 2);
@@ -58,7 +36,7 @@ function Home() {
         {/* Left column */}
         <div className="space-y-6 lg:col-span-3">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Good morning, {me.name.split(" ")[0]}</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">{greeting}, {me.name.split(" ")[0]}</h1>
             <p className="text-sm text-muted-foreground">{today}</p>
           </div>
 
@@ -136,7 +114,7 @@ function Home() {
             </div>
           </Card>
 
-          {isEvening && (
+          {hour >= 17 && (
             <Card className="overflow-hidden border-border p-0">
               <div className="flex items-center gap-2 border-b border-border/60 bg-muted/40 px-5 py-3">
                 <Sunset className="size-4 text-[color:var(--warning)]" />
@@ -199,7 +177,7 @@ function Home() {
                       <p className="text-sm leading-snug">
                         <b className="font-semibold">{m.name}</b> <span className="text-muted-foreground">{previews[i]}</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground">{i + 1}h ago · #ventures-tourism</p>
+                      <p className="text-[11px] text-muted-foreground">{i + 1}h ago · #tourism</p>
                     </div>
                     <ArrowUpRight className="size-3.5 text-muted-foreground" />
                   </div>
