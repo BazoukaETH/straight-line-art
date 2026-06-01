@@ -292,7 +292,7 @@ const Finance = () => {
       </div>
 
       <div className="flex gap-0 border-b border-border">
-        {[{ id: "engine", l: "Engine" }, { id: "subscriptions", l: "Subscriptions" }].map(p => (
+        {[{ id: "overview", l: "Overview" }, { id: "engine", l: "Engine" }, { id: "subscriptions", l: "Subscriptions" }].map(p => (
           <button key={p.id} onClick={() => setPage(p.id as any)} className={`px-4 py-2 text-[12px] font-semibold transition-colors border-b-2 ${page === p.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
             {p.l}
           </button>
