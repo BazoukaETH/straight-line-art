@@ -61,10 +61,16 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
         e.preventDefault();
         setCollapsed((c) => !c);
       }
+      if (role === "founder" && (e.key === "f" || e.key === "F") && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const t = e.target as HTMLElement;
+        if (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable) return;
+        e.preventDefault();
+        nav({ to: "/founder" });
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [role, nav]);
   const sidebarCtx: SidebarCtx = { collapsed, toggle: () => setCollapsed((c) => !c), setCollapsed };
 
   return (
