@@ -108,7 +108,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
               </Button>
               {showDevTools && (
                 <>
-                  <div className="mx-1 h-5 w-px bg-border" />
+              <div className="mx-1 h-5 w-px bg-border" />
                   <div className="hidden sm:flex items-center gap-1.5">
                     <span className="text-[11px] text-muted-foreground">View as</span>
                     <Select value={role} onValueChange={(v) => setRole(v as Role)}>
