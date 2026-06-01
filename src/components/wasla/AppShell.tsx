@@ -19,7 +19,6 @@ import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { QuickCreateModal } from "./QuickCreateModal";
 import { BulkActionBar } from "./BulkActionBar";
 
-import { FounderQuickAccess } from "./FounderQuickAccess";
 import { setNav } from "@/lib/nav-bridge";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
