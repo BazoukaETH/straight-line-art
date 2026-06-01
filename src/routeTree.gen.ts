@@ -11,22 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as OrgRouteImport } from './routes/org'
 import { Route as InboxRouteImport } from './routes/inbox'
 import { Route as FounderRouteImport } from './routes/founder'
 import { Route as FilesRouteImport } from './routes/files'
 import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as OrgIndexRouteImport } from './routes/org.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as SpaceSpaceIdRouteImport } from './routes/space.$spaceId'
 import { Route as PillarPillarIdRouteImport } from './routes/pillar.$pillarId'
 import { Route as PeopleIdRouteImport } from './routes/people.$id'
-import { Route as OrgSubscriptionsRouteImport } from './routes/org.subscriptions'
-import { Route as OrgSettingsRouteImport } from './routes/org.settings'
-import { Route as OrgMembersRouteImport } from './routes/org.members'
-import { Route as OrgFinancialRouteImport } from './routes/org.financial'
 import { Route as FounderVenturesRouteImport } from './routes/founder.ventures'
 import { Route as FounderTeamRouteImport } from './routes/founder.team'
 import { Route as FounderSettingsRouteImport } from './routes/founder.settings'
@@ -53,11 +47,6 @@ const TasksRoute = TasksRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrgRoute = OrgRouteImport.update({
-  id: '/org',
-  path: '/org',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InboxRoute = InboxRouteImport.update({
@@ -90,11 +79,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OrgIndexRoute = OrgIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => OrgRoute,
-} as any)
 const FounderIndexRoute = FounderIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -114,26 +98,6 @@ const PeopleIdRoute = PeopleIdRouteImport.update({
   id: '/people/$id',
   path: '/people/$id',
   getParentRoute: () => rootRouteImport,
-} as any)
-const OrgSubscriptionsRoute = OrgSubscriptionsRouteImport.update({
-  id: '/subscriptions',
-  path: '/subscriptions',
-  getParentRoute: () => OrgRoute,
-} as any)
-const OrgSettingsRoute = OrgSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => OrgRoute,
-} as any)
-const OrgMembersRoute = OrgMembersRouteImport.update({
-  id: '/members',
-  path: '/members',
-  getParentRoute: () => OrgRoute,
-} as any)
-const OrgFinancialRoute = OrgFinancialRouteImport.update({
-  id: '/financial',
-  path: '/financial',
-  getParentRoute: () => OrgRoute,
 } as any)
 const FounderVenturesRoute = FounderVenturesRouteImport.update({
   id: '/ventures',
@@ -231,7 +195,6 @@ export interface FileRoutesByFullPath {
   '/files': typeof FilesRoute
   '/founder': typeof FounderRouteWithChildren
   '/inbox': typeof InboxRoute
-  '/org': typeof OrgRouteWithChildren
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
   '/founder/ai-agents': typeof FounderAiAgentsRoute
@@ -245,15 +208,10 @@ export interface FileRoutesByFullPath {
   '/founder/settings': typeof FounderSettingsRouteWithChildren
   '/founder/team': typeof FounderTeamRouteWithChildren
   '/founder/ventures': typeof FounderVenturesRoute
-  '/org/financial': typeof OrgFinancialRoute
-  '/org/members': typeof OrgMembersRoute
-  '/org/settings': typeof OrgSettingsRoute
-  '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
   '/pillar/$pillarId': typeof PillarPillarIdRoute
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/founder/': typeof FounderIndexRoute
-  '/org/': typeof OrgIndexRoute
   '/founder/settings/users/$id': typeof FounderSettingsUsersIdRoute
   '/founder/team/jobs/$jobId': typeof FounderTeamJobsJobIdRoute
   '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
@@ -280,15 +238,10 @@ export interface FileRoutesByTo {
   '/founder/settings': typeof FounderSettingsRouteWithChildren
   '/founder/team': typeof FounderTeamRouteWithChildren
   '/founder/ventures': typeof FounderVenturesRoute
-  '/org/financial': typeof OrgFinancialRoute
-  '/org/members': typeof OrgMembersRoute
-  '/org/settings': typeof OrgSettingsRoute
-  '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
   '/pillar/$pillarId': typeof PillarPillarIdRoute
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/founder': typeof FounderIndexRoute
-  '/org': typeof OrgIndexRoute
   '/founder/settings/users/$id': typeof FounderSettingsUsersIdRoute
   '/founder/team/jobs/$jobId': typeof FounderTeamJobsJobIdRoute
   '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
@@ -304,7 +257,6 @@ export interface FileRoutesById {
   '/files': typeof FilesRoute
   '/founder': typeof FounderRouteWithChildren
   '/inbox': typeof InboxRoute
-  '/org': typeof OrgRouteWithChildren
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
   '/founder/ai-agents': typeof FounderAiAgentsRoute
@@ -318,15 +270,10 @@ export interface FileRoutesById {
   '/founder/settings': typeof FounderSettingsRouteWithChildren
   '/founder/team': typeof FounderTeamRouteWithChildren
   '/founder/ventures': typeof FounderVenturesRoute
-  '/org/financial': typeof OrgFinancialRoute
-  '/org/members': typeof OrgMembersRoute
-  '/org/settings': typeof OrgSettingsRoute
-  '/org/subscriptions': typeof OrgSubscriptionsRoute
   '/people/$id': typeof PeopleIdRoute
   '/pillar/$pillarId': typeof PillarPillarIdRoute
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
   '/founder/': typeof FounderIndexRoute
-  '/org/': typeof OrgIndexRoute
   '/founder/settings/users/$id': typeof FounderSettingsUsersIdRoute
   '/founder/team/jobs/$jobId': typeof FounderTeamJobsJobIdRoute
   '/space/$spaceId/folder/$folderId': typeof SpaceSpaceIdFolderFolderIdRoute
@@ -343,7 +290,6 @@ export interface FileRouteTypes {
     | '/files'
     | '/founder'
     | '/inbox'
-    | '/org'
     | '/settings'
     | '/tasks'
     | '/founder/ai-agents'
@@ -357,15 +303,10 @@ export interface FileRouteTypes {
     | '/founder/settings'
     | '/founder/team'
     | '/founder/ventures'
-    | '/org/financial'
-    | '/org/members'
-    | '/org/settings'
-    | '/org/subscriptions'
     | '/people/$id'
     | '/pillar/$pillarId'
     | '/space/$spaceId'
     | '/founder/'
-    | '/org/'
     | '/founder/settings/users/$id'
     | '/founder/team/jobs/$jobId'
     | '/space/$spaceId/folder/$folderId'
@@ -392,15 +333,10 @@ export interface FileRouteTypes {
     | '/founder/settings'
     | '/founder/team'
     | '/founder/ventures'
-    | '/org/financial'
-    | '/org/members'
-    | '/org/settings'
-    | '/org/subscriptions'
     | '/people/$id'
     | '/pillar/$pillarId'
     | '/space/$spaceId'
     | '/founder'
-    | '/org'
     | '/founder/settings/users/$id'
     | '/founder/team/jobs/$jobId'
     | '/space/$spaceId/folder/$folderId'
@@ -415,7 +351,6 @@ export interface FileRouteTypes {
     | '/files'
     | '/founder'
     | '/inbox'
-    | '/org'
     | '/settings'
     | '/tasks'
     | '/founder/ai-agents'
@@ -429,15 +364,10 @@ export interface FileRouteTypes {
     | '/founder/settings'
     | '/founder/team'
     | '/founder/ventures'
-    | '/org/financial'
-    | '/org/members'
-    | '/org/settings'
-    | '/org/subscriptions'
     | '/people/$id'
     | '/pillar/$pillarId'
     | '/space/$spaceId'
     | '/founder/'
-    | '/org/'
     | '/founder/settings/users/$id'
     | '/founder/team/jobs/$jobId'
     | '/space/$spaceId/folder/$folderId'
@@ -453,7 +383,6 @@ export interface RootRouteChildren {
   FilesRoute: typeof FilesRoute
   FounderRoute: typeof FounderRouteWithChildren
   InboxRoute: typeof InboxRoute
-  OrgRoute: typeof OrgRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   TasksRoute: typeof TasksRoute
   PeopleIdRoute: typeof PeopleIdRoute
@@ -475,13 +404,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/org': {
-      id: '/org'
-      path: '/org'
-      fullPath: '/org'
-      preLoaderRoute: typeof OrgRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inbox': {
@@ -526,13 +448,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/org/': {
-      id: '/org/'
-      path: '/'
-      fullPath: '/org/'
-      preLoaderRoute: typeof OrgIndexRouteImport
-      parentRoute: typeof OrgRoute
-    }
     '/founder/': {
       id: '/founder/'
       path: '/'
@@ -560,34 +475,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/people/$id'
       preLoaderRoute: typeof PeopleIdRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/org/subscriptions': {
-      id: '/org/subscriptions'
-      path: '/subscriptions'
-      fullPath: '/org/subscriptions'
-      preLoaderRoute: typeof OrgSubscriptionsRouteImport
-      parentRoute: typeof OrgRoute
-    }
-    '/org/settings': {
-      id: '/org/settings'
-      path: '/settings'
-      fullPath: '/org/settings'
-      preLoaderRoute: typeof OrgSettingsRouteImport
-      parentRoute: typeof OrgRoute
-    }
-    '/org/members': {
-      id: '/org/members'
-      path: '/members'
-      fullPath: '/org/members'
-      preLoaderRoute: typeof OrgMembersRouteImport
-      parentRoute: typeof OrgRoute
-    }
-    '/org/financial': {
-      id: '/org/financial'
-      path: '/financial'
-      fullPath: '/org/financial'
-      preLoaderRoute: typeof OrgFinancialRouteImport
-      parentRoute: typeof OrgRoute
     }
     '/founder/ventures': {
       id: '/founder/ventures'
@@ -768,24 +655,6 @@ const FounderRouteChildren: FounderRouteChildren = {
 const FounderRouteWithChildren =
   FounderRoute._addFileChildren(FounderRouteChildren)
 
-interface OrgRouteChildren {
-  OrgFinancialRoute: typeof OrgFinancialRoute
-  OrgMembersRoute: typeof OrgMembersRoute
-  OrgSettingsRoute: typeof OrgSettingsRoute
-  OrgSubscriptionsRoute: typeof OrgSubscriptionsRoute
-  OrgIndexRoute: typeof OrgIndexRoute
-}
-
-const OrgRouteChildren: OrgRouteChildren = {
-  OrgFinancialRoute: OrgFinancialRoute,
-  OrgMembersRoute: OrgMembersRoute,
-  OrgSettingsRoute: OrgSettingsRoute,
-  OrgSubscriptionsRoute: OrgSubscriptionsRoute,
-  OrgIndexRoute: OrgIndexRoute,
-}
-
-const OrgRouteWithChildren = OrgRoute._addFileChildren(OrgRouteChildren)
-
 interface SpaceSpaceIdListListIdTaskTaskIdRouteChildren {
   SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute: typeof SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute
 }
@@ -837,7 +706,6 @@ const rootRouteChildren: RootRouteChildren = {
   FilesRoute: FilesRoute,
   FounderRoute: FounderRouteWithChildren,
   InboxRoute: InboxRoute,
-  OrgRoute: OrgRouteWithChildren,
   SettingsRoute: SettingsRoute,
   TasksRoute: TasksRoute,
   PeopleIdRoute: PeopleIdRoute,
@@ -847,13 +715,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
