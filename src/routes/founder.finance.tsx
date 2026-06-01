@@ -269,17 +269,28 @@ const Finance = () => {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-foreground tracking-tight">Finance Engine</h1>
+          <h1 className="text-xl font-bold text-foreground tracking-tight">Finance</h1>
           <p className="text-[11px] text-muted-foreground/60 mt-1">Synced from: Wasla Ventures Master Google Sheet · Last synced: {todayStr}</p>
         </div>
-        <Select value={ventureFilter} onValueChange={setVentureFilter}>
-          <SelectTrigger className="w-[200px] h-8 text-xs"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {allVentures.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
-          </SelectContent>
-        </Select>
+        {page === "engine" && (
+          <Select value={ventureFilter} onValueChange={setVentureFilter}>
+            <SelectTrigger className="w-[200px] h-8 text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {allVentures.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
+      <div className="flex gap-0 border-b border-border">
+        {[{ id: "engine", l: "Engine" }, { id: "subscriptions", l: "Subscriptions" }].map(p => (
+          <button key={p.id} onClick={() => setPage(p.id as any)} className={`px-4 py-2 text-[12px] font-semibold transition-colors border-b-2 ${page === p.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+            {p.l}
+          </button>
+        ))}
+      </div>
+
+      {page === "engine" && (
       <div className="flex gap-0 border-b border-border">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 ${tab === t.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
@@ -287,6 +298,10 @@ const Finance = () => {
           </button>
         ))}
       </div>
+      )}
+
+      {page === "engine" && (<>
+
 
       {/* ─── OVERVIEW ─────────────────────────────────────────────────────── */}
       {tab === "overview" && (
