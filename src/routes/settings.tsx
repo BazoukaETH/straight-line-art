@@ -41,6 +41,7 @@ function SettingsPage() {
       }
     >
       <div className="px-6 py-5 max-w-3xl">
+        {active === "company" && <Company />}
         {active === "workspace" && <Workspace />}
         {active === "members" && <Members />}
         {active === "pillars" && <Pillars />}
