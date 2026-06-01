@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AppShell, SidebarHeader, SidebarTreeItem } from "@/components/wasla/AppShell";
+import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { useApp } from "@/lib/app-context";
 import { DailyBrief } from "@/components/wasla/DailyBrief";
