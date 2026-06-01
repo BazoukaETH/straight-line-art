@@ -75,7 +75,7 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
         {/* Top header strip with workspace switcher + top bar — slim, single-line */}
         <div className="flex h-11 shrink-0 items-stretch border-b border-border bg-card/60 backdrop-blur">
           {/* Switcher cell */}
-          <div className="flex w-[220px] shrink-0 items-center border-r border-border/60 pl-2.5 pr-1.5">
+          <div className="flex h-full w-[208px] shrink-0 items-center border-r border-border/60 pl-2.5 pr-1.5">
             <WorkspaceSwitcher />
           </div>
           {/* Top bar */}
