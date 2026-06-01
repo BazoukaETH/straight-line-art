@@ -5,15 +5,17 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar } from "@/components/wasla/Avatar";
-import { Building2, Users, Layers, Plug, BellRing, CreditCard, Check } from "lucide-react";
+import { Building2, Building, Users, Layers, Plug, BellRing, CreditCard, Check } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/settings")({ component: SettingsPage });
 
 const sections = [
+  { id: "company", label: "Company", icon: Building },
   { id: "workspace", label: "Workspace", icon: Building2 },
   { id: "members", label: "Members & Roles", icon: Users },
   { id: "pillars", label: "Pillars", icon: Layers },
@@ -39,6 +41,7 @@ function SettingsPage() {
       }
     >
       <div className="px-6 py-5 max-w-3xl">
+        {active === "company" && <Company />}
         {active === "workspace" && <Workspace />}
         {active === "members" && <Members />}
         {active === "pillars" && <Pillars />}
@@ -50,15 +53,29 @@ function SettingsPage() {
   );
 }
 
-function Workspace() {
+function Company() {
+  const [weeklyDigest, setWeeklyDigest] = useState(true);
   return (
     <Card className="border-border p-6 space-y-5">
       <div>
-        <h2 className="text-lg font-semibold">Workspace</h2>
-        <p className="text-sm text-muted-foreground">Settings for the Wasla workspace.</p>
+        <h2 className="text-lg font-semibold">Company</h2>
+        <p className="text-sm text-muted-foreground">Organization-level settings.</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Workspace name" defaultValue="Wasla Solutions" />
+        <Field label="Organization name" defaultValue="Wasla Solutions" />
+        <div>
+          <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">Billing currency</Label>
+          <Select defaultValue="egp">
+            <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="egp">EGP — Egyptian Pound</SelectItem>
+              <SelectItem value="usd">USD — US Dollar</SelectItem>
+              <SelectItem value="eur">EUR — Euro</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Time zone" defaultValue="Africa/Cairo (UTC+2)" />
       </div>
       <div>
@@ -69,6 +86,26 @@ function Workspace() {
           ))}
         </div>
       </div>
+      <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
+        <div>
+          <div className="text-sm font-medium">Email me weekly digest</div>
+          <div className="text-xs text-muted-foreground">Get a summary of last week every Monday.</div>
+        </div>
+        <Switch checked={weeklyDigest} onCheckedChange={setWeeklyDigest} id="weekly-digest-settings" />
+      </div>
+      <Button onClick={() => toast.success("Company settings saved")}>Save changes</Button>
+    </Card>
+  );
+}
+
+function Workspace() {
+  return (
+    <Card className="border-border p-6 space-y-5">
+      <div>
+        <h2 className="text-lg font-semibold">Workspace</h2>
+        <p className="text-sm text-muted-foreground">Settings for the Wasla workspace.</p>
+      </div>
+      <Field label="Workspace name" defaultValue="Wasla Solutions" />
       <div>
         <Label className="mb-1.5 block text-xs font-medium text-muted-foreground">Logo</Label>
         <div className="flex items-center gap-3">
