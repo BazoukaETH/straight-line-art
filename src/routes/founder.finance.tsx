@@ -309,6 +309,8 @@ const Finance = () => {
       </div>
       )}
 
+      {page === "overview" && <OverviewPanel subsCancelled={subscriptions.filter(s => s.status === "Cancelled").length} subsTotal={subscriptions.length} subsProjectedSavings={subsProjectedSavings} />}
+
       {page === "engine" && (<>
 
 
