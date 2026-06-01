@@ -44,14 +44,6 @@ const workspaceNav: NavItem[] = [
 ];
 
 
-const comingSoonNav: { icon: typeof BookOpen; label: string; tooltip: string }[] = [
-  { icon: BookOpen,      label: "Docs",       tooltip: "Coming in Phase 3. Replaces Notion." },
-  { icon: Video,         label: "Recordings", tooltip: "Coming in Phase 5. Replaces Loom." },
-  { icon: CalendarPlus,  label: "Scheduling", tooltip: "Coming in Phase 6. Replaces Calendly." },
-  { icon: ClipboardList, label: "Forms",      tooltip: "Coming in Phase 7. Replaces Typeform." },
-  { icon: Users,         label: "CRM",        tooltip: "Coming in Phase 8. Replaces HubSpot / Pipedrive." },
-  { icon: Briefcase,     label: "HR",         tooltip: "Coming in Phase 9. Replaces BambooHR." },
-];
 
 const orgNav: NavItem[] = [
   { to: "/org",               icon: Globe,         label: "Org Dashboard" },
