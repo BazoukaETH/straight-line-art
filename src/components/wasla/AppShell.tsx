@@ -43,22 +43,12 @@ const workspaceNav: NavItem[] = [
 ];
 
 
-
-const orgNav: NavItem[] = [
-  { to: "/org",               icon: Globe,         label: "Org Dashboard" },
-  { to: "/org/financial",     icon: TrendingUp,    label: "Financial & Portfolio" },
-  { to: "/org/members",       icon: Users,         label: "Org Members" },
-  { to: "/org/subscriptions", icon: CreditCard,    label: "Subscriptions" },
-  { to: "/org/settings",      icon: SettingsIcon,  label: "Org Settings" },
-];
-
 export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNode; sidebar?: ReactNode; breadcrumb?: ReactNode }) {
   const { role, setRole, currentUserId, dark, toggleDark, setCommandOpen, openQuickCreate } = useApp();
   const loc = useLocation();
   const nav = useNavigate();
   const me = memberById(currentUserId);
-  const inOrg = loc.pathname.startsWith("/org");
-  const items = inOrg ? orgNav : workspaceNav.filter((i) => !i.founderOnly || role === "founder");
+  const items = workspaceNav.filter((i) => !i.founderOnly || role === "founder");
   const unreadCount = inboxItems.filter((i) => i.unread).length;
   const showDevTools = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("devTools");
   const [collapsed, setCollapsed] = useState<boolean>(() => {
@@ -92,11 +82,6 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
           <header className="flex flex-1 items-center justify-between gap-2 px-3 min-w-0">
             {/* Left: breadcrumb (truncates instead of wrapping) */}
             <div className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground whitespace-nowrap overflow-hidden">
-              {inOrg && (
-                <Button size="sm" variant="ghost" className="h-7 gap-1 -ml-1.5 px-1.5 text-xs shrink-0" onClick={() => nav({ to: "/" })}>
-                  <ArrowLeft className="size-3.5" /> Back
-                </Button>
-              )}
               <div className="truncate font-medium text-foreground">
                 {breadcrumb ?? <span>{titleFor(loc.pathname)}</span>}
               </div>
