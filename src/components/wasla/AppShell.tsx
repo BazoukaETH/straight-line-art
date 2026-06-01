@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   Home, CheckSquare, Inbox, MessageSquare, BarChart3, Files,
   Search, Plus, Bell, Command, Sun, Moon, ChevronRight,
-  BookOpen, Video, CalendarPlus, ClipboardList, Users, Briefcase,
+  Users,
   Globe, CreditCard, Settings as SettingsIcon, ArrowLeft, TrendingUp, Contact2,
 } from "lucide-react";
 
