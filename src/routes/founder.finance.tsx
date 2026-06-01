@@ -1,12 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, CartesianGrid } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Pencil, Check, X, Plus, Trash2, Info } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Pencil, Check, X, Plus, Trash2, Info, MoreVertical, RefreshCw, ArrowUpRight, FileSpreadsheet, EyeOff, ArrowRight } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Spark, StackedRevenue } from "@/components/wasla/Charts";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
@@ -20,12 +23,18 @@ import {
 } from "@/lib/finance-calculations";
 import { useSalaries } from "@/contexts/SalaryContext";
 import { useApp } from "@/lib/app-context";
-import { egp } from "@/lib/mock-data";
+import { egp, financialMetrics, ventures, revenueByWorkspace } from "@/lib/mock-data";
 
 const SUB_STATUS_STYLES: Record<string, string> = {
   Active:    "bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] text-accent",
   Cutover:   "bg-[color-mix(in_oklab,var(--warning)_18%,transparent)] text-[color:var(--warning)]",
   Cancelled: "bg-muted text-muted-foreground",
+};
+
+const VENTURE_STATUS_STYLES: Record<string, string> = {
+  Active: "bg-[color-mix(in_oklab,var(--success)_14%,transparent)] text-[color:var(--success)]",
+  Pilot:  "bg-[color-mix(in_oklab,var(--warning)_18%,transparent)] text-[color:var(--warning)]",
+  Paused: "bg-muted text-muted-foreground",
 };
 
 const PC = ["hsl(220,95%,47%)", "hsl(168,100%,42%)", "hsl(36,90%,53%)", "hsl(250,60%,60%)", "hsl(350,75%,50%)", "hsl(160,80%,40%)"];
