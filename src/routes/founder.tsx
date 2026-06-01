@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, useNavigate, useLocation, Link } from "@tansta
 import { AppShell, useSidebarCollapse } from "@/components/wasla/AppShell";
 import { useApp } from "@/lib/app-context";
 import { organization } from "@/lib/mock-data";
-import { LayoutDashboard, Rocket, Briefcase, Contact2, DollarSign, Users, Globe, BarChart3, Target, Bot, FileText, Settings as SettingsIcon, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { LayoutDashboard, Rocket, Briefcase, Contact2, DollarSign, Users, Globe, BarChart3, Target, Bot, Settings as SettingsIcon, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
   { to: "/founder/market-intel", label: "Market Intel",   icon: BarChart3 },
   { to: "/founder/initiatives",  label: "Initiatives",    icon: Target },
   { to: "/founder/ai-agents",    label: "AI Agents",      icon: Bot },
-  { to: "/founder/documents",    label: "Documents",      icon: FileText },
+  
   { to: "/founder/settings",     label: "Settings",       icon: SettingsIcon },
 ];
 
