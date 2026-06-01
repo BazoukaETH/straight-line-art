@@ -80,7 +80,7 @@ const allVentures = ["All Ventures", ...Array.from(new Set([...MONEY_IN_SEED.map
 const BASSEL_COMMITMENT = 1000000;
 
 const Finance = () => {
-  const [page, setPage] = useState<"engine" | "subscriptions">("engine");
+  const [page, setPage] = useState<"overview" | "engine" | "subscriptions">("overview");
   const [tab, setTab] = useState("overview");
   const [ventureFilter, setVentureFilter] = useState("All Ventures");
   const { subscriptions, setSubStatus } = useApp();
