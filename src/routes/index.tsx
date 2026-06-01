@@ -12,6 +12,7 @@ import { TaskCard } from "@/components/wasla/TaskCard";
 import { Avatar } from "@/components/wasla/Avatar";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Pencil, Sunrise, Sunset, Calendar, AlertCircle, ArrowUpRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Home });
 
