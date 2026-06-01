@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   Home, CheckSquare, Inbox, MessageSquare, BarChart3, Files,
   Search, Plus, Bell, Command, Sun, Moon, ChevronRight,
-  BookOpen, Video, CalendarPlus, ClipboardList, Users, Briefcase,
+  Users,
   Globe, CreditCard, Settings as SettingsIcon, ArrowLeft, TrendingUp, Contact2,
 } from "lucide-react";
 
@@ -19,7 +19,7 @@ import { CommandPalette } from "./CommandPalette";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { QuickCreateModal } from "./QuickCreateModal";
 import { BulkActionBar } from "./BulkActionBar";
-import { toast } from "sonner";
+
 import { FounderQuickAccess } from "./FounderQuickAccess";
 import { setNav } from "@/lib/nav-bridge";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
@@ -44,14 +44,6 @@ const workspaceNav: NavItem[] = [
 ];
 
 
-const comingSoonNav: { icon: typeof BookOpen; label: string; tooltip: string }[] = [
-  { icon: BookOpen,      label: "Docs",       tooltip: "Coming in Phase 3. Replaces Notion." },
-  { icon: Video,         label: "Recordings", tooltip: "Coming in Phase 5. Replaces Loom." },
-  { icon: CalendarPlus,  label: "Scheduling", tooltip: "Coming in Phase 6. Replaces Calendly." },
-  { icon: ClipboardList, label: "Forms",      tooltip: "Coming in Phase 7. Replaces Typeform." },
-  { icon: Users,         label: "CRM",        tooltip: "Coming in Phase 8. Replaces HubSpot / Pipedrive." },
-  { icon: Briefcase,     label: "HR",         tooltip: "Coming in Phase 9. Replaces BambooHR." },
-];
 
 const orgNav: NavItem[] = [
   { to: "/org",               icon: Globe,         label: "Org Dashboard" },
@@ -193,30 +185,6 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
                 <TooltipContent side="right">Search · ⌘K</TooltipContent>
               </Tooltip>
 
-              {!inOrg && (
-                <>
-                  <div className="my-2 h-px w-6 bg-white/15" />
-                  <div className="mb-1 text-[8px] font-semibold uppercase tracking-wider text-white/40">Soon</div>
-                  {comingSoonNav.map((item) => (
-                    <Tooltip key={item.label}>
-                      <TooltipTrigger asChild>
-                        <button
-                          aria-disabled
-                          onClick={() => toast(item.tooltip)}
-                          className="relative flex size-10 cursor-not-allowed items-center justify-center rounded-lg text-white/30 hover:bg-white/5"
-                        >
-                          <item.icon className="size-[18px]" />
-                          <span className="absolute right-0.5 top-0.5 rounded-full bg-white/15 px-1 text-[8px] font-semibold leading-tight text-white/70">·</span>
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right">
-                        <div className="font-medium">{item.label}</div>
-                        <div className="text-[11px] text-muted-foreground">{item.tooltip}</div>
-                      </TooltipContent>
-                    </Tooltip>
-                  ))}
-                </>
-              )}
             </div>
             <div className="flex flex-col items-center gap-2">
               <button onClick={toggleDark} className="flex size-9 items-center justify-center rounded-lg hover:bg-white/5 hover:text-white">
