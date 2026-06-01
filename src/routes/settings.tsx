@@ -15,6 +15,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/settings")({ component: SettingsPage });
 
 const sections = [
+  { id: "company", label: "Company", icon: Building },
   { id: "workspace", label: "Workspace", icon: Building2 },
   { id: "members", label: "Members & Roles", icon: Users },
   { id: "pillars", label: "Pillars", icon: Layers },
