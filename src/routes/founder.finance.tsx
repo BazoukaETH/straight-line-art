@@ -4,8 +4,11 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pencil, Check, X, Plus, Trash2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Pencil, Check, X, Plus, Trash2, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import {
   MONEY_IN_SEED, MONEY_OUT_SEED, CASH_ACCOUNTS_SEED, EXCHANGE_RATES_SEED, PROJECTIONS_SEED,
   FY26_REVENUE_PLAN, FY26_BURN_PLAN,
@@ -16,6 +19,14 @@ import {
   calculateInvoiceAging, calculateClientConcentration, calculateActualVsPlan, calculateRecurringVsOneTime,
 } from "@/lib/finance-calculations";
 import { useSalaries } from "@/contexts/SalaryContext";
+import { useApp } from "@/lib/app-context";
+import { egp } from "@/lib/mock-data";
+
+const SUB_STATUS_STYLES: Record<string, string> = {
+  Active:    "bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] text-accent",
+  Cutover:   "bg-[color-mix(in_oklab,var(--warning)_18%,transparent)] text-[color:var(--warning)]",
+  Cancelled: "bg-muted text-muted-foreground",
+};
 
 const PC = ["hsl(220,95%,47%)", "hsl(168,100%,42%)", "hsl(36,90%,53%)", "hsl(250,60%,60%)", "hsl(350,75%,50%)", "hsl(160,80%,40%)"];
 
@@ -60,8 +71,13 @@ const allVentures = ["All Ventures", ...Array.from(new Set([...MONEY_IN_SEED.map
 const BASSEL_COMMITMENT = 1000000;
 
 const Finance = () => {
+  const [page, setPage] = useState<"engine" | "subscriptions">("engine");
   const [tab, setTab] = useState("overview");
   const [ventureFilter, setVentureFilter] = useState("All Ventures");
+  const { subscriptions, setSubStatus } = useApp();
+  const activeSubs = subscriptions.filter(s => s.status === "Active");
+  const subsMonthlySpend = activeSubs.reduce((sum, s) => sum + s.monthly, 0);
+  const subsProjectedSavings = subscriptions.reduce((sum, s) => sum + s.monthly, 0);
   const { salaries, setSalaries } = useSalaries();
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [editValue, setEditValue] = useState("");
@@ -253,17 +269,28 @@ const Finance = () => {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-foreground tracking-tight">Finance Engine</h1>
+          <h1 className="text-xl font-bold text-foreground tracking-tight">Finance</h1>
           <p className="text-[11px] text-muted-foreground/60 mt-1">Synced from: Wasla Ventures Master Google Sheet · Last synced: {todayStr}</p>
         </div>
-        <Select value={ventureFilter} onValueChange={setVentureFilter}>
-          <SelectTrigger className="w-[200px] h-8 text-xs"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {allVentures.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
-          </SelectContent>
-        </Select>
+        {page === "engine" && (
+          <Select value={ventureFilter} onValueChange={setVentureFilter}>
+            <SelectTrigger className="w-[200px] h-8 text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {allVentures.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
+      <div className="flex gap-0 border-b border-border">
+        {[{ id: "engine", l: "Engine" }, { id: "subscriptions", l: "Subscriptions" }].map(p => (
+          <button key={p.id} onClick={() => setPage(p.id as any)} className={`px-4 py-2 text-[12px] font-semibold transition-colors border-b-2 ${page === p.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+            {p.l}
+          </button>
+        ))}
+      </div>
+
+      {page === "engine" && (
       <div className="flex gap-0 border-b border-border">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 ${tab === t.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
@@ -271,6 +298,10 @@ const Finance = () => {
           </button>
         ))}
       </div>
+      )}
+
+      {page === "engine" && (<>
+
 
       {/* ─── OVERVIEW ─────────────────────────────────────────────────────── */}
       {tab === "overview" && (
@@ -387,6 +418,10 @@ const Finance = () => {
                     {e.name} {e.pct}%
                   </div>
                 ))}
+              </div>
+              <div className="mt-3 pt-3 border-t border-border/40 flex items-center justify-between text-[11px]">
+                <span className="text-muted-foreground">SaaS subscriptions <span className="text-muted-foreground/60">({activeSubs.length} active)</span></span>
+                <button onClick={() => setPage("subscriptions")} className="font-semibold text-foreground hover:text-secondary">{fmtF(subsMonthlySpend)}<span className="text-muted-foreground/60 font-normal"> / mo</span></button>
               </div>
             </div>
           </div>
@@ -835,6 +870,67 @@ const Finance = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      )}
+      </>)}
+
+      {page === "subscriptions" && (
+        <div className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Card className="border-border p-5">
+              <div className="text-xs text-muted-foreground">Total active monthly spend</div>
+              <div className="mt-1.5 text-[28px] font-semibold tracking-tight">{egp(subsMonthlySpend)}</div>
+              <div className="text-[11px] text-muted-foreground">{activeSubs.length} active subscriptions</div>
+            </Card>
+            <Card className="border-border p-5">
+              <div className="text-xs text-muted-foreground">Projected savings at full migration</div>
+              <div className="mt-1.5 text-[28px] font-semibold tracking-tight text-[color:var(--success)]">{egp(subsProjectedSavings)}</div>
+              <div className="text-[11px] text-muted-foreground">If every replaced tool is cancelled</div>
+            </Card>
+          </div>
+
+          <Card className="border-border p-0 overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <th className="px-5 py-2.5">Subscription</th>
+                  <th className="px-2 py-2.5">Replaced by</th>
+                  <th className="px-2 py-2.5">Status</th>
+                  <th className="px-2 py-2.5">Cutover date</th>
+                  <th className="px-2 py-2.5 text-right">Monthly</th>
+                  <th className="px-5 py-2.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {subscriptions.map((s) => {
+                  const cancelled = s.status === "Cancelled";
+                  return (
+                    <tr key={s.id} className={cn("border-b border-border/60 last:border-0 transition", cancelled ? "bg-muted/30 text-muted-foreground" : "hover:bg-muted/40")}>
+                      <td className="px-5 py-3 font-medium">{s.name}</td>
+                      <td className="px-2 text-xs">{s.replacedBy}</td>
+                      <td className="px-2"><span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${SUB_STATUS_STYLES[s.status]}`}>{s.status}</span></td>
+                      <td className="px-2 text-xs text-muted-foreground">{s.cutoverDate ?? "—"}</td>
+                      <td className="px-2 text-right tabular-nums">{egp(s.monthly)}</td>
+                      <td className="px-5 py-2 text-right">
+                        <div className="inline-flex gap-1">
+                          <Button size="sm" variant="ghost" disabled={s.status !== "Active"} onClick={() => { setSubStatus(s.id, "Cutover"); toast.success(`${s.name} marked Cutover`); }}>Mark cutover</Button>
+                          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" disabled={s.status === "Cancelled"} onClick={() => { setSubStatus(s.id, "Cancelled"); toast.success(`${s.name} cancelled`); }}>Cancel</Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </Card>
+
+          <div className="flex items-start gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+            <Info className="mt-0.5 size-4 shrink-0 text-[color:var(--warning)]" />
+            <span>
+              <b className="text-foreground">Cancellation discipline:</b> do not cancel any subscription until the
+              replacing Wasla OS module has been live for at least 30 days with the full team adopting it.
+            </span>
           </div>
         </div>
       )}
