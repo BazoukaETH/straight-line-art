@@ -4,6 +4,7 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import {
   Plus, Pencil, Trash2, X, Briefcase, CheckCircle, Inbox, Mail, Star, Award,
   Share2, MoreHorizontal, Search, ExternalLink, ChevronRight, LayoutGrid, List, Users, UserPlus, Sparkles,
+  Phone, MapPin, Calendar, Cake,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
