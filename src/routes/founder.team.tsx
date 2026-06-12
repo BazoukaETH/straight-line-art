@@ -449,39 +449,24 @@ const Team = () => {
         <>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {team.map((p, i) => (
-              <div key={i} onClick={() => setSelected(selected === i ? null : i)}
-                className="bg-card rounded-xl p-4 cursor-pointer transition-all duration-200 group relative"
-                style={{ border: `1px solid ${selected === i ? p.color : 'hsl(220,25%,16%)'}` }}>
+              <div key={i} onClick={() => setSelected(i)}
+                className="bg-card rounded-xl p-4 cursor-pointer transition-all duration-200 group relative hover:-translate-y-0.5"
+                style={{ border: `1px solid hsl(220,25%,16%)` }}>
                 <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button onClick={e => { e.stopPropagation(); openEditMember(i); }} className="w-6 h-6 rounded-md flex items-center justify-center bg-muted hover:bg-accent transition-colors"><Pencil className="w-3 h-3 text-muted-foreground" /></button>
                   <button onClick={e => { e.stopPropagation(); removeMember(i); }} className="w-6 h-6 rounded-md flex items-center justify-center bg-muted hover:bg-destructive/20 transition-colors"><X className="w-3 h-3 text-muted-foreground" /></button>
                 </div>
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0" style={{ background: `${p.color}22`, border: `2px solid ${p.color}66`, color: p.color }}>{p.initials}</div>
-                  <div>
-                    <div className="text-xs font-bold text-foreground">{p.name}</div>
-                    <div className="text-[10px] font-semibold" style={{ color: p.color }}>{p.role}</div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-foreground truncate">{p.name}</div>
+                    <div className="text-[10px] font-semibold truncate" style={{ color: p.color }}>{p.role}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-[9px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{p.dept}</span>
-                  {p.equity !== "-" && <span className="text-[9px] px-2 py-0.5 rounded" style={{ background: "hsl(220,95%,47%,0.12)", color: "hsl(220,95%,47%)" }}>Equity: {p.equity}</span>}
+                  {p.equity !== "-" && p.equity !== "—" && <span className="text-[9px] px-2 py-0.5 rounded" style={{ background: "hsl(220,95%,47%,0.12)", color: "hsl(220,95%,47%)" }}>Equity: {p.equity}</span>}
                 </div>
-                {selected === i && (
-                  <div className="mt-3 pt-3 border-t border-border space-y-2.5">
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">{p.bio}</p>
-                    <div>
-                      <div className="text-[9px] text-muted-foreground/50 uppercase tracking-wide font-semibold mb-1">Skills</div>
-                      <div className="flex flex-wrap gap-1">
-                        {p.skills.map((s, si) => <span key={si} className="text-[9px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${p.color}18`, color: p.color }}>{s}</span>)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[9px] text-muted-foreground/50 uppercase tracking-wide font-semibold mb-1">Current Focus</div>
-                      <p className="text-[10px] text-muted-foreground leading-relaxed">{p.focus}</p>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>
