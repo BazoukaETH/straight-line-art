@@ -23,21 +23,79 @@ import {
   type EmploymentType, type ApplicantSource,
 } from "@/data/jobs";
 
+type MemberEmploymentType = "Full-time" | "Part-time" | "Equity Partner" | "Contractor";
+
 interface TeamMember {
-  name: string; role: string; dept: string; initials: string; color: string; equity: string; skills: string[]; bio: string; focus: string;
+  name: string; role: string; dept: string; initials: string; color: string;
+  equity: string; skills: string[]; bio: string; focus: string;
+  age: number; birthDate: string; location: string; joinedDate: string;
+  employmentType: MemberEmploymentType;
+  email: string; phone: string;
+  knowHow: string[];
+  monthlySalary: number; salarySource: "manual";
+  languages: string[]; funFact: string;
 }
 interface Advisor { name: string; role: string; note: string; }
 
 const TEAM_SEED: TeamMember[] = [
-  { name: "Bassel El Aroussy", role: "Principal", dept: "Leadership", initials: "BA", color: "hsl(220,95%,47%)", equity: "55% (WV)", skills: ["Strategy", "Business Dev", "Capital Markets", "Partnerships"], bio: "Managing Principal & founder.", focus: "Investor relations, business development, strategy" },
-  { name: "Usef El Shazly", role: "Digital Lead", dept: "Product & Design", initials: "UE", color: "hsl(168,100%,42%)", equity: "10% (WV) / 35% (Edu)", skills: ["UI/UX", "Digital Strategy", "Design Systems", "Product"], bio: "Managing Partner & Head of Design.", focus: "Product design, Wasla Education lead" },
-  { name: "Hussein Shahbender", role: "Marketing Lead", dept: "Growth", initials: "HS", color: "hsl(250,60%,60%)", equity: "15% (WV)", skills: ["Branding", "Performance Marketing", "Content", "Growth"], bio: "Co-founder & Marketing Lead.", focus: "Brand, marketing strategy, content" },
-  { name: "Moaz El Sawy", role: "Development Lead", dept: "Engineering", initials: "ME", color: "hsl(160,80%,40%)", equity: "2% (WV) / 2.5% (Sol+Edu)", skills: ["iOS", "Android", "Full-Stack", "React Native"], bio: "Senior Software Developer.", focus: "Mobile development, full-stack delivery" },
-  { name: "Ali El Amir", role: "Creative Lead", dept: "Design", initials: "AE", color: "hsl(36,90%,53%)", equity: "2% (WV)", skills: ["Graphic Design", "Creative Direction", "Branding", "Motion"], bio: "Creative Lead & Creative Director.", focus: "Visual identity, creative direction" },
-  { name: "Mohab Metwali", role: "Engineering & AI Lead", dept: "Engineering", initials: "MM", color: "hsl(330,80%,60%)", equity: "1% (direct)", skills: ["AI/ML", "Blockchain", "Data Science", "C++"], bio: "Senior engineer with AI expertise.", focus: "AI integrations, advanced engineering" },
-  { name: "Mohamed Hagry", role: "Product Designer", dept: "Design", initials: "MH", color: "hsl(174,72%,46%)", equity: "-", skills: ["Product Design", "Figma", "User Research"], bio: "Digital product designer.", focus: "Product UI design, design system" },
-  { name: "Saif Nosair", role: "Visual & Motion Designer", dept: "Design", initials: "SN", color: "hsl(24,94%,53%)", equity: "-", skills: ["Motion Design", "After Effects", "Brand Identity"], bio: "Visual and motion designer.", focus: "Motion graphics, brand videos" },
+  { name: "Bassel El Aroussy", role: "Principal", dept: "Leadership", initials: "BA", color: "hsl(220,95%,47%)", equity: "55% (WV)", skills: ["Strategy", "Business Dev", "Capital Markets", "Partnerships"], bio: "Managing Principal & founder.", focus: "Investor relations, business development, strategy",
+    age: 32, birthDate: "1993-04-18", location: "Cairo, Egypt", joinedDate: "2023-01-15", employmentType: "Equity Partner",
+    email: "bassel@waslaventures.com", phone: "+20 100 111 2233",
+    knowHow: ["Notion", "Pitch", "Figma", "Excel", "DocuSign"],
+    monthlySalary: 0, salarySource: "manual",
+    languages: ["Arabic", "English", "French"], funFact: "Trained as a tennis coach before founding Wasla." },
+  { name: "Usef El Shazly", role: "Digital Lead", dept: "Product & Design", initials: "UE", color: "hsl(168,100%,42%)", equity: "10% (WV) / 35% (Edu)", skills: ["UI/UX", "Digital Strategy", "Design Systems", "Product"], bio: "Managing Partner & Head of Design.", focus: "Product design, Wasla Education lead",
+    age: 30, birthDate: "1995-09-02", location: "New Cairo, Egypt", joinedDate: "2023-02-01", employmentType: "Full-time",
+    email: "usef@waslaventures.com", phone: "+20 100 222 3344",
+    knowHow: ["Figma", "Framer", "Webflow", "Notion", "Linear"],
+    monthlySalary: 60000, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Collects vintage Swiss design posters." },
+  { name: "Hussein Shahbender", role: "Marketing Lead", dept: "Growth", initials: "HS", color: "hsl(250,60%,60%)", equity: "15% (WV)", skills: ["Branding", "Performance Marketing", "Content", "Growth"], bio: "Co-founder & Marketing Lead.", focus: "Brand, marketing strategy, content",
+    age: 31, birthDate: "1994-07-22", location: "Cairo, Egypt", joinedDate: "2023-01-20", employmentType: "Equity Partner",
+    email: "hussein@waslaventures.com", phone: "+20 100 333 4455",
+    knowHow: ["Meta Ads", "Google Ads", "TikTok Ads", "GA4", "HubSpot"],
+    monthlySalary: 0, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Runs a small specialty coffee pop-up on weekends." },
+  { name: "Moaz El Sawy", role: "Development Lead", dept: "Engineering", initials: "ME", color: "hsl(160,80%,40%)", equity: "2% (WV) / 2.5% (Sol+Edu)", skills: ["iOS", "Android", "Full-Stack", "React Native"], bio: "Senior Software Developer.", focus: "Mobile development, full-stack delivery",
+    age: 29, birthDate: "1996-03-11", location: "Giza, Egypt", joinedDate: "2023-05-10", employmentType: "Full-time",
+    email: "moaz@waslaventures.com", phone: "+20 101 444 5566",
+    knowHow: ["React Native", "Swift", "Kotlin", "Supabase", "Node.js"],
+    monthlySalary: 30000, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Built his first iOS app at 16." },
+  { name: "Ali El Amir", role: "Creative Lead", dept: "Design", initials: "AE", color: "hsl(36,90%,53%)", equity: "2% (WV)", skills: ["Graphic Design", "Creative Direction", "Branding", "Motion"], bio: "Creative Lead & Creative Director.", focus: "Visual identity, creative direction",
+    age: 28, birthDate: "1997-11-30", location: "Cairo, Egypt", joinedDate: "2023-08-01", employmentType: "Equity Partner",
+    email: "ali@waslaventures.com", phone: "+20 102 555 6677",
+    knowHow: ["Illustrator", "Photoshop", "After Effects", "Cinema 4D"],
+    monthlySalary: 0, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Sketches every morning before opening his laptop." },
+  { name: "Mohab Metwali", role: "Engineering & AI Lead", dept: "Engineering", initials: "MM", color: "hsl(330,80%,60%)", equity: "1% (direct)", skills: ["AI/ML", "Blockchain", "Data Science", "C++"], bio: "Senior engineer with AI expertise.", focus: "AI integrations, advanced engineering",
+    age: 27, birthDate: "1998-06-14", location: "Alexandria, Egypt", joinedDate: "2024-02-12", employmentType: "Full-time",
+    email: "mohab@waslaventures.com", phone: "+20 103 666 7788",
+    knowHow: ["PyTorch", "LangChain", "Solidity", "C++", "Postgres"],
+    monthlySalary: 45000, salarySource: "manual",
+    languages: ["Arabic", "English", "German"], funFact: "Competes in international chess tournaments." },
+  { name: "Mohamed Hagry", role: "Product Designer", dept: "Design", initials: "MH", color: "hsl(174,72%,46%)", equity: "-", skills: ["Product Design", "Figma", "User Research"], bio: "Digital product designer.", focus: "Product UI design, design system",
+    age: 26, birthDate: "1999-01-25", location: "Cairo, Egypt", joinedDate: "2024-06-03", employmentType: "Full-time",
+    email: "hagry@waslaventures.com", phone: "+20 109 777 8899",
+    knowHow: ["Figma", "Maze", "Notion", "Principle"],
+    monthlySalary: 20000, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Used to DJ at university events." },
+  { name: "Saif Nosair", role: "Visual & Motion Designer", dept: "Design", initials: "SN", color: "hsl(24,94%,53%)", equity: "-", skills: ["Motion Design", "After Effects", "Brand Identity"], bio: "Visual and motion designer.", focus: "Motion graphics, brand videos",
+    age: 25, birthDate: "2000-10-08", location: "Cairo, Egypt", joinedDate: "2025-03-17", employmentType: "Part-time",
+    email: "saif@waslaventures.com", phone: "+20 109 888 9900",
+    knowHow: ["After Effects", "Premiere", "Blender", "Figma"],
+    monthlySalary: 15000, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Skateboards across Zamalek every weekend." },
 ];
+
+const EMPLOYMENT_TYPES_MEMBER: MemberEmploymentType[] = ["Full-time", "Part-time", "Equity Partner", "Contractor"];
+const formatEGP = (n: number) => n > 0 ? `${n.toLocaleString("en-US")} EGP / mo` : "—";
+const yearsAt = (iso: string) => {
+  const d = new Date(iso); if (isNaN(d.getTime())) return "—";
+  const y = (Date.now() - d.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+  if (y < 1) { const m = Math.max(1, Math.round(y * 12)); return `${m} mo at Wasla`; }
+  return `${y.toFixed(1)} yrs at Wasla`;
+};
 
 const ADVISORS_SEED: Advisor[] = [
   { name: "Mr. Yasser Hashem", role: "Legal Advisor", note: "Top tech lawyer in Egypt. 2% equity for 3 years of legal services." },
