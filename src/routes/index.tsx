@@ -56,34 +56,110 @@ function Home() {
 
 
 
-          {/* BOD */}
-          <Card className="overflow-hidden border-border p-0">
-            <div className="flex items-center gap-2 border-b border-border/60 bg-muted/40 px-5 py-3">
-              <Sunrise className="size-4 text-[color:var(--warning)]" />
-              <h3 className="text-sm font-semibold">Beginning of Day</h3>
-              {bodSubmitted && <span className="ml-auto text-xs text-[color:var(--success)]">Submitted · 8:14 AM</span>}
-            </div>
-            <div className="space-y-3 p-5">
-              {!bodSubmitted ? (
-                <>
-                  <div>
-                    <label className="text-xs font-medium text-muted-foreground">What will you ship today?</label>
-                    <Textarea value={bodText} onChange={(e) => setBodText(e.target.value)} rows={2} className="mt-1.5 resize-none" />
-                  </div>
-                  <div>
-                    <label className="text-xs font-medium text-muted-foreground">Any blockers?</label>
-                    <Textarea rows={1} placeholder="Optional…" className="mt-1.5 resize-none" />
-                  </div>
-                  <Button onClick={() => { setBodSubmitted(true); toast.success("BOD submitted to the team"); }}>Submit BOD</Button>
-                </>
-              ) : (
-                <div className="flex items-start gap-3">
-                  <div className="flex-1 text-sm text-foreground/85">{bodText}</div>
-                  <Button variant="ghost" size="icon" onClick={() => setBodSubmitted(false)}><Pencil className="size-3.5" /></Button>
+          {/* Daily check-in: BOD until submitted, then EOD. One place for everyone. */}
+          {(() => {
+            const phase: "bod" | "eod" | "done" = !bodSubmitted ? "bod" : !eodSubmitted ? "eod" : "done";
+            const bodLate = phase === "bod" && hour >= 10;
+            const eodLate = phase === "eod" && hour >= 19;
+            const late = bodLate || eodLate;
+            const Icon = phase === "eod" ? Sunset : Sunrise;
+            const title = phase === "bod" ? "Beginning of Day" : phase === "eod" ? "End of Day" : "Daily check-in";
+
+            return (
+              <Card className="overflow-hidden border-border p-0">
+                <div className="flex items-center gap-2 border-b border-border/60 bg-muted/40 px-5 py-3">
+                  <Icon className="size-4 text-[color:var(--warning)]" />
+                  <h3 className="text-sm font-semibold">{title}</h3>
+                  {late && (
+                    <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-[color:var(--warning)]/15 px-2 py-0.5 text-[11px] font-medium text-[color:var(--warning)]" title={phase === "bod" ? "BOD is late" : "EOD is late"}>
+                      <TriangleAlert className="size-3" /> Late
+                    </span>
+                  )}
+                  {phase === "done" && (
+                    <span className="ml-auto inline-flex items-center gap-1 text-xs text-[color:var(--success)]"><CheckCircle2 className="size-3.5" /> All in for today</span>
+                  )}
                 </div>
-              )}
-            </div>
-          </Card>
+
+                {/* Missed-entries gate: must acknowledge before writing new BOD/EOD */}
+                {needsMissBrief && phase !== "done" ? (
+                  <div className="space-y-3 p-5">
+                    <div className="flex items-start gap-2 rounded-md border border-[color:var(--warning)]/40 bg-[color:var(--warning)]/10 p-3">
+                      <TriangleAlert className="mt-0.5 size-4 text-[color:var(--warning)]" />
+                      <div className="text-sm">
+                        <p className="font-medium">Before you submit, a quick note on what you missed</p>
+                        <p className="mt-0.5 text-muted-foreground">
+                          On record: {missed.map((m) => m.label).join(", ")}.
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Briefly, what happened?</label>
+                      <Textarea value={missBrief} onChange={(e) => setMissBrief(e.target.value)} rows={2} placeholder="A short reason for each miss — we'll handle it offline." className="mt-1.5 resize-none" />
+                    </div>
+                    <Button
+                      onClick={() => {
+                        if (missBrief.trim().length < 3) { toast.error("Add a short note before continuing"); return; }
+                        setMissAcknowledged(true);
+                        toast.success("Thanks — noted on the record");
+                      }}
+                    >
+                      Continue
+                    </Button>
+                  </div>
+                ) : phase === "bod" ? (
+                  <div className="space-y-3 p-5">
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">What will you ship today?</label>
+                      <Textarea value={bodText} onChange={(e) => setBodText(e.target.value)} rows={2} className="mt-1.5 resize-none" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Any blockers?</label>
+                      <Textarea rows={1} placeholder="Optional…" className="mt-1.5 resize-none" />
+                    </div>
+                    <Button onClick={() => { setBodSubmitted(true); toast.success("BOD submitted to the team"); }}>Submit BOD</Button>
+                  </div>
+                ) : phase === "eod" ? (
+                  <div className="space-y-3 p-5">
+                    <div className="rounded-md border border-border/60 bg-muted/30 p-3 text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">This morning:</span> {bodText}
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">What did you ship today?</label>
+                      <Textarea value={eodText} onChange={(e) => setEodText(e.target.value)} rows={2} placeholder="Wins, shipped work, decisions made…" className="mt-1.5 resize-none" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">What's blocked for tomorrow?</label>
+                      <Textarea value={eodBlockers} onChange={(e) => setEodBlockers(e.target.value)} rows={1} placeholder="Optional…" className="mt-1.5 resize-none" />
+                    </div>
+                    <Button onClick={() => { setEodSubmitted(true); toast.success("EOD submitted"); }}>Submit EOD</Button>
+                  </div>
+                ) : (
+                  <div className="space-y-3 p-5 text-sm">
+                    <div className="flex items-start gap-2">
+                      <Sunrise className="mt-0.5 size-4 text-muted-foreground" />
+                      <div className="flex-1"><span className="text-xs text-muted-foreground">BOD</span><div>{bodText}</div></div>
+                      <Button variant="ghost" size="icon" onClick={() => setBodSubmitted(false)}><Pencil className="size-3.5" /></Button>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Sunset className="mt-0.5 size-4 text-muted-foreground" />
+                      <div className="flex-1"><span className="text-xs text-muted-foreground">EOD</span><div>{eodText || <span className="text-muted-foreground">—</span>}</div></div>
+                      <Button variant="ghost" size="icon" onClick={() => setEodSubmitted(false)}><Pencil className="size-3.5" /></Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Tracked misses footer (always visible while there are any) */}
+                {missed.length > 0 && (
+                  <div className="flex items-center justify-between gap-3 border-t border-border/60 bg-muted/20 px-5 py-2 text-[11px] text-muted-foreground">
+                    <span><b className="text-foreground">{missed.length}</b> tracked miss{missed.length === 1 ? "" : "es"} on record{missAcknowledged ? " · noted" : ""}</span>
+                    {missAcknowledged && (
+                      <button className="text-accent hover:underline" onClick={() => { setMissed([]); setMissAcknowledged(false); setMissBrief(""); }}>Clear</button>
+                    )}
+                  </div>
+                )}
+              </Card>
+            );
+          })()}
 
           {/* Now / Next / Blocked */}
           <Card className="border-border p-5">
