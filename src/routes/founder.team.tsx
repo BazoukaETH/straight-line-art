@@ -448,28 +448,91 @@ const Team = () => {
       {/* CURRENT TEAM TAB */}
       {tab === "team" && (
         <>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {team.map((p, i) => (
-              <div key={i} onClick={() => setSelected(i)}
-                className="bg-card rounded-xl p-4 cursor-pointer transition-all duration-200 group relative hover:-translate-y-0.5"
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {team.map((p, i) => {
+              const syncedSalary = salaries.find(s => s.name === p.name)?.monthlySalary ?? p.monthlySalary;
+              return (
+              <div key={i}
+                className="bg-card rounded-xl p-4 transition-all duration-200 group relative"
                 style={{ border: `1px solid hsl(220,25%,16%)` }}>
-                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={e => { e.stopPropagation(); openEditMember(i); }} className="w-6 h-6 rounded-md flex items-center justify-center bg-muted hover:bg-accent transition-colors"><Pencil className="w-3 h-3 text-muted-foreground" /></button>
-                  <button onClick={e => { e.stopPropagation(); removeMember(i); }} className="w-6 h-6 rounded-md flex items-center justify-center bg-muted hover:bg-destructive/20 transition-colors"><X className="w-3 h-3 text-muted-foreground" /></button>
+                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <button onClick={() => openEditMember(i)} className="w-6 h-6 rounded-md flex items-center justify-center bg-muted hover:bg-accent transition-colors"><Pencil className="w-3 h-3 text-muted-foreground" /></button>
+                  <button onClick={() => removeMember(i)} className="w-6 h-6 rounded-md flex items-center justify-center bg-muted hover:bg-destructive/20 transition-colors"><X className="w-3 h-3 text-muted-foreground" /></button>
                 </div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0" style={{ background: `${p.color}22`, border: `2px solid ${p.color}66`, color: p.color }}>{p.initials}</div>
-                  <div className="min-w-0">
+
+                {/* Top row */}
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0" style={{ background: `${p.color}22`, border: `2px solid ${p.color}66`, color: p.color }}>{p.initials}</div>
+                  <div className="min-w-0 flex-1">
                     <div className="text-xs font-bold text-foreground truncate">{p.name}</div>
-                    <div className="text-[10px] font-semibold truncate" style={{ color: p.color }}>{p.role}</div>
+                    <div className="text-[10px] font-semibold mb-1.5" style={{ color: p.color }}>{p.role}</div>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[9px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{p.dept}</span>
+                      <span className="text-[9px] px-2 py-0.5 rounded font-medium" style={{ background: `${p.color}18`, color: p.color }}>{p.employmentType}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[9px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{p.dept}</span>
-                  {p.equity !== "-" && p.equity !== "—" && <span className="text-[9px] px-2 py-0.5 rounded" style={{ background: "hsl(220,95%,47%,0.12)", color: "hsl(220,95%,47%)" }}>Equity: {p.equity}</span>}
+
+                {/* Quick facts */}
+                <div className="flex items-center gap-x-3 gap-y-1 flex-wrap text-[10px] text-muted-foreground mb-3">
+                  {p.age ? <span className="inline-flex items-center gap-1"><Cake className="w-3 h-3" />{p.age}</span> : null}
+                  {p.location && <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" />{p.location}</span>}
+                  {p.joinedDate && <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" />{formatDate(p.joinedDate)} · {yearsAt(p.joinedDate)}</span>}
+                  {p.email && <span className="inline-flex items-center gap-1 break-all"><Mail className="w-3 h-3" />{p.email}</span>}
+                  {p.phone && <span className="inline-flex items-center gap-1"><Phone className="w-3 h-3" />{p.phone}</span>}
+                </div>
+
+                {/* About */}
+                <div className="mb-3">
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{p.bio}</p>
+                  {p.funFact && <p className="text-[11px] text-foreground/80 leading-relaxed italic mt-1">"{p.funFact}"</p>}
+                </div>
+
+                {/* Skills */}
+                {p.skills.length > 0 && (
+                  <div className="mb-2">
+                    <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold mb-1">Skills</div>
+                    <div className="flex flex-wrap gap-1">
+                      {p.skills.map((s, si) => <span key={si} className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${p.color}18`, color: p.color }}>{s}</span>)}
+                    </div>
+                  </div>
+                )}
+
+                {/* Know-how */}
+                {(p.knowHow || []).length > 0 && (
+                  <div className="mb-2">
+                    <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold mb-1">Know-how & Tools</div>
+                    <div className="flex flex-wrap gap-1">
+                      {p.knowHow.map((s, si) => <span key={si} className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted border border-border text-foreground">{s}</span>)}
+                    </div>
+                  </div>
+                )}
+
+                {/* Focus */}
+                {p.focus && (
+                  <div className="mb-3">
+                    <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold mb-0.5">Current Focus</div>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">{p.focus}</p>
+                  </div>
+                )}
+
+                {/* Footer: comp */}
+                <div className="mt-3 pt-3 border-t border-border/60">
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div>
+                      <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Monthly Salary</div>
+                      <div className="text-xs font-bold text-foreground">{formatEGP(syncedSalary)}</div>
+                    </div>
+                    <div className="h-8 w-px bg-border/60" />
+                    <div>
+                      <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Equity</div>
+                      <div className="text-xs font-bold" style={{ color: p.color }}>{p.equity || "—"}</div>
+                    </div>
+                  </div>
+                  <div className="text-[9px] text-muted-foreground/60 italic mt-1.5">Synced from Finance (dummy data for now)</div>
                 </div>
               </div>
-            ))}
+            );})}
           </div>
 
           <div className="bg-card border border-border rounded-xl p-4">
