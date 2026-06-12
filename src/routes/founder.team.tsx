@@ -23,21 +23,79 @@ import {
   type EmploymentType, type ApplicantSource,
 } from "@/data/jobs";
 
+type MemberEmploymentType = "Full-time" | "Part-time" | "Equity Partner" | "Contractor";
+
 interface TeamMember {
-  name: string; role: string; dept: string; initials: string; color: string; equity: string; skills: string[]; bio: string; focus: string;
+  name: string; role: string; dept: string; initials: string; color: string;
+  equity: string; skills: string[]; bio: string; focus: string;
+  age: number; birthDate: string; location: string; joinedDate: string;
+  employmentType: MemberEmploymentType;
+  email: string; phone: string;
+  knowHow: string[];
+  monthlySalary: number; salarySource: "manual";
+  languages: string[]; funFact: string;
 }
 interface Advisor { name: string; role: string; note: string; }
 
 const TEAM_SEED: TeamMember[] = [
-  { name: "Bassel El Aroussy", role: "Principal", dept: "Leadership", initials: "BA", color: "hsl(220,95%,47%)", equity: "55% (WV)", skills: ["Strategy", "Business Dev", "Capital Markets", "Partnerships"], bio: "Managing Principal & founder.", focus: "Investor relations, business development, strategy" },
-  { name: "Usef El Shazly", role: "Digital Lead", dept: "Product & Design", initials: "UE", color: "hsl(168,100%,42%)", equity: "10% (WV) / 35% (Edu)", skills: ["UI/UX", "Digital Strategy", "Design Systems", "Product"], bio: "Managing Partner & Head of Design.", focus: "Product design, Wasla Education lead" },
-  { name: "Hussein Shahbender", role: "Marketing Lead", dept: "Growth", initials: "HS", color: "hsl(250,60%,60%)", equity: "15% (WV)", skills: ["Branding", "Performance Marketing", "Content", "Growth"], bio: "Co-founder & Marketing Lead.", focus: "Brand, marketing strategy, content" },
-  { name: "Moaz El Sawy", role: "Development Lead", dept: "Engineering", initials: "ME", color: "hsl(160,80%,40%)", equity: "2% (WV) / 2.5% (Sol+Edu)", skills: ["iOS", "Android", "Full-Stack", "React Native"], bio: "Senior Software Developer.", focus: "Mobile development, full-stack delivery" },
-  { name: "Ali El Amir", role: "Creative Lead", dept: "Design", initials: "AE", color: "hsl(36,90%,53%)", equity: "2% (WV)", skills: ["Graphic Design", "Creative Direction", "Branding", "Motion"], bio: "Creative Lead & Creative Director.", focus: "Visual identity, creative direction" },
-  { name: "Mohab Metwali", role: "Engineering & AI Lead", dept: "Engineering", initials: "MM", color: "hsl(330,80%,60%)", equity: "1% (direct)", skills: ["AI/ML", "Blockchain", "Data Science", "C++"], bio: "Senior engineer with AI expertise.", focus: "AI integrations, advanced engineering" },
-  { name: "Mohamed Hagry", role: "Product Designer", dept: "Design", initials: "MH", color: "hsl(174,72%,46%)", equity: "-", skills: ["Product Design", "Figma", "User Research"], bio: "Digital product designer.", focus: "Product UI design, design system" },
-  { name: "Saif Nosair", role: "Visual & Motion Designer", dept: "Design", initials: "SN", color: "hsl(24,94%,53%)", equity: "-", skills: ["Motion Design", "After Effects", "Brand Identity"], bio: "Visual and motion designer.", focus: "Motion graphics, brand videos" },
+  { name: "Bassel El Aroussy", role: "Principal", dept: "Leadership", initials: "BA", color: "hsl(220,95%,47%)", equity: "55% (WV)", skills: ["Strategy", "Business Dev", "Capital Markets", "Partnerships"], bio: "Managing Principal & founder.", focus: "Investor relations, business development, strategy",
+    age: 32, birthDate: "1993-04-18", location: "Cairo, Egypt", joinedDate: "2023-01-15", employmentType: "Equity Partner",
+    email: "bassel@waslaventures.com", phone: "+20 100 111 2233",
+    knowHow: ["Notion", "Pitch", "Figma", "Excel", "DocuSign"],
+    monthlySalary: 0, salarySource: "manual",
+    languages: ["Arabic", "English", "French"], funFact: "Trained as a tennis coach before founding Wasla." },
+  { name: "Usef El Shazly", role: "Digital Lead", dept: "Product & Design", initials: "UE", color: "hsl(168,100%,42%)", equity: "10% (WV) / 35% (Edu)", skills: ["UI/UX", "Digital Strategy", "Design Systems", "Product"], bio: "Managing Partner & Head of Design.", focus: "Product design, Wasla Education lead",
+    age: 30, birthDate: "1995-09-02", location: "New Cairo, Egypt", joinedDate: "2023-02-01", employmentType: "Full-time",
+    email: "usef@waslaventures.com", phone: "+20 100 222 3344",
+    knowHow: ["Figma", "Framer", "Webflow", "Notion", "Linear"],
+    monthlySalary: 60000, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Collects vintage Swiss design posters." },
+  { name: "Hussein Shahbender", role: "Marketing Lead", dept: "Growth", initials: "HS", color: "hsl(250,60%,60%)", equity: "15% (WV)", skills: ["Branding", "Performance Marketing", "Content", "Growth"], bio: "Co-founder & Marketing Lead.", focus: "Brand, marketing strategy, content",
+    age: 31, birthDate: "1994-07-22", location: "Cairo, Egypt", joinedDate: "2023-01-20", employmentType: "Equity Partner",
+    email: "hussein@waslaventures.com", phone: "+20 100 333 4455",
+    knowHow: ["Meta Ads", "Google Ads", "TikTok Ads", "GA4", "HubSpot"],
+    monthlySalary: 0, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Runs a small specialty coffee pop-up on weekends." },
+  { name: "Moaz El Sawy", role: "Development Lead", dept: "Engineering", initials: "ME", color: "hsl(160,80%,40%)", equity: "2% (WV) / 2.5% (Sol+Edu)", skills: ["iOS", "Android", "Full-Stack", "React Native"], bio: "Senior Software Developer.", focus: "Mobile development, full-stack delivery",
+    age: 29, birthDate: "1996-03-11", location: "Giza, Egypt", joinedDate: "2023-05-10", employmentType: "Full-time",
+    email: "moaz@waslaventures.com", phone: "+20 101 444 5566",
+    knowHow: ["React Native", "Swift", "Kotlin", "Supabase", "Node.js"],
+    monthlySalary: 30000, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Built his first iOS app at 16." },
+  { name: "Ali El Amir", role: "Creative Lead", dept: "Design", initials: "AE", color: "hsl(36,90%,53%)", equity: "2% (WV)", skills: ["Graphic Design", "Creative Direction", "Branding", "Motion"], bio: "Creative Lead & Creative Director.", focus: "Visual identity, creative direction",
+    age: 28, birthDate: "1997-11-30", location: "Cairo, Egypt", joinedDate: "2023-08-01", employmentType: "Equity Partner",
+    email: "ali@waslaventures.com", phone: "+20 102 555 6677",
+    knowHow: ["Illustrator", "Photoshop", "After Effects", "Cinema 4D"],
+    monthlySalary: 0, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Sketches every morning before opening his laptop." },
+  { name: "Mohab Metwali", role: "Engineering & AI Lead", dept: "Engineering", initials: "MM", color: "hsl(330,80%,60%)", equity: "1% (direct)", skills: ["AI/ML", "Blockchain", "Data Science", "C++"], bio: "Senior engineer with AI expertise.", focus: "AI integrations, advanced engineering",
+    age: 27, birthDate: "1998-06-14", location: "Alexandria, Egypt", joinedDate: "2024-02-12", employmentType: "Full-time",
+    email: "mohab@waslaventures.com", phone: "+20 103 666 7788",
+    knowHow: ["PyTorch", "LangChain", "Solidity", "C++", "Postgres"],
+    monthlySalary: 45000, salarySource: "manual",
+    languages: ["Arabic", "English", "German"], funFact: "Competes in international chess tournaments." },
+  { name: "Mohamed Hagry", role: "Product Designer", dept: "Design", initials: "MH", color: "hsl(174,72%,46%)", equity: "-", skills: ["Product Design", "Figma", "User Research"], bio: "Digital product designer.", focus: "Product UI design, design system",
+    age: 26, birthDate: "1999-01-25", location: "Cairo, Egypt", joinedDate: "2024-06-03", employmentType: "Full-time",
+    email: "hagry@waslaventures.com", phone: "+20 109 777 8899",
+    knowHow: ["Figma", "Maze", "Notion", "Principle"],
+    monthlySalary: 20000, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Used to DJ at university events." },
+  { name: "Saif Nosair", role: "Visual & Motion Designer", dept: "Design", initials: "SN", color: "hsl(24,94%,53%)", equity: "-", skills: ["Motion Design", "After Effects", "Brand Identity"], bio: "Visual and motion designer.", focus: "Motion graphics, brand videos",
+    age: 25, birthDate: "2000-10-08", location: "Cairo, Egypt", joinedDate: "2025-03-17", employmentType: "Part-time",
+    email: "saif@waslaventures.com", phone: "+20 109 888 9900",
+    knowHow: ["After Effects", "Premiere", "Blender", "Figma"],
+    monthlySalary: 15000, salarySource: "manual",
+    languages: ["Arabic", "English"], funFact: "Skateboards across Zamalek every weekend." },
 ];
+
+const EMPLOYMENT_TYPES_MEMBER: MemberEmploymentType[] = ["Full-time", "Part-time", "Equity Partner", "Contractor"];
+const formatEGP = (n: number) => n > 0 ? `${n.toLocaleString("en-US")} EGP / mo` : "—";
+const yearsAt = (iso: string) => {
+  const d = new Date(iso); if (isNaN(d.getTime())) return "—";
+  const y = (Date.now() - d.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+  if (y < 1) { const m = Math.max(1, Math.round(y * 12)); return `${m} mo at Wasla`; }
+  return `${y.toFixed(1)} yrs at Wasla`;
+};
 
 const ADVISORS_SEED: Advisor[] = [
   { name: "Mr. Yasser Hashem", role: "Legal Advisor", note: "Top tech lawyer in Egypt. 2% equity for 3 years of legal services." },
@@ -111,11 +169,18 @@ const Team = () => {
   const [selected, setSelected] = useState<number | null>(null);
   const [addModal, setAddModal] = useState(false);
   const [editIdx, setEditIdx] = useState<number | null>(null);
-  const [form, setForm] = useState({ name: "", role: "", dept: "Engineering", skills: "", bio: "", focus: "", equity: "-" });
+  const [form, setForm] = useState({
+    name: "", role: "", dept: "Engineering", skills: "", bio: "", focus: "", equity: "-",
+    age: "", birthDate: "", location: "Cairo, Egypt",
+    joinedDate: new Date().toISOString().slice(0, 10),
+    employmentType: "Full-time" as MemberEmploymentType,
+    email: "", phone: "", knowHow: "", monthlySalary: "",
+    languages: "Arabic, English", funFact: "",
+  });
   const [addAdvisorModal, setAddAdvisorModal] = useState(false);
   const [editAdvisorIdx, setEditAdvisorIdx] = useState<number | null>(null);
   const [advisorForm, setAdvisorForm] = useState({ name: "", role: "", note: "" });
-  const { addSalaryEntry } = useSalaries();
+  const { salaries, setSalaries, addSalaryEntry } = useSalaries();
   const { currentUser } = useUsers();
 
   // Hiring permission
@@ -163,18 +228,56 @@ const Team = () => {
   const [candidateOpen, setCandidateOpen] = useState<string | null>(null);
 
   // Team helpers
-  function resetForm() { setForm({ name: "", role: "", dept: "Engineering", skills: "", bio: "", focus: "", equity: "-" }); }
-  function openEditMember(i: number) { const p = team[i]; setForm({ name: p.name, role: p.role, dept: p.dept, skills: p.skills.join(", "), bio: p.bio, focus: p.focus, equity: p.equity }); setEditIdx(i); setAddModal(true); }
+  const EMPTY_FORM = {
+    name: "", role: "", dept: "Engineering", skills: "", bio: "", focus: "", equity: "-",
+    age: "", birthDate: "", location: "Cairo, Egypt",
+    joinedDate: new Date().toISOString().slice(0, 10),
+    employmentType: "Full-time" as MemberEmploymentType,
+    email: "", phone: "", knowHow: "", monthlySalary: "",
+    languages: "Arabic, English", funFact: "",
+  };
+  function resetForm() { setForm(EMPTY_FORM); }
+  function openEditMember(i: number) {
+    const p = team[i];
+    setForm({
+      name: p.name, role: p.role, dept: p.dept, skills: p.skills.join(", "),
+      bio: p.bio, focus: p.focus, equity: p.equity,
+      age: p.age ? String(p.age) : "", birthDate: p.birthDate || "",
+      location: p.location || "", joinedDate: p.joinedDate || "",
+      employmentType: p.employmentType || "Full-time",
+      email: p.email || "", phone: p.phone || "",
+      knowHow: (p.knowHow || []).join(", "),
+      monthlySalary: p.monthlySalary ? String(p.monthlySalary) : "",
+      languages: (p.languages || []).join(", "),
+      funFact: p.funFact || "",
+    });
+    setEditIdx(i); setAddModal(true);
+  }
   function saveMember() {
     if (!form.name.trim()) return;
     const initials = form.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
     const skills = form.skills.split(",").map(s => s.trim()).filter(Boolean);
+    const knowHow = form.knowHow.split(",").map(s => s.trim()).filter(Boolean);
+    const languages = form.languages.split(",").map(s => s.trim()).filter(Boolean);
+    const monthlySalary = Number(form.monthlySalary) || 0;
+    const age = Number(form.age) || 0;
+    const base = {
+      name: form.name, role: form.role, dept: form.dept, initials, equity: form.equity,
+      skills, bio: form.bio, focus: form.focus,
+      age, birthDate: form.birthDate, location: form.location,
+      joinedDate: form.joinedDate, employmentType: form.employmentType,
+      email: form.email, phone: form.phone, knowHow,
+      monthlySalary, salarySource: "manual" as const,
+      languages, funFact: form.funFact,
+    };
     if (editIdx !== null) {
-      setTeam(prev => prev.map((p, i) => i === editIdx ? { ...p, name: form.name, role: form.role, dept: form.dept, initials, equity: form.equity, skills, bio: form.bio, focus: form.focus } : p));
+      setTeam(prev => prev.map((p, i) => i === editIdx ? { ...p, ...base } : p));
+      const editedName = team[editIdx].name;
+      setSalaries(prev => prev.map(s => s.name === editedName ? { ...s, name: form.name, role: form.role, dept: form.dept, monthlySalary, equity: form.equity } : s));
     } else {
       const color = DEPT_COLORS[team.length % DEPT_COLORS.length];
-      setTeam(prev => [...prev, { name: form.name, role: form.role, dept: form.dept, initials, color, equity: form.equity, skills, bio: form.bio, focus: form.focus }]);
-      addSalaryEntry({ name: form.name, role: form.role, dept: form.dept, monthlySalary: 0, equity: "-", venture: "Pending" });
+      setTeam(prev => [...prev, { ...base, color }]);
+      addSalaryEntry({ name: form.name, role: form.role, dept: form.dept, monthlySalary, equity: form.equity || "-", venture: "Pending" });
     }
     resetForm(); setEditIdx(null); setAddModal(false);
   }
@@ -346,39 +449,24 @@ const Team = () => {
         <>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {team.map((p, i) => (
-              <div key={i} onClick={() => setSelected(selected === i ? null : i)}
-                className="bg-card rounded-xl p-4 cursor-pointer transition-all duration-200 group relative"
-                style={{ border: `1px solid ${selected === i ? p.color : 'hsl(220,25%,16%)'}` }}>
+              <div key={i} onClick={() => setSelected(i)}
+                className="bg-card rounded-xl p-4 cursor-pointer transition-all duration-200 group relative hover:-translate-y-0.5"
+                style={{ border: `1px solid hsl(220,25%,16%)` }}>
                 <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button onClick={e => { e.stopPropagation(); openEditMember(i); }} className="w-6 h-6 rounded-md flex items-center justify-center bg-muted hover:bg-accent transition-colors"><Pencil className="w-3 h-3 text-muted-foreground" /></button>
                   <button onClick={e => { e.stopPropagation(); removeMember(i); }} className="w-6 h-6 rounded-md flex items-center justify-center bg-muted hover:bg-destructive/20 transition-colors"><X className="w-3 h-3 text-muted-foreground" /></button>
                 </div>
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0" style={{ background: `${p.color}22`, border: `2px solid ${p.color}66`, color: p.color }}>{p.initials}</div>
-                  <div>
-                    <div className="text-xs font-bold text-foreground">{p.name}</div>
-                    <div className="text-[10px] font-semibold" style={{ color: p.color }}>{p.role}</div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-foreground truncate">{p.name}</div>
+                    <div className="text-[10px] font-semibold truncate" style={{ color: p.color }}>{p.role}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-[9px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{p.dept}</span>
-                  {p.equity !== "-" && <span className="text-[9px] px-2 py-0.5 rounded" style={{ background: "hsl(220,95%,47%,0.12)", color: "hsl(220,95%,47%)" }}>Equity: {p.equity}</span>}
+                  {p.equity !== "-" && p.equity !== "—" && <span className="text-[9px] px-2 py-0.5 rounded" style={{ background: "hsl(220,95%,47%,0.12)", color: "hsl(220,95%,47%)" }}>Equity: {p.equity}</span>}
                 </div>
-                {selected === i && (
-                  <div className="mt-3 pt-3 border-t border-border space-y-2.5">
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">{p.bio}</p>
-                    <div>
-                      <div className="text-[9px] text-muted-foreground/50 uppercase tracking-wide font-semibold mb-1">Skills</div>
-                      <div className="flex flex-wrap gap-1">
-                        {p.skills.map((s, si) => <span key={si} className="text-[9px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${p.color}18`, color: p.color }}>{s}</span>)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[9px] text-muted-foreground/50 uppercase tracking-wide font-semibold mb-1">Current Focus</div>
-                      <p className="text-[10px] text-muted-foreground leading-relaxed">{p.focus}</p>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -797,25 +885,141 @@ const Team = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Member Profile Dialog */}
+      <Dialog open={selected !== null} onOpenChange={v => { if (!v) setSelected(null); }}>
+        <DialogContent className="sm:max-w-[640px] bg-card border-border max-h-[88vh] overflow-y-auto">
+          {selected !== null && (() => {
+            const p = team[selected];
+            const syncedSalary = salaries.find(s => s.name === p.name)?.monthlySalary ?? p.monthlySalary;
+            return (
+              <>
+                <DialogHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center text-base font-bold shrink-0" style={{ background: `${p.color}22`, border: `2px solid ${p.color}66`, color: p.color }}>{p.initials}</div>
+                    <div className="min-w-0 flex-1">
+                      <DialogTitle className="text-sm">{p.name}</DialogTitle>
+                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                        <span className="text-[11px] font-semibold" style={{ color: p.color }}>{p.role}</span>
+                        <span className="text-[9px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{p.dept}</span>
+                        <span className="text-[9px] px-2 py-0.5 rounded font-medium" style={{ background: `${p.color}18`, color: p.color }}>{p.employmentType}</span>
+                      </div>
+                    </div>
+                    <Button size="sm" variant="outline" className="h-7 text-[10px] gap-1" onClick={() => { const i = selected; setSelected(null); openEditMember(i); }}><Pencil className="w-3 h-3" /> Edit</Button>
+                  </div>
+                </DialogHeader>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                  {[
+                    ["Age", p.age ? `${p.age}` : "—"],
+                    ["Location", p.location || "—"],
+                    ["Joined", `${formatDate(p.joinedDate)} · ${yearsAt(p.joinedDate)}`],
+                    ["Email", p.email || "—"],
+                    ["Phone", p.phone || "—"],
+                    ["Languages", (p.languages || []).join(", ") || "—"],
+                  ].map(([k, v]) => (
+                    <div key={k} className="bg-muted/40 border border-border rounded-lg p-2">
+                      <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold mb-0.5">{k}</div>
+                      <div className="text-[11px] text-foreground break-words">{v}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">About</div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{p.bio}</p>
+                  {p.funFact && <p className="text-[11px] text-foreground/80 leading-relaxed italic">“{p.funFact}”</p>}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Skills</div>
+                  <div className="flex flex-wrap gap-1">
+                    {p.skills.map((s, si) => <span key={si} className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${p.color}18`, color: p.color }}>{s}</span>)}
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Know-how & Tools</div>
+                  <div className="flex flex-wrap gap-1">
+                    {(p.knowHow || []).length === 0
+                      ? <span className="text-[10px] text-muted-foreground">—</span>
+                      : p.knowHow.map((s, si) => <span key={si} className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted border border-border text-foreground">{s}</span>)}
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Current Focus</div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{p.focus}</p>
+                </div>
+
+                <div className="bg-muted/40 border border-border rounded-lg p-3 space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Compensation</div>
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div>
+                      <div className="text-[10px] text-muted-foreground">Monthly Salary</div>
+                      <div className="text-sm font-bold text-foreground">{formatEGP(syncedSalary)}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-muted-foreground">Equity</div>
+                      <div className="text-sm font-bold" style={{ color: p.color }}>{p.equity || "—"}</div>
+                    </div>
+                  </div>
+                  <div className="text-[9px] text-muted-foreground/60 italic">Synced from Finance (dummy data for now)</div>
+                </div>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
+
       {/* Add/Edit Member Dialog */}
       <Dialog open={addModal} onOpenChange={v => { if (!v) { setEditIdx(null); resetForm(); } setAddModal(v); }}>
-        <DialogContent className="sm:max-w-[480px] bg-card border-border">
+        <DialogContent className="sm:max-w-[560px] bg-card border-border max-h-[88vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editIdx !== null ? "Edit Team Member" : "Add Team Member"}</DialogTitle></DialogHeader>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Full Name *</label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="h-8 text-xs" /></div>
-            <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Role</label><Input value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="h-8 text-xs" /></div>
-            <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Department</label>
-              <Select value={form.dept} onValueChange={v => setForm({ ...form, dept: v })}><SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger><SelectContent>{DEPTS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent></Select>
+
+          <div className="space-y-3">
+            <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Basics</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Full Name *</label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Role</label><Input value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Department</label>
+                <Select value={form.dept} onValueChange={v => setForm({ ...form, dept: v })}><SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger><SelectContent>{DEPTS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent></Select>
+              </div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Employment Type</label>
+                <Select value={form.employmentType} onValueChange={v => setForm({ ...form, employmentType: v as MemberEmploymentType })}><SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger><SelectContent>{EMPLOYMENT_TYPES_MEMBER.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent></Select>
+              </div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Age</label><Input type="number" value={form.age} onChange={e => setForm({ ...form, age: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Birth Date</label><Input type="date" value={form.birthDate} onChange={e => setForm({ ...form, birthDate: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Joined Date</label><Input type="date" value={form.joinedDate} onChange={e => setForm({ ...form, joinedDate: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Location</label><Input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} className="h-8 text-xs" placeholder="City, Country" /></div>
             </div>
-            <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Equity</label><Input value={form.equity} onChange={e => setForm({ ...form, equity: e.target.value })} className="h-8 text-xs" /></div>
+
+            <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold pt-1">Contact</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Email</label><Input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Phone</label><Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1 col-span-2"><label className="text-[10px] text-muted-foreground font-medium">Languages (comma-separated)</label><Input value={form.languages} onChange={e => setForm({ ...form, languages: e.target.value })} className="h-8 text-xs" /></div>
+            </div>
+
+            <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold pt-1">Expertise</div>
+            <div className="space-y-3">
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Skills (comma-separated)</label><Input value={form.skills} onChange={e => setForm({ ...form, skills: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Know-how & Tools (comma-separated)</label><Input value={form.knowHow} onChange={e => setForm({ ...form, knowHow: e.target.value })} className="h-8 text-xs" placeholder="Figma, React Native, Meta Ads…" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Bio</label><Input value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Current Focus</label><Input value={form.focus} onChange={e => setForm({ ...form, focus: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Fun fact / personal line</label><Input value={form.funFact} onChange={e => setForm({ ...form, funFact: e.target.value })} className="h-8 text-xs" /></div>
+            </div>
+
+            <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold pt-1">Compensation</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Monthly Salary (EGP)</label><Input type="number" value={form.monthlySalary} onChange={e => setForm({ ...form, monthlySalary: e.target.value })} className="h-8 text-xs" placeholder="0" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Equity</label><Input value={form.equity} onChange={e => setForm({ ...form, equity: e.target.value })} className="h-8 text-xs" /></div>
+            </div>
           </div>
-          <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Skills (comma-separated)</label><Input value={form.skills} onChange={e => setForm({ ...form, skills: e.target.value })} className="h-8 text-xs" /></div>
-          <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Bio</label><Input value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })} className="h-8 text-xs" /></div>
-          <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Current Focus</label><Input value={form.focus} onChange={e => setForm({ ...form, focus: e.target.value })} className="h-8 text-xs" /></div>
-          <div className="flex gap-2 justify-end">
+
+          <DialogFooter>
             <Button variant="outline" onClick={() => { setAddModal(false); setEditIdx(null); resetForm(); }} className="text-xs h-8">Cancel</Button>
             <Button onClick={saveMember} disabled={!form.name.trim()} className="text-xs h-8">{editIdx !== null ? "Save Changes" : "Add Member"}</Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
