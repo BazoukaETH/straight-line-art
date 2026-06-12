@@ -22,7 +22,18 @@ function Home() {
   const me = memberById(currentUserId);
   const today = formatCairoDate();
   const [bodSubmitted, setBodSubmitted] = useState(false);
+  const [eodSubmitted, setEodSubmitted] = useState(false);
   const [bodText, setBodText] = useState("Ship the Loop Commerce marketing site refresh and review the May board deck.");
+  const [eodText, setEodText] = useState("");
+  const [eodBlockers, setEodBlockers] = useState("");
+  // Tracked misses (in real life: from backend). Persist across submits so we have a record.
+  const [missed, setMissed] = useState<Array<{ id: string; label: string }>>([
+    { id: "m1", label: "Yesterday's EOD" },
+    { id: "m2", label: "Monday's BOD" },
+  ]);
+  const [missBrief, setMissBrief] = useState("");
+  const [missAcknowledged, setMissAcknowledged] = useState(false);
+  const needsMissBrief = missed.length > 0 && !missAcknowledged;
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
