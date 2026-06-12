@@ -228,18 +228,56 @@ const Team = () => {
   const [candidateOpen, setCandidateOpen] = useState<string | null>(null);
 
   // Team helpers
-  function resetForm() { setForm({ name: "", role: "", dept: "Engineering", skills: "", bio: "", focus: "", equity: "-" }); }
-  function openEditMember(i: number) { const p = team[i]; setForm({ name: p.name, role: p.role, dept: p.dept, skills: p.skills.join(", "), bio: p.bio, focus: p.focus, equity: p.equity }); setEditIdx(i); setAddModal(true); }
+  const EMPTY_FORM = {
+    name: "", role: "", dept: "Engineering", skills: "", bio: "", focus: "", equity: "-",
+    age: "", birthDate: "", location: "Cairo, Egypt",
+    joinedDate: new Date().toISOString().slice(0, 10),
+    employmentType: "Full-time" as MemberEmploymentType,
+    email: "", phone: "", knowHow: "", monthlySalary: "",
+    languages: "Arabic, English", funFact: "",
+  };
+  function resetForm() { setForm(EMPTY_FORM); }
+  function openEditMember(i: number) {
+    const p = team[i];
+    setForm({
+      name: p.name, role: p.role, dept: p.dept, skills: p.skills.join(", "),
+      bio: p.bio, focus: p.focus, equity: p.equity,
+      age: p.age ? String(p.age) : "", birthDate: p.birthDate || "",
+      location: p.location || "", joinedDate: p.joinedDate || "",
+      employmentType: p.employmentType || "Full-time",
+      email: p.email || "", phone: p.phone || "",
+      knowHow: (p.knowHow || []).join(", "),
+      monthlySalary: p.monthlySalary ? String(p.monthlySalary) : "",
+      languages: (p.languages || []).join(", "),
+      funFact: p.funFact || "",
+    });
+    setEditIdx(i); setAddModal(true);
+  }
   function saveMember() {
     if (!form.name.trim()) return;
     const initials = form.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
     const skills = form.skills.split(",").map(s => s.trim()).filter(Boolean);
+    const knowHow = form.knowHow.split(",").map(s => s.trim()).filter(Boolean);
+    const languages = form.languages.split(",").map(s => s.trim()).filter(Boolean);
+    const monthlySalary = Number(form.monthlySalary) || 0;
+    const age = Number(form.age) || 0;
+    const base = {
+      name: form.name, role: form.role, dept: form.dept, initials, equity: form.equity,
+      skills, bio: form.bio, focus: form.focus,
+      age, birthDate: form.birthDate, location: form.location,
+      joinedDate: form.joinedDate, employmentType: form.employmentType,
+      email: form.email, phone: form.phone, knowHow,
+      monthlySalary, salarySource: "manual" as const,
+      languages, funFact: form.funFact,
+    };
     if (editIdx !== null) {
-      setTeam(prev => prev.map((p, i) => i === editIdx ? { ...p, name: form.name, role: form.role, dept: form.dept, initials, equity: form.equity, skills, bio: form.bio, focus: form.focus } : p));
+      setTeam(prev => prev.map((p, i) => i === editIdx ? { ...p, ...base } : p));
+      const editedName = team[editIdx].name;
+      setSalaries(prev => prev.map(s => s.name === editedName ? { ...s, name: form.name, role: form.role, dept: form.dept, monthlySalary, equity: form.equity } : s));
     } else {
       const color = DEPT_COLORS[team.length % DEPT_COLORS.length];
-      setTeam(prev => [...prev, { name: form.name, role: form.role, dept: form.dept, initials, color, equity: form.equity, skills, bio: form.bio, focus: form.focus }]);
-      addSalaryEntry({ name: form.name, role: form.role, dept: form.dept, monthlySalary: 0, equity: "-", venture: "Pending" });
+      setTeam(prev => [...prev, { ...base, color }]);
+      addSalaryEntry({ name: form.name, role: form.role, dept: form.dept, monthlySalary, equity: form.equity || "-", venture: "Pending" });
     }
     resetForm(); setEditIdx(null); setAddModal(false);
   }
