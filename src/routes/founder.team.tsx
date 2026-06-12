@@ -169,7 +169,14 @@ const Team = () => {
   const [selected, setSelected] = useState<number | null>(null);
   const [addModal, setAddModal] = useState(false);
   const [editIdx, setEditIdx] = useState<number | null>(null);
-  const [form, setForm] = useState({ name: "", role: "", dept: "Engineering", skills: "", bio: "", focus: "", equity: "-" });
+  const [form, setForm] = useState({
+    name: "", role: "", dept: "Engineering", skills: "", bio: "", focus: "", equity: "-",
+    age: "", birthDate: "", location: "Cairo, Egypt",
+    joinedDate: new Date().toISOString().slice(0, 10),
+    employmentType: "Full-time" as MemberEmploymentType,
+    email: "", phone: "", knowHow: "", monthlySalary: "",
+    languages: "Arabic, English", funFact: "",
+  });
   const [addAdvisorModal, setAddAdvisorModal] = useState(false);
   const [editAdvisorIdx, setEditAdvisorIdx] = useState<number | null>(null);
   const [advisorForm, setAdvisorForm] = useState({ name: "", role: "", note: "" });
