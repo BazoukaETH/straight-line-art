@@ -885,25 +885,141 @@ const Team = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Member Profile Dialog */}
+      <Dialog open={selected !== null} onOpenChange={v => { if (!v) setSelected(null); }}>
+        <DialogContent className="sm:max-w-[640px] bg-card border-border max-h-[88vh] overflow-y-auto">
+          {selected !== null && (() => {
+            const p = team[selected];
+            const syncedSalary = salaries.find(s => s.name === p.name)?.monthlySalary ?? p.monthlySalary;
+            return (
+              <>
+                <DialogHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center text-base font-bold shrink-0" style={{ background: `${p.color}22`, border: `2px solid ${p.color}66`, color: p.color }}>{p.initials}</div>
+                    <div className="min-w-0 flex-1">
+                      <DialogTitle className="text-sm">{p.name}</DialogTitle>
+                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                        <span className="text-[11px] font-semibold" style={{ color: p.color }}>{p.role}</span>
+                        <span className="text-[9px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{p.dept}</span>
+                        <span className="text-[9px] px-2 py-0.5 rounded font-medium" style={{ background: `${p.color}18`, color: p.color }}>{p.employmentType}</span>
+                      </div>
+                    </div>
+                    <Button size="sm" variant="outline" className="h-7 text-[10px] gap-1" onClick={() => { const i = selected; setSelected(null); openEditMember(i); }}><Pencil className="w-3 h-3" /> Edit</Button>
+                  </div>
+                </DialogHeader>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                  {[
+                    ["Age", p.age ? `${p.age}` : "—"],
+                    ["Location", p.location || "—"],
+                    ["Joined", `${formatDate(p.joinedDate)} · ${yearsAt(p.joinedDate)}`],
+                    ["Email", p.email || "—"],
+                    ["Phone", p.phone || "—"],
+                    ["Languages", (p.languages || []).join(", ") || "—"],
+                  ].map(([k, v]) => (
+                    <div key={k} className="bg-muted/40 border border-border rounded-lg p-2">
+                      <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold mb-0.5">{k}</div>
+                      <div className="text-[11px] text-foreground break-words">{v}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">About</div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{p.bio}</p>
+                  {p.funFact && <p className="text-[11px] text-foreground/80 leading-relaxed italic">“{p.funFact}”</p>}
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Skills</div>
+                  <div className="flex flex-wrap gap-1">
+                    {p.skills.map((s, si) => <span key={si} className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={{ background: `${p.color}18`, color: p.color }}>{s}</span>)}
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Know-how & Tools</div>
+                  <div className="flex flex-wrap gap-1">
+                    {(p.knowHow || []).length === 0
+                      ? <span className="text-[10px] text-muted-foreground">—</span>
+                      : p.knowHow.map((s, si) => <span key={si} className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-muted border border-border text-foreground">{s}</span>)}
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Current Focus</div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{p.focus}</p>
+                </div>
+
+                <div className="bg-muted/40 border border-border rounded-lg p-3 space-y-1">
+                  <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Compensation</div>
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div>
+                      <div className="text-[10px] text-muted-foreground">Monthly Salary</div>
+                      <div className="text-sm font-bold text-foreground">{formatEGP(syncedSalary)}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-muted-foreground">Equity</div>
+                      <div className="text-sm font-bold" style={{ color: p.color }}>{p.equity || "—"}</div>
+                    </div>
+                  </div>
+                  <div className="text-[9px] text-muted-foreground/60 italic">Synced from Finance (dummy data for now)</div>
+                </div>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
+
       {/* Add/Edit Member Dialog */}
       <Dialog open={addModal} onOpenChange={v => { if (!v) { setEditIdx(null); resetForm(); } setAddModal(v); }}>
-        <DialogContent className="sm:max-w-[480px] bg-card border-border">
+        <DialogContent className="sm:max-w-[560px] bg-card border-border max-h-[88vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editIdx !== null ? "Edit Team Member" : "Add Team Member"}</DialogTitle></DialogHeader>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Full Name *</label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="h-8 text-xs" /></div>
-            <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Role</label><Input value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="h-8 text-xs" /></div>
-            <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Department</label>
-              <Select value={form.dept} onValueChange={v => setForm({ ...form, dept: v })}><SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger><SelectContent>{DEPTS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent></Select>
+
+          <div className="space-y-3">
+            <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold">Basics</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Full Name *</label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Role</label><Input value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Department</label>
+                <Select value={form.dept} onValueChange={v => setForm({ ...form, dept: v })}><SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger><SelectContent>{DEPTS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent></Select>
+              </div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Employment Type</label>
+                <Select value={form.employmentType} onValueChange={v => setForm({ ...form, employmentType: v as MemberEmploymentType })}><SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger><SelectContent>{EMPLOYMENT_TYPES_MEMBER.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent></Select>
+              </div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Age</label><Input type="number" value={form.age} onChange={e => setForm({ ...form, age: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Birth Date</label><Input type="date" value={form.birthDate} onChange={e => setForm({ ...form, birthDate: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Joined Date</label><Input type="date" value={form.joinedDate} onChange={e => setForm({ ...form, joinedDate: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Location</label><Input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} className="h-8 text-xs" placeholder="City, Country" /></div>
             </div>
-            <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Equity</label><Input value={form.equity} onChange={e => setForm({ ...form, equity: e.target.value })} className="h-8 text-xs" /></div>
+
+            <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold pt-1">Contact</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Email</label><Input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Phone</label><Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1 col-span-2"><label className="text-[10px] text-muted-foreground font-medium">Languages (comma-separated)</label><Input value={form.languages} onChange={e => setForm({ ...form, languages: e.target.value })} className="h-8 text-xs" /></div>
+            </div>
+
+            <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold pt-1">Expertise</div>
+            <div className="space-y-3">
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Skills (comma-separated)</label><Input value={form.skills} onChange={e => setForm({ ...form, skills: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Know-how & Tools (comma-separated)</label><Input value={form.knowHow} onChange={e => setForm({ ...form, knowHow: e.target.value })} className="h-8 text-xs" placeholder="Figma, React Native, Meta Ads…" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Bio</label><Input value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Current Focus</label><Input value={form.focus} onChange={e => setForm({ ...form, focus: e.target.value })} className="h-8 text-xs" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Fun fact / personal line</label><Input value={form.funFact} onChange={e => setForm({ ...form, funFact: e.target.value })} className="h-8 text-xs" /></div>
+            </div>
+
+            <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-semibold pt-1">Compensation</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Monthly Salary (EGP)</label><Input type="number" value={form.monthlySalary} onChange={e => setForm({ ...form, monthlySalary: e.target.value })} className="h-8 text-xs" placeholder="0" /></div>
+              <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Equity</label><Input value={form.equity} onChange={e => setForm({ ...form, equity: e.target.value })} className="h-8 text-xs" /></div>
+            </div>
           </div>
-          <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Skills (comma-separated)</label><Input value={form.skills} onChange={e => setForm({ ...form, skills: e.target.value })} className="h-8 text-xs" /></div>
-          <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Bio</label><Input value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })} className="h-8 text-xs" /></div>
-          <div className="space-y-1"><label className="text-[10px] text-muted-foreground font-medium">Current Focus</label><Input value={form.focus} onChange={e => setForm({ ...form, focus: e.target.value })} className="h-8 text-xs" /></div>
-          <div className="flex gap-2 justify-end">
+
+          <DialogFooter>
             <Button variant="outline" onClick={() => { setAddModal(false); setEditIdx(null); resetForm(); }} className="text-xs h-8">Cancel</Button>
             <Button onClick={saveMember} disabled={!form.name.trim()} className="text-xs h-8">{editIdx !== null ? "Save Changes" : "Add Member"}</Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
