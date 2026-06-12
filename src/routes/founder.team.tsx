@@ -180,7 +180,7 @@ const Team = () => {
   const [addAdvisorModal, setAddAdvisorModal] = useState(false);
   const [editAdvisorIdx, setEditAdvisorIdx] = useState<number | null>(null);
   const [advisorForm, setAdvisorForm] = useState({ name: "", role: "", note: "" });
-  const { addSalaryEntry } = useSalaries();
+  const { salaries, setSalaries, addSalaryEntry } = useSalaries();
   const { currentUser } = useUsers();
 
   // Hiring permission
