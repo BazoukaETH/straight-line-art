@@ -201,20 +201,6 @@ function Home() {
               ))}
             </div>
           </Card>
-
-          {hour >= 17 && (
-            <Card className="overflow-hidden border-border p-0">
-              <div className="flex items-center gap-2 border-b border-border/60 bg-muted/40 px-5 py-3">
-                <Sunset className="size-4 text-[color:var(--warning)]" />
-                <h3 className="text-sm font-semibold">End of Day</h3>
-              </div>
-              <div className="space-y-3 p-5">
-                <Textarea rows={2} placeholder="What did you ship today?" className="resize-none" />
-                <Textarea rows={1} placeholder="What is blocked for tomorrow?" className="resize-none" />
-                <Button onClick={() => toast.success("EOD submitted")}>Submit EOD</Button>
-              </div>
-            </Card>
-          )}
         </div>
 
         {/* Right column */}
