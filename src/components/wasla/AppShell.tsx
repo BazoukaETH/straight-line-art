@@ -101,6 +101,15 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
                 </TooltipTrigger>
                 <TooltipContent>New</TooltipContent>
               </Tooltip>
+              <Select value={role === "founder" ? "founder" : "team"} onValueChange={(v) => setRole(v === "founder" ? "founder" : "member")}>
+                <SelectTrigger className="h-7 w-[110px] text-[11px]" aria-label="View as">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="founder">Founder view</SelectItem>
+                  <SelectItem value="team">Team view</SelectItem>
+                </SelectContent>
+              </Select>
               <Button size="icon" variant="ghost" onClick={() => nav({ to: "/inbox" })} className="relative h-7 w-7">
                 <Bell className="size-4" />
                 {unreadCount > 0 && (
