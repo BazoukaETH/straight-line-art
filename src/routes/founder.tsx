@@ -13,14 +13,10 @@ type NavItem = { to: string; label: string; icon: typeof LayoutDashboard };
 const navItems: NavItem[] = [
   { to: "/founder",              label: "Command Center", icon: LayoutDashboard },
   { to: "/founder/ventures",     label: "Ventures",       icon: Rocket },
-  { to: "/founder/pipeline",     label: "Pipeline",       icon: Briefcase },
-  { to: "/founder/clients",      label: "Clients",        icon: Contact2 },
   { to: "/founder/finance",      label: "Finance",        icon: DollarSign },
   { to: "/founder/network",      label: "Network",        icon: Globe },
   { to: "/founder/market-intel", label: "Market Intel",   icon: BarChart3 },
   { to: "/founder/initiatives",  label: "Initiatives",    icon: Target },
-  { to: "/founder/ai-agents",    label: "AI Agents",      icon: Bot },
-
   { to: "/founder/settings",     label: "Settings",       icon: SettingsIcon },
 ];
 
