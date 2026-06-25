@@ -17,7 +17,7 @@ import { StatusPill } from "@/components/wasla/StatusPill";
 import { PriorityIcon } from "@/components/wasla/PriorityIcon";
 import { SpaceTag } from "@/components/wasla/PillarTag";
 import { SubtaskBadge } from "@/components/wasla/SubtaskBadge";
-import { isBefore, isToday, startOfDay } from "date-fns";
+import { isBefore, isToday, startOfDay, endOfWeek, isAfter } from "date-fns";
 import { relativeDue, getChildren } from "@/lib/task-utils";
 import { useTaskNav, routeForTask } from "@/lib/task-nav";
 import { HierarchicalTaskList, GroupByPill, type GroupKey } from "@/components/wasla/HierarchicalTaskList";
@@ -145,14 +145,19 @@ function TasksPage() {
           </div>
 
           <TabsContent value="list" className="mt-4">
-            <HierarchicalTaskList
-              tasks={scopedTasks}
-              allTasks={tasks}
-              primary={group}
-              secondary={group === "space" ? "status" : undefined}
-              scopeLabel={activeListId === "my" ? "Workspace" : activeSpace?.name}
-            />
+            {activeListId === "my" ? (
+              <MyWorkBuckets tasks={scopedTasks} />
+            ) : (
+              <HierarchicalTaskList
+                tasks={scopedTasks}
+                allTasks={tasks}
+                primary={group}
+                secondary={group === "space" ? "status" : undefined}
+                scopeLabel={activeListId === "my" ? "Workspace" : activeSpace?.name}
+              />
+            )}
           </TabsContent>
+
 
           <TabsContent value="board" className="mt-4">
             <BoardView tasks={scopedTasks} />
@@ -176,7 +181,95 @@ function TasksPage() {
   );
 }
 
-// ============ Toolbar bits ============
+// ============ My Work bucketed view ============
+function MyWorkBuckets({ tasks }: { tasks: Task[] }) {
+  const { currentUserId } = useApp();
+  const buckets = useMemo(() => {
+    const mine = tasks.filter((t) => t.assigneeId === currentUserId && t.status !== "Done");
+    const now = new Date();
+    const todayStart = startOfDay(now);
+    const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
+    const overdue: Task[] = [];
+    const today: Task[] = [];
+    const week: Task[] = [];
+    const later: Task[] = [];
+    for (const t of mine) {
+      const d = new Date(t.due);
+      if (isBefore(d, todayStart)) overdue.push(t);
+      else if (isToday(d)) today.push(t);
+      else if (!isAfter(d, weekEnd)) week.push(t);
+      else later.push(t);
+    }
+    const sortFn = (a: Task, b: Task) => +new Date(a.due) - +new Date(b.due);
+    return {
+      overdue: overdue.sort(sortFn),
+      today: today.sort(sortFn),
+      week: week.sort(sortFn),
+      later: later.sort(sortFn),
+    };
+  }, [tasks, currentUserId]);
+
+  const sections: Array<{ key: string; label: string; items: Task[]; tone?: "danger" }> = [
+    { key: "overdue", label: "Overdue", items: buckets.overdue, tone: "danger" },
+    { key: "today", label: "Today", items: buckets.today },
+    { key: "week", label: "This week", items: buckets.week },
+    { key: "later", label: "Later", items: buckets.later },
+  ];
+
+  const total = buckets.overdue.length + buckets.today.length + buckets.week.length + buckets.later.length;
+  if (total === 0) {
+    return <div className="rounded-lg border border-dashed border-border p-10 text-center text-sm text-muted-foreground">Nothing on your plate. Enjoy the calm.</div>;
+  }
+
+  return (
+    <div className="space-y-5">
+      {sections.map((s) => (
+        s.items.length === 0 ? null : (
+          <section key={s.key} className="overflow-hidden rounded-lg border border-border bg-card">
+            <header className={cn(
+              "flex items-center gap-2 border-b border-border/60 px-4 py-2 text-xs font-semibold uppercase tracking-wider",
+              s.tone === "danger" ? "bg-destructive/10 text-destructive" : "text-muted-foreground"
+            )}>
+              <span>{s.label}</span>
+              <span className={cn(
+                "rounded-full px-1.5 py-0.5 text-[10px]",
+                s.tone === "danger" ? "bg-destructive/20 text-destructive" : "bg-muted text-foreground/70"
+              )}>{s.items.length}</span>
+            </header>
+            <div>
+              {s.items.map((t) => (
+                <MyWorkRow key={t.id} task={t} danger={s.tone === "danger"} />
+              ))}
+            </div>
+          </section>
+        )
+      ))}
+    </div>
+  );
+}
+
+function MyWorkRow({ task, danger }: { task: Task; danger?: boolean }) {
+  const sp = spaceById(task.spaceId);
+  const r = routeForTask(task);
+  const due = new Date(task.due);
+  const dueLabel = due.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return (
+    <Link
+      to={r.to as any}
+      params={r.params as any}
+      className="group flex w-full items-center gap-3 border-b border-border/60 px-4 py-2.5 text-left transition-colors last:border-b-0 hover:bg-muted/50"
+    >
+      <PriorityIcon priority={task.priority} />
+      <span className={cn("flex-1 truncate text-sm font-medium", danger ? "text-destructive" : "text-foreground")}>{task.title}</span>
+      <SpaceTag name={sp.name} pillar={sp.pillar} />
+      <StatusPill status={task.status} />
+      <span className={cn("w-24 text-right text-xs", danger ? "text-destructive font-medium" : "text-muted-foreground")}>{dueLabel}</span>
+      <Avatar memberId={task.assigneeId} size={22} />
+    </Link>
+  );
+}
+
+
 function SubtasksToggle({ value, onChange }: { value: "collapse" | "show" | "separate"; onChange: (v: "collapse" | "show" | "separate") => void }) {
   const labels = { collapse: "Hide", show: "Show", separate: "Separate" } as const;
   const next = value === "collapse" ? "show" : value === "show" ? "separate" : "collapse";
