@@ -66,9 +66,14 @@ export function TaskDetail({ taskId }: { taskId: string }) {
         <TitleBlock task={task} code={code} onRename={(t) => updateTask(task.id, { title: t })} />
         {(space.id === "leads" || space.id === "proposals") && <WonCreateClientButton task={task} />}
 
+        {/* Quick edit: Due + Assignee */}
+        <QuickEditBar task={task} updateTask={updateTask} />
 
         {/* Properties grid */}
         <PropertiesGrid task={task} updateTask={updateTask} />
+
+        {/* Blocked by / Blocks */}
+        <BlockedBySection task={task} />
 
         {/* Description */}
         <DescriptionSection task={task} onSave={(v) => updateTask(task.id, { description: v })} />
