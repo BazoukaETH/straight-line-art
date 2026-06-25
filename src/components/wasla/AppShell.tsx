@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   Home, CheckSquare, Inbox, MessageSquare, BarChart3, Files,
   Search, Plus, Bell, Command, Sun, Moon, ChevronRight,
-  Contact2,
+  Contact2, Users,
 } from "lucide-react";
 
 import { useApp } from "@/lib/app-context";
@@ -35,6 +35,7 @@ const workspaceNav: NavItem[] = [
   { to: "/", icon: Home, label: "Home" },
   { to: "/founder", icon: BarChart3, label: "Founder Dashboard", founderOnly: true },
   { to: "/tasks", icon: CheckSquare, label: "Tasks" },
+  { to: "/team/workload", icon: Users, label: "Team" },
   { to: "/inbox", icon: Inbox, label: "Inbox" },
   { to: "/chat", icon: MessageSquare, label: "Chat" },
   { to: "/clients", icon: Contact2, label: "Clients" },
