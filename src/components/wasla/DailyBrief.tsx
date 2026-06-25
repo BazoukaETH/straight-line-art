@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Sparkles, RefreshCw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCheckins, cairoNow } from "@/lib/checkins-store";
+import { members } from "@/lib/mock-data";
 
 type Bullet = { text: string; to: string };
 type Section = { icon: string; title: string; bullets: Bullet[] };
