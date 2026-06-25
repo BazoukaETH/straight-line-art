@@ -69,32 +69,51 @@ function Home() {
 
 
 
-          {/* Daily check-in: BOD until submitted, then EOD. One place for everyone. */}
+          {/* Daily check-in: phase driven by Cairo time. Persisted via checkins-store. */}
           {(() => {
-            const phase: "bod" | "eod" | "done" = !bodSubmitted ? "bod" : !eodSubmitted ? "eod" : "done";
-            const bodLate = phase === "bod" && hour >= 10;
-            const eodLate = phase === "eod" && hour >= 19;
+            const bodLate = phase === "bod" && cairo !== null && cairo.hour >= 10;
+            const eodLate = phase === "eod" && cairo !== null && cairo.hour >= 19;
             const late = bodLate || eodLate;
             const Icon = phase === "eod" ? Sunset : Sunrise;
-            const title = phase === "bod" ? "Beginning of Day" : phase === "eod" ? "End of Day" : "Daily check-in";
+            const title = phase === "bod" ? "Beginning of Day" : "End of Day";
+            const isDone = !!existing && !editing;
+            const placeholderShipped = phase === "bod"
+              ? "e.g. Ship the Loop Commerce site refresh and review May deck."
+              : "Wins, shipped work, decisions made…";
+            const labelShipped = phase === "bod" ? "What will you ship today?" : "What did you ship today?";
+            const labelBlockers = phase === "bod" ? "Any blockers?" : "What's blocked for tomorrow?";
+
+            const handleSubmit = () => {
+              if (!cairo) return;
+              if (text.trim().length < 3) { toast.error(`Add a brief note before submitting ${phase.toUpperCase()}`); return; }
+              submitCheckin({
+                memberId: currentUserId,
+                date: todayStr,
+                phase,
+                text: text.trim(),
+                blockers: blockers.trim(),
+              });
+              setEditing(false);
+              toast.success(`${phase.toUpperCase()} submitted`);
+            };
 
             return (
               <Card className="overflow-hidden border-border p-0">
                 <div className="flex items-center gap-2 border-b border-border/60 bg-muted/40 px-5 py-3">
                   <Icon className="size-4 text-[color:var(--warning)]" />
                   <h3 className="text-sm font-semibold">{title}</h3>
-                  {late && (
+                  {late && !isDone && (
                     <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-[color:var(--warning)]/15 px-2 py-0.5 text-[11px] font-medium text-[color:var(--warning)]" title={phase === "bod" ? "BOD is late" : "EOD is late"}>
                       <TriangleAlert className="size-3" /> Late
                     </span>
                   )}
-                  {phase === "done" && (
-                    <span className="ml-auto inline-flex items-center gap-1 text-xs text-[color:var(--success)]"><CheckCircle2 className="size-3.5" /> All in for today</span>
+                  {isDone && (
+                    <span className="ml-auto inline-flex items-center gap-1 text-xs text-[color:var(--success)]"><CheckCircle2 className="size-3.5" /> Checked in</span>
                   )}
                 </div>
 
                 {/* Missed-entries gate: must acknowledge before writing new BOD/EOD */}
-                {needsMissBrief && phase !== "done" ? (
+                {needsMissBrief && !isDone ? (
                   <div className="space-y-3 p-5">
                     <div className="flex items-start gap-2 rounded-md border border-[color:var(--warning)]/40 bg-[color:var(--warning)]/10 p-3">
                       <TriangleAlert className="mt-0.5 size-4 text-[color:var(--warning)]" />
@@ -119,46 +138,41 @@ function Home() {
                       Continue
                     </Button>
                   </div>
-                ) : phase === "bod" ? (
-                  <div className="space-y-3 p-5">
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">What will you ship today?</label>
-                      <Textarea value={bodText} onChange={(e) => setBodText(e.target.value)} rows={2} className="mt-1.5 resize-none" />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Any blockers?</label>
-                      <Textarea rows={1} placeholder="Optional…" className="mt-1.5 resize-none" />
-                    </div>
-                    <Button onClick={() => { setBodSubmitted(true); toast.success("BOD submitted to the team"); }}>Submit BOD</Button>
-                  </div>
-                ) : phase === "eod" ? (
-                  <div className="space-y-3 p-5">
-                    <div className="rounded-md border border-border/60 bg-muted/30 p-3 text-xs text-muted-foreground">
-                      <span className="font-medium text-foreground">This morning:</span> {bodText}
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">What did you ship today?</label>
-                      <Textarea value={eodText} onChange={(e) => setEodText(e.target.value)} rows={2} placeholder="Wins, shipped work, decisions made…" className="mt-1.5 resize-none" />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">What's blocked for tomorrow?</label>
-                      <Textarea value={eodBlockers} onChange={(e) => setEodBlockers(e.target.value)} rows={1} placeholder="Optional…" className="mt-1.5 resize-none" />
-                    </div>
-                    <Button onClick={() => { setEodSubmitted(true); toast.success("EOD submitted"); }}>Submit EOD</Button>
-                  </div>
-                ) : (
+                ) : isDone && existing ? (
                   <div className="space-y-3 p-5 text-sm">
                     <div className="flex items-start gap-2">
-                      <Sunrise className="mt-0.5 size-4 text-muted-foreground" />
-                      <div className="flex-1"><span className="text-xs text-muted-foreground">BOD</span><div>{bodText}</div></div>
-                      <Button variant="ghost" size="icon" onClick={() => setBodSubmitted(false)}><Pencil className="size-3.5" /></Button>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Sunset className="mt-0.5 size-4 text-muted-foreground" />
-                      <div className="flex-1"><span className="text-xs text-muted-foreground">EOD</span><div>{eodText || <span className="text-muted-foreground">—</span>}</div></div>
-                      <Button variant="ghost" size="icon" onClick={() => setEodSubmitted(false)}><Pencil className="size-3.5" /></Button>
+                      <Icon className="mt-0.5 size-4 text-muted-foreground" />
+                      <div className="flex-1">
+                        <span className="text-xs text-muted-foreground">{phase.toUpperCase()}</span>
+                        <div>{existing.text}</div>
+                        {existing.blockers && (
+                          <div className="mt-1 text-xs text-muted-foreground"><span className="font-medium text-foreground">Blockers:</span> {existing.blockers}</div>
+                        )}
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
+                        <Pencil className="size-3.5 mr-1" /> Edit
+                      </Button>
                     </div>
                   </div>
+                ) : cairo ? (
+                  <div className="space-y-3 p-5">
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">{labelShipped}</label>
+                      <Textarea value={text} onChange={(e) => setText(e.target.value)} rows={2} placeholder={placeholderShipped} className="mt-1.5 resize-none" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">{labelBlockers}</label>
+                      <Textarea value={blockers} onChange={(e) => setBlockers(e.target.value)} rows={1} placeholder="Optional…" className="mt-1.5 resize-none" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button onClick={handleSubmit}>Submit {phase.toUpperCase()}</Button>
+                      {existing && (
+                        <Button variant="ghost" onClick={() => setEditing(false)}>Cancel</Button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-5 text-sm text-muted-foreground">Loading…</div>
                 )}
 
                 {/* Tracked misses footer (always visible while there are any) */}
