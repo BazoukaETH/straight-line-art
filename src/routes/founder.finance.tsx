@@ -275,7 +275,7 @@ const Finance = () => {
   }, []);
 
   return (
-    <div className="space-y-5">
+    <div className="px-6 py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-foreground tracking-tight">Finance</h1>
@@ -293,7 +293,7 @@ const Finance = () => {
 
       <div className="flex gap-0 border-b border-border">
         {[{ id: "overview", l: "Overview" }, { id: "engine", l: "Engine" }, { id: "subscriptions", l: "Subscriptions" }].map(p => (
-          <button key={p.id} onClick={() => setPage(p.id as any)} className={`px-4 py-2 text-[12px] font-semibold transition-colors border-b-2 ${page === p.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+          <button key={p.id} onClick={() => setPage(p.id as any)} className={`px-4 py-2 text-[12px] font-semibold transition-colors -mb-px border-b-2 ${page === p.id ? "text-foreground border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
             {p.l}
           </button>
         ))}
@@ -302,12 +302,13 @@ const Finance = () => {
       {page === "engine" && (
       <div className="flex gap-0 border-b border-border">
         {tabs.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 ${tab === t.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+          <button key={t.id} onClick={() => setTab(t.id)} className={`px-4 py-2 text-[11px] font-medium transition-colors -mb-px border-b-2 ${tab === t.id ? "text-foreground border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
             {t.l}
           </button>
         ))}
       </div>
       )}
+
 
       {page === "overview" && <OverviewPanel subsCancelled={subscriptions.filter(s => s.status === "Cancelled").length} subsTotal={subscriptions.length} subsProjectedSavings={subsProjectedSavings} />}
 
