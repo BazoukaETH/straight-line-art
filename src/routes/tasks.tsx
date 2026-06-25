@@ -8,14 +8,17 @@ import { useApp } from "@/lib/app-context";
 import { useTasks } from "@/lib/tasks-store";
 import { TaskCard } from "@/components/wasla/TaskCard";
 import { ListSettingsDialog } from "@/components/wasla/ListSettingsDialog";
-import { spaces, type Status, type Task, memberById, type CustomField } from "@/lib/mock-data";
+import { spaces, type Status, type Task, memberById, type CustomField, spaceById } from "@/lib/mock-data";
 import { Plus, Settings, Filter, Search, Star, Share2, Sliders, Eye, EyeOff, Hash } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/wasla/Avatar";
 import { StatusPill } from "@/components/wasla/StatusPill";
 import { PriorityIcon } from "@/components/wasla/PriorityIcon";
-import { relativeDue } from "@/lib/task-utils";
+import { SpaceTag } from "@/components/wasla/PillarTag";
+import { SubtaskBadge } from "@/components/wasla/SubtaskBadge";
+import { isBefore, isToday, startOfDay } from "date-fns";
+import { relativeDue, getChildren } from "@/lib/task-utils";
 import { useTaskNav, routeForTask } from "@/lib/task-nav";
 import { HierarchicalTaskList, GroupByPill, type GroupKey } from "@/components/wasla/HierarchicalTaskList";
 import { toast } from "sonner";
@@ -210,6 +213,49 @@ function AssigneeFilterChip({ value, onChange }: { value: string | null; onChang
 
 
 // ============ Board ============
+function BoardCard({ task }: { task: Task }) {
+  const sp = spaceById(task.spaceId);
+  const r = routeForTask(task);
+  const { tasks: pool } = useTasks();
+  const subCount = getChildren(pool, task.id).length;
+
+  const dueDate = new Date(task.due);
+  const now = new Date();
+  const overdue = isBefore(dueDate, startOfDay(now));
+  const dueToday = isToday(dueDate);
+  const dueInfo = relativeDue(task.due);
+
+  let chipClass = "text-muted-foreground bg-muted";
+  if (overdue) {
+    chipClass = "text-destructive bg-destructive/10";
+  } else if (dueToday) {
+    chipClass = "text-amber-600 bg-amber-500/10";
+  }
+
+  return (
+    <Link
+      to={r.to as any}
+      params={r.params as any}
+      className="group block w-full rounded-lg border border-border bg-card p-3 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-foreground/15 hover:shadow-sm"
+    >
+      <div className="mb-2 flex items-center justify-between">
+        <SpaceTag name={sp.name} pillar={sp.pillar} />
+        <PriorityIcon priority={task.priority} />
+      </div>
+      <p className="mb-2 line-clamp-2 text-sm font-medium leading-snug text-foreground">{task.title}</p>
+      <div className="mb-2 flex items-center gap-1.5">
+        <SubtaskBadge count={subCount} />
+      </div>
+      <div className="flex items-center justify-between">
+        <span className={cn("inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium", chipClass)}>
+          {dueInfo.label}
+        </span>
+        <Avatar memberId={task.assigneeId} size={22} />
+      </div>
+    </Link>
+  );
+}
+
 function BoardView({ tasks }: { tasks: Task[] }) {
   const { updateTask } = useTasks();
   const onDrop = (e: DragEvent, status: Status) => {
@@ -235,7 +281,7 @@ function BoardView({ tasks }: { tasks: Task[] }) {
             <div className="space-y-2">
               {items.map((t) => (
                 <div key={t.id} draggable onDragStart={(e) => e.dataTransfer.setData("text/task-id", t.id)}>
-                  <TaskCard task={t} />
+                  <BoardCard task={t} />
                 </div>
               ))}
               {items.length === 0 && <div className="rounded-md border border-dashed border-border/60 py-6 text-center text-[11px] text-muted-foreground">Drop here</div>}
