@@ -1,12 +1,17 @@
 import { useMemo } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, AreaChart, Area } from "recharts";
 import { VENTURES_DATA, PORTFOLIO_DATA, VENTURE_PIPELINE_SEED } from "@/data/ventures";
 import { INCOME_DATA, EXPENSE_DATA, CLIENT_PIPELINE, TEAM_DATA, fmtCurrency, MONEY_IN_SEED, MONEY_OUT_SEED, CASH_ACCOUNTS_SEED, EXCHANGE_RATES_SEED } from "@/data/finance";
 import { calculateMonthlyBurn, calculateCashOnHand, calculateRunway, calculateMRR, calculateInvoiceAging, calculateClientConcentration } from "@/lib/finance-calculations";
-import { AlertTriangle, Clock, Rocket, Briefcase, Users, DollarSign, Target, ArrowUpRight, ArrowDownRight, Activity, Wallet, Flame, Repeat, CheckCircle2 } from "lucide-react";
+import { CLIENT_DIRECTORY_SEED } from "@/data/clients";
+import { useTasks } from "@/lib/tasks-store";
+import { useHiring } from "@/contexts/HiringContext";
+import { members, bodEod } from "@/lib/mock-data";
+import { AlertTriangle, Clock, Rocket, Briefcase, Users, DollarSign, Target, ArrowUpRight, ArrowDownRight, Activity, Wallet, Flame, Repeat, CheckCircle2, UserCheck, ListChecks, ClipboardList, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/founder/")({ component: CommandCenter });
+
 
 const ChartTip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
@@ -106,8 +111,88 @@ function CommandCenter() {
     };
   }, []);
 
+
+
+  const { tasks } = useTasks();
+  const { jobs, applicants } = useHiring();
+
+  const rollup = useMemo(() => {
+    const now = new Date();
+    const activeClients = CLIENT_DIRECTORY_SEED.filter(c => c.status === "Active").length;
+    const top = metrics.topClients[0];
+    const topConc = top ? Math.round(top.percentage) : 0;
+
+    const openTasks = tasks.filter(t => t.status !== "Done");
+    const overdue = openTasks.filter(t => t.due && new Date(t.due) < now).length;
+    const blocked = tasks.filter(t => t.status === "Blocked").length;
+
+    const today = now.toISOString().slice(0, 10);
+    const checkedInIds = new Set(bodEod.filter(b => b.date === today && b.bod).map(b => b.memberId));
+    const missing = members.filter(m => !checkedInIds.has(m.id));
+    const checkedCount = members.length - missing.length;
+
+    const openJobs = jobs.filter(j => j.status === "Active").length;
+    const applicantsInProgress = applicants.filter(a => ["New", "Reviewing", "Interview", "Offer"].includes(a.status)).length;
+
+    return { activeClients, top, topConc, openTasks: openTasks.length, overdue, blocked, checkedCount, missing, openJobs, applicantsInProgress };
+  }, [tasks, jobs, applicants, metrics.topClients]);
+
+  const signals = useMemo(() => {
+    type Sig = { sev: "red" | "amber" | "yellow"; text: string; to: string };
+    const out: Sig[] = [];
+    if (metrics.runway !== null && metrics.cashOnHand > 0 && metrics.runway < 6) {
+      out.push({ sev: metrics.runway < 3 ? "red" : "amber", text: `Runway ${metrics.runway.toFixed(1)} months at current burn`, to: "/founder/finance" });
+    }
+    if (rollup.top && rollup.topConc >= 25) {
+      out.push({ sev: "amber", text: `${rollup.top.client} is ${rollup.topConc}% of revenue — concentration risk`, to: "/clients" });
+    }
+    if (rollup.overdue > 5) {
+      out.push({ sev: "amber", text: `${rollup.overdue} overdue tasks across the team`, to: "/team/workload" });
+    }
+    if (rollup.blocked > 0) {
+      out.push({ sev: "yellow", text: `${rollup.blocked} task${rollup.blocked === 1 ? "" : "s"} blocked`, to: "/team/workload" });
+    }
+    if (rollup.missing.length >= 2) {
+      const names = rollup.missing.slice(0, 3).map(m => m.name.split(" ")[0]).join(", ");
+      const more = rollup.missing.length > 3 ? ` +${rollup.missing.length - 3}` : "";
+      out.push({ sev: "yellow", text: `${rollup.missing.length} missing today's check-in: ${names}${more}`, to: "/team/checkins" });
+    }
+    metrics.attentionItems.forEach(it => {
+      out.push({ sev: "yellow", text: `${it.client} pending EGP ${Math.round(it.amount).toLocaleString()} · ${it.service}`, to: "/founder/finance" });
+    });
+    const order = { red: 0, amber: 1, yellow: 2 } as const;
+    return out.sort((a, b) => order[a.sev] - order[b.sev]).slice(0, 6);
+  }, [metrics, rollup]);
+
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
+  const runwayTone: "normal" | "amber" | "red" =
+    metrics.runway === null || metrics.cashOnHand === 0 ? "normal" :
+    metrics.runway < 3 ? "red" : metrics.runway < 6 ? "amber" : "normal";
+  const concentrationTone: "normal" | "amber" = rollup.topConc >= 25 ? "amber" : "normal";
+
+  const toneStyles = (tone: "normal" | "amber" | "red") => {
+    if (tone === "red") return { ring: "hsl(350,75%,50%)", text: "hsl(350,75%,60%)" };
+    if (tone === "amber") return { ring: "hsl(36,90%,53%)", text: "hsl(36,90%,60%)" };
+    return { ring: "hsl(220,15%,30%)", text: "hsl(var(--foreground))" };
+  };
+
+  const sevColor = (s: "red" | "amber" | "yellow") =>
+    s === "red" ? "hsl(350,75%,50%)" : s === "amber" ? "hsl(36,90%,53%)" : "hsl(48,90%,55%)";
+
+  const glanceTiles: Array<{
+    key: string; icon: typeof Users; label: string; primary: string; secondary: string;
+    to: string; tone: "normal" | "amber" | "red";
+  }> = [
+    { key: "workload", icon: ListChecks, label: "Team Workload", primary: `${rollup.openTasks}`, secondary: rollup.overdue > 0 ? `${rollup.overdue} overdue` : "no overdue", to: "/team/workload", tone: rollup.overdue > 0 ? "red" : "normal" },
+    { key: "checkins", icon: UserCheck, label: "Check-ins", primary: `${rollup.checkedCount} / ${members.length}`, secondary: rollup.missing.length === 0 ? "all in today" : `${rollup.missing.length} missing`, to: "/team/checkins", tone: rollup.missing.length > 0 ? "amber" : "normal" },
+    { key: "clients", icon: Users, label: "Clients", primary: `${rollup.activeClients}`, secondary: rollup.top ? `top client ${rollup.topConc}% of revenue` : "active accounts", to: "/clients", tone: concentrationTone },
+    { key: "pipeline", icon: Target, label: "Pipeline", primary: `EGP ${fmtCurrency(metrics.pipelineValue)}`, secondary: `${metrics.pipelineDeals} open deals`, to: "/clients/pipeline", tone: "normal" },
+    { key: "hiring", icon: ClipboardList, label: "Hiring", primary: `${rollup.openJobs}`, secondary: `${rollup.applicantsInProgress} in progress`, to: "/team/hiring", tone: "normal" },
+    { key: "ventures", icon: Rocket, label: "Ventures", primary: `${metrics.liveVentures} / ${metrics.totalVentures}`, secondary: "live in portfolio", to: "/founder/ventures", tone: "normal" },
+    { key: "finance", icon: DollarSign, label: "Finance", primary: `EGP ${fmtCurrency(Math.round(metrics.net))}`, secondary: metrics.runway === null ? "net position" : `${metrics.runway.toFixed(1)} mo runway`, to: "/founder/finance", tone: runwayTone },
+  ];
 
   return (
     <div className="px-6 py-6 space-y-5">
@@ -120,6 +205,63 @@ function CommandCenter() {
             : "Configure Cash Position to see runway."}
         </p>
       </div>
+
+      <div>
+        <div className="text-[10px] text-muted-foreground/60 uppercase tracking-wider font-bold mb-2">Company at a glance</div>
+        <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
+          {glanceTiles.map(t => {
+            const s = toneStyles(t.tone);
+            return (
+              <Link
+                key={t.key}
+                to={t.to}
+                aria-label={`${t.label}: ${t.primary} — ${t.secondary}`}
+                className="group bg-card rounded-xl p-3 border border-border hover:border-secondary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors relative overflow-hidden text-left"
+              >
+                <div className="absolute top-0 left-0 w-[3px] h-full" style={{ background: s.ring }} />
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <t.icon className="w-3.5 h-3.5 text-muted-foreground" />
+                  <div className="text-[9px] text-muted-foreground/60 font-bold uppercase tracking-wide">{t.label}</div>
+                  <ChevronRight className="w-3 h-3 text-muted-foreground/40 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <div className="text-base font-bold tracking-tight leading-tight" style={{ color: s.text }}>{t.primary}</div>
+                <div className="text-[10px] text-muted-foreground/60 mt-0.5 truncate">{t.secondary}</div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {signals.length > 0 && (
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-0.5">
+            <AlertTriangle className="w-3.5 h-3.5" style={{ color: "hsl(36,90%,53%)" }} />
+            <div className="text-xs font-semibold text-foreground">Needs your attention</div>
+            <span className="text-[10px] text-muted-foreground/50 ml-1">{signals.length} signal{signals.length === 1 ? "" : "s"}</span>
+          </div>
+          <div className="text-[10px] text-muted-foreground/50 mb-3">Risks & open items ranked by severity</div>
+          <div className="space-y-1.5">
+            {signals.map((sig, i) => {
+              const c = sevColor(sig.sev);
+              return (
+                <Link
+                  key={i}
+                  to={sig.to}
+                  aria-label={`${sig.sev} alert: ${sig.text}`}
+                  className="flex items-center gap-2 bg-muted rounded-lg px-2.5 py-2 hover:bg-muted/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-colors"
+                  style={{ borderLeft: `3px solid ${c}` }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: c }} />
+                  <span className="text-[11px] text-foreground flex-1">{sig.text}</span>
+                  <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
         {(() => {
