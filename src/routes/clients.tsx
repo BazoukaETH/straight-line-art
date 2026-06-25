@@ -11,6 +11,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { usePageTitle } from "@/lib/page-title";
 import { cn } from "@/lib/utils";
+import { ClientsTabs } from "@/components/wasla/ClientsTabs";
 
 export const Route = createFileRoute("/clients")({ component: ClientsPage });
 
@@ -30,6 +31,7 @@ function ClientsPage() {
     <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground">Clients</span>}>
       <PageHeader crumbs={[{ label: "Clients" }]} />
       <div className="px-6 py-5">
+        <div className="mb-4"><ClientsTabs active="clients" /></div>
         <div className="mb-5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">Clients</h1>

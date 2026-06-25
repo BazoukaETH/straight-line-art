@@ -35,6 +35,7 @@ import { Route as FounderInitiativesRouteImport } from './routes/founder.initiat
 import { Route as FounderFinanceRouteImport } from './routes/founder.finance'
 import { Route as FounderClientsRouteImport } from './routes/founder.clients'
 import { Route as FounderAiAgentsRouteImport } from './routes/founder.ai-agents'
+import { Route as ClientsPipelineRouteImport } from './routes/clients.pipeline'
 import { Route as SpaceSpaceIdListListIdRouteImport } from './routes/space.$spaceId.list.$listId'
 import { Route as SpaceSpaceIdFolderFolderIdRouteImport } from './routes/space.$spaceId.folder.$folderId'
 import { Route as FounderTeamJobsJobIdRouteImport } from './routes/founder.team.jobs.$jobId'
@@ -172,6 +173,11 @@ const FounderAiAgentsRoute = FounderAiAgentsRouteImport.update({
   path: '/ai-agents',
   getParentRoute: () => FounderRoute,
 } as any)
+const ClientsPipelineRoute = ClientsPipelineRouteImport.update({
+  id: '/pipeline',
+  path: '/pipeline',
+  getParentRoute: () => ClientsRoute,
+} as any)
 const SpaceSpaceIdListListIdRoute = SpaceSpaceIdListListIdRouteImport.update({
   id: '/list/$listId',
   path: '/list/$listId',
@@ -209,13 +215,14 @@ const SpaceSpaceIdListListIdTaskTaskIdSubtaskSubtaskIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
-  '/clients': typeof ClientsRoute
+  '/clients': typeof ClientsRouteWithChildren
   '/deadlines': typeof DeadlinesRoute
   '/files': typeof FilesRoute
   '/founder': typeof FounderRouteWithChildren
   '/inbox': typeof InboxRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
+  '/clients/pipeline': typeof ClientsPipelineRoute
   '/founder/ai-agents': typeof FounderAiAgentsRoute
   '/founder/clients': typeof FounderClientsRoute
   '/founder/finance': typeof FounderFinanceRoute
@@ -243,12 +250,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
-  '/clients': typeof ClientsRoute
+  '/clients': typeof ClientsRouteWithChildren
   '/deadlines': typeof DeadlinesRoute
   '/files': typeof FilesRoute
   '/inbox': typeof InboxRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
+  '/clients/pipeline': typeof ClientsPipelineRoute
   '/founder/ai-agents': typeof FounderAiAgentsRoute
   '/founder/clients': typeof FounderClientsRoute
   '/founder/finance': typeof FounderFinanceRoute
@@ -277,13 +285,14 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
-  '/clients': typeof ClientsRoute
+  '/clients': typeof ClientsRouteWithChildren
   '/deadlines': typeof DeadlinesRoute
   '/files': typeof FilesRoute
   '/founder': typeof FounderRouteWithChildren
   '/inbox': typeof InboxRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
+  '/clients/pipeline': typeof ClientsPipelineRoute
   '/founder/ai-agents': typeof FounderAiAgentsRoute
   '/founder/clients': typeof FounderClientsRoute
   '/founder/finance': typeof FounderFinanceRoute
@@ -320,6 +329,7 @@ export interface FileRouteTypes {
     | '/inbox'
     | '/settings'
     | '/tasks'
+    | '/clients/pipeline'
     | '/founder/ai-agents'
     | '/founder/clients'
     | '/founder/finance'
@@ -353,6 +363,7 @@ export interface FileRouteTypes {
     | '/inbox'
     | '/settings'
     | '/tasks'
+    | '/clients/pipeline'
     | '/founder/ai-agents'
     | '/founder/clients'
     | '/founder/finance'
@@ -387,6 +398,7 @@ export interface FileRouteTypes {
     | '/inbox'
     | '/settings'
     | '/tasks'
+    | '/clients/pipeline'
     | '/founder/ai-agents'
     | '/founder/clients'
     | '/founder/finance'
@@ -415,7 +427,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRoute
-  ClientsRoute: typeof ClientsRoute
+  ClientsRoute: typeof ClientsRouteWithChildren
   DeadlinesRoute: typeof DeadlinesRoute
   FilesRoute: typeof FilesRoute
   FounderRoute: typeof FounderRouteWithChildren
@@ -614,6 +626,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderAiAgentsRouteImport
       parentRoute: typeof FounderRoute
     }
+    '/clients/pipeline': {
+      id: '/clients/pipeline'
+      path: '/pipeline'
+      fullPath: '/clients/pipeline'
+      preLoaderRoute: typeof ClientsPipelineRouteImport
+      parentRoute: typeof ClientsRoute
+    }
     '/space/$spaceId/list/$listId': {
       id: '/space/$spaceId/list/$listId'
       path: '/list/$listId'
@@ -658,6 +677,17 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface ClientsRouteChildren {
+  ClientsPipelineRoute: typeof ClientsPipelineRoute
+}
+
+const ClientsRouteChildren: ClientsRouteChildren = {
+  ClientsPipelineRoute: ClientsPipelineRoute,
+}
+
+const ClientsRouteWithChildren =
+  ClientsRoute._addFileChildren(ClientsRouteChildren)
 
 interface FounderSettingsRouteChildren {
   FounderSettingsUsersIdRoute: typeof FounderSettingsUsersIdRoute
@@ -761,7 +791,7 @@ const SpaceSpaceIdRouteWithChildren = SpaceSpaceIdRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
-  ClientsRoute: ClientsRoute,
+  ClientsRoute: ClientsRouteWithChildren,
   DeadlinesRoute: DeadlinesRoute,
   FilesRoute: FilesRoute,
   FounderRoute: FounderRouteWithChildren,

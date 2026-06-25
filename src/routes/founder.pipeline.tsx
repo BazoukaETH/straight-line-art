@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { GripVertical, ChevronDown, ChevronUp, Plus, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -69,7 +69,7 @@ const paymentColors: Record<string, string> = {
   Recurring: "hsl(220, 95%, 47%)", Overdue: "hsl(350, 75%, 50%)",
 };
 
-const Pipeline = () => {
+export const Pipeline = () => {
   const [tab, setTab] = useState<"projects" | "pipeline">("projects");
   const [expandedClient, setExpandedClient] = useState<string | null>(null);
   const tabs = [{ id: "projects" as const, l: "Client Projects" }, { id: "pipeline" as const, l: "Sales Pipeline" }];
@@ -194,4 +194,8 @@ const Pipeline = () => {
   );
 };
 
-export const Route = createFileRoute("/founder/pipeline")({ component: Pipeline });
+export const Route = createFileRoute("/founder/pipeline")({
+  beforeLoad: () => {
+    throw redirect({ to: "/clients/pipeline" });
+  },
+});
