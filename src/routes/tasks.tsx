@@ -17,7 +17,7 @@ import { StatusPill } from "@/components/wasla/StatusPill";
 import { PriorityIcon } from "@/components/wasla/PriorityIcon";
 import { SpaceTag } from "@/components/wasla/PillarTag";
 import { SubtaskBadge } from "@/components/wasla/SubtaskBadge";
-import { isBefore, isToday, startOfDay } from "date-fns";
+import { isBefore, isToday, startOfDay, endOfWeek, isAfter } from "date-fns";
 import { relativeDue, getChildren } from "@/lib/task-utils";
 import { useTaskNav, routeForTask } from "@/lib/task-nav";
 import { HierarchicalTaskList, GroupByPill, type GroupKey } from "@/components/wasla/HierarchicalTaskList";
