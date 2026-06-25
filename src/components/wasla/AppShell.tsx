@@ -36,6 +36,7 @@ const workspaceNav: NavItem[] = [
   { to: "/founder", icon: BarChart3, label: "Founder Dashboard", founderOnly: true },
   { to: "/tasks", icon: CheckSquare, label: "Tasks" },
   { to: "/team/workload", icon: Users, label: "Team", managerOrFounder: true },
+  { to: "/deadlines", icon: CalendarClock, label: "Deadlines" },
   { to: "/inbox", icon: Inbox, label: "Inbox" },
   { to: "/chat", icon: MessageSquare, label: "Chat" },
   { to: "/clients", icon: Contact2, label: "Clients" },
