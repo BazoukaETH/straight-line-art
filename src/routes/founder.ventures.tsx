@@ -137,7 +137,8 @@ const Ventures = () => {
 
       {/* ═══════ OVERVIEW ═══════ */}
       {tab === "overview" && (
-        <div className="px-6 py-6 space-y-6">
+        <div className="space-y-5">
+
           {/* Summary KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
             {[
