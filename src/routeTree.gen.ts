@@ -21,6 +21,7 @@ import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as SpaceSpaceIdRouteImport } from './routes/space.$spaceId'
 import { Route as PillarPillarIdRouteImport } from './routes/pillar.$pillarId'
 import { Route as PeopleIdRouteImport } from './routes/people.$id'
+import { Route as FounderWorkloadRouteImport } from './routes/founder.workload'
 import { Route as FounderVenturesRouteImport } from './routes/founder.ventures'
 import { Route as FounderTeamRouteImport } from './routes/founder.team'
 import { Route as FounderSettingsRouteImport } from './routes/founder.settings'
@@ -97,6 +98,11 @@ const PeopleIdRoute = PeopleIdRouteImport.update({
   id: '/people/$id',
   path: '/people/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const FounderWorkloadRoute = FounderWorkloadRouteImport.update({
+  id: '/workload',
+  path: '/workload',
+  getParentRoute: () => FounderRoute,
 } as any)
 const FounderVenturesRoute = FounderVenturesRouteImport.update({
   id: '/ventures',
@@ -201,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/founder/settings': typeof FounderSettingsRouteWithChildren
   '/founder/team': typeof FounderTeamRouteWithChildren
   '/founder/ventures': typeof FounderVenturesRoute
+  '/founder/workload': typeof FounderWorkloadRoute
   '/people/$id': typeof PeopleIdRoute
   '/pillar/$pillarId': typeof PillarPillarIdRoute
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
@@ -230,6 +237,7 @@ export interface FileRoutesByTo {
   '/founder/settings': typeof FounderSettingsRouteWithChildren
   '/founder/team': typeof FounderTeamRouteWithChildren
   '/founder/ventures': typeof FounderVenturesRoute
+  '/founder/workload': typeof FounderWorkloadRoute
   '/people/$id': typeof PeopleIdRoute
   '/pillar/$pillarId': typeof PillarPillarIdRoute
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/founder/settings': typeof FounderSettingsRouteWithChildren
   '/founder/team': typeof FounderTeamRouteWithChildren
   '/founder/ventures': typeof FounderVenturesRoute
+  '/founder/workload': typeof FounderWorkloadRoute
   '/people/$id': typeof PeopleIdRoute
   '/pillar/$pillarId': typeof PillarPillarIdRoute
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/founder/settings'
     | '/founder/team'
     | '/founder/ventures'
+    | '/founder/workload'
     | '/people/$id'
     | '/pillar/$pillarId'
     | '/space/$spaceId'
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/founder/settings'
     | '/founder/team'
     | '/founder/ventures'
+    | '/founder/workload'
     | '/people/$id'
     | '/pillar/$pillarId'
     | '/space/$spaceId'
@@ -352,6 +363,7 @@ export interface FileRouteTypes {
     | '/founder/settings'
     | '/founder/team'
     | '/founder/ventures'
+    | '/founder/workload'
     | '/people/$id'
     | '/pillar/$pillarId'
     | '/space/$spaceId'
@@ -463,6 +475,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/people/$id'
       preLoaderRoute: typeof PeopleIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/founder/workload': {
+      id: '/founder/workload'
+      path: '/workload'
+      fullPath: '/founder/workload'
+      preLoaderRoute: typeof FounderWorkloadRouteImport
+      parentRoute: typeof FounderRoute
     }
     '/founder/ventures': {
       id: '/founder/ventures'
@@ -614,6 +633,7 @@ interface FounderRouteChildren {
   FounderSettingsRoute: typeof FounderSettingsRouteWithChildren
   FounderTeamRoute: typeof FounderTeamRouteWithChildren
   FounderVenturesRoute: typeof FounderVenturesRoute
+  FounderWorkloadRoute: typeof FounderWorkloadRoute
   FounderIndexRoute: typeof FounderIndexRoute
 }
 
@@ -628,6 +648,7 @@ const FounderRouteChildren: FounderRouteChildren = {
   FounderSettingsRoute: FounderSettingsRouteWithChildren,
   FounderTeamRoute: FounderTeamRouteWithChildren,
   FounderVenturesRoute: FounderVenturesRoute,
+  FounderWorkloadRoute: FounderWorkloadRoute,
   FounderIndexRoute: FounderIndexRoute,
 }
 
@@ -694,13 +715,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
