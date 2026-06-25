@@ -28,7 +28,7 @@ export function QuickCreateModal() {
 
   useEffect(() => {
     if (quickCreateOpen) {
-      setTitle("");
+      setTitle(quickCreateContext?.title ?? "");
       setTemplateId("none");
       setNewName("");
       setTab(quickCreateContext?.tab ?? "task");

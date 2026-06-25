@@ -55,7 +55,7 @@ function ChatPage() {
   const msgs = useMemo(() => [...seeded, ...extras].sort((a, b) => a.at.localeCompare(b.at)), [seeded, extras]);
   const promoted = useMemo(() => readPromoted(), [tick]);
   const { goTask } = useTaskNav();
-  const { currentUserId } = useApp();
+  const { currentUserId, openQuickCreate } = useApp();
   const [convertMsg, setConvertMsg] = useState<Message | null>(null);
 
   return (
