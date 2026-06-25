@@ -1,17 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Globe, TrendingUp, Building2, BarChart3, Newspaper, Shield, Plus, Pencil, X } from "lucide-react";
+import { Plus, Pencil, X, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { MarketIntelEgypt } from "@/components/wasla/MarketIntelEgypt";
 import {
   MACRO_INDICATORS, RATE_HISTORY, FUNDING_ROUNDS, VC_DIRECTORY, INDUSTRY_SIGNALS, REGULATORY_UPDATES, NEWS_FEED,
   type VCTarget,
 } from "@/data/market-intel";
 
 const MarketIntel = () => {
-  const [tab, setTab] = useState<"macro" | "funding" | "vc" | "signals" | "news">("macro");
+  const [tab, setTab] = useState<"ecosystem" | "macro" | "funding" | "vc" | "signals" | "news">("ecosystem");
   const [vcView, setVcView] = useState<"directory" | "targets">("directory");
   const [targets, setTargets] = useState<VCTarget[]>([]);
 
@@ -32,6 +33,7 @@ const MarketIntel = () => {
   }
 
   const tabs = [
+    { id: "ecosystem" as const, l: "Ecosystem Terminal" },
     { id: "macro" as const, l: "Macro Dashboard" },
     { id: "funding" as const, l: "Startup & Funding" },
     { id: "vc" as const, l: "VC Directory" },
@@ -42,7 +44,7 @@ const MarketIntel = () => {
   const totalFunding = FUNDING_ROUNDS.length;
 
   return (
-    <div className="px-6 py-6 space-y-6">
+    <div className="space-y-5">
       <div>
         <h1 className="text-[22px] font-bold text-foreground tracking-tight">Market Intel</h1>
         <p className="text-xs text-muted-foreground mt-1">Egypt & MENA economic data, startup ecosystem, and industry intelligence</p>
@@ -51,11 +53,13 @@ const MarketIntel = () => {
       <div className="flex gap-0 border-b border-border overflow-x-auto">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 whitespace-nowrap ${tab === t.id ? "text-foreground border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+            className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 whitespace-nowrap ${tab === t.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
             {t.l}
           </button>
         ))}
       </div>
+
+      {tab === "ecosystem" && <MarketIntelEgypt />}
 
       {tab === "macro" && (
         <div className="space-y-4">
