@@ -145,14 +145,19 @@ function TasksPage() {
           </div>
 
           <TabsContent value="list" className="mt-4">
-            <HierarchicalTaskList
-              tasks={scopedTasks}
-              allTasks={tasks}
-              primary={group}
-              secondary={group === "space" ? "status" : undefined}
-              scopeLabel={activeListId === "my" ? "Workspace" : activeSpace?.name}
-            />
+            {activeListId === "my" ? (
+              <MyWorkBuckets tasks={scopedTasks} />
+            ) : (
+              <HierarchicalTaskList
+                tasks={scopedTasks}
+                allTasks={tasks}
+                primary={group}
+                secondary={group === "space" ? "status" : undefined}
+                scopeLabel={activeListId === "my" ? "Workspace" : activeSpace?.name}
+              />
+            )}
           </TabsContent>
+
 
           <TabsContent value="board" className="mt-4">
             <BoardView tasks={scopedTasks} />
