@@ -22,11 +22,23 @@ function Home() {
   const { currentUserId, role } = useApp();
   const me = memberById(currentUserId);
   const today = formatCairoDate();
-  const [bodSubmitted, setBodSubmitted] = useState(false);
-  const [eodSubmitted, setEodSubmitted] = useState(false);
-  const [bodText, setBodText] = useState("Ship the Loop Commerce marketing site refresh and review the May board deck.");
-  const [eodText, setEodText] = useState("");
-  const [eodBlockers, setEodBlockers] = useState("");
+  const { submitCheckin, getCheckin } = useCheckins();
+  // Compute Cairo time on client only to avoid SSR hydration mismatch
+  const [cairo, setCairo] = useState<{ dateStr: string; hour: number } | null>(null);
+  useEffect(() => { setCairo(cairoNow()); }, []);
+  const phase: "bod" | "eod" = cairo && cairo.hour >= 15 ? "eod" : "bod";
+  const todayStr = cairo?.dateStr ?? "";
+  const existing = cairo ? getCheckin(currentUserId, todayStr, phase) : undefined;
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState("");
+  const [blockers, setBlockers] = useState("");
+  // Initialize fields from existing entry when phase/cairo resolves
+  useEffect(() => {
+    if (!cairo) return;
+    setText(existing?.text ?? "");
+    setBlockers(existing?.blockers ?? "");
+    setEditing(false);
+  }, [cairo?.dateStr, phase, existing?.id]);
   // Tracked misses (in real life: from backend). Persist across submits so we have a record.
   const [missed, setMissed] = useState<Array<{ id: string; label: string }>>([
     { id: "m1", label: "Yesterday's EOD" },
