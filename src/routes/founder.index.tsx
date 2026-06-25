@@ -8,6 +8,7 @@ import { CLIENT_DIRECTORY_SEED } from "@/data/clients";
 import { useTasks } from "@/lib/tasks-store";
 import { useHiring } from "@/contexts/HiringContext";
 import { members, bodEod } from "@/lib/mock-data";
+import { useCheckins, cairoNow } from "@/lib/checkins-store";
 import { AlertTriangle, Clock, Rocket, Briefcase, Users, DollarSign, Target, ArrowUpRight, ArrowDownRight, Activity, Wallet, Flame, Repeat, CheckCircle2, UserCheck, ListChecks, ClipboardList, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/founder/")({ component: CommandCenter });
@@ -115,6 +116,7 @@ function CommandCenter() {
 
   const { tasks } = useTasks();
   const { jobs, applicants } = useHiring();
+  const { entries: checkinEntries } = useCheckins();
 
   const rollup = useMemo(() => {
     const now = new Date();
@@ -126,8 +128,13 @@ function CommandCenter() {
     const overdue = openTasks.filter(t => t.due && new Date(t.due) < now).length;
     const blocked = tasks.filter(t => t.status === "Blocked").length;
 
-    const today = now.toISOString().slice(0, 10);
-    const checkedInIds = new Set(bodEod.filter(b => b.date === today && b.bod).map(b => b.memberId));
+    const today = cairoNow().dateStr;
+    const todays = checkinEntries.filter(e => e.date === today);
+    let checkedInIds = new Set(todays.map(e => e.memberId));
+    if (checkedInIds.size === 0) {
+      // Fallback to seed data if the store has no entries for today.
+      checkedInIds = new Set(bodEod.filter(b => b.date === today && b.bod).map(b => b.memberId));
+    }
     const missing = members.filter(m => !checkedInIds.has(m.id));
     const checkedCount = members.length - missing.length;
 
@@ -135,7 +142,7 @@ function CommandCenter() {
     const applicantsInProgress = applicants.filter(a => ["New", "Reviewing", "Interview", "Offer"].includes(a.status)).length;
 
     return { activeClients, top, topConc, openTasks: openTasks.length, overdue, blocked, checkedCount, missing, openJobs, applicantsInProgress };
-  }, [tasks, jobs, applicants, metrics.topClients]);
+  }, [tasks, jobs, applicants, metrics.topClients, checkinEntries]);
 
   const signals = useMemo(() => {
     type Sig = { sev: "red" | "amber" | "yellow"; text: string; to: string };
