@@ -8,6 +8,7 @@ import { CLIENT_DIRECTORY_SEED } from "@/data/clients";
 import { useTasks } from "@/lib/tasks-store";
 import { useHiring } from "@/contexts/HiringContext";
 import { members, bodEod } from "@/lib/mock-data";
+import { useCheckins, cairoNow } from "@/lib/checkins-store";
 import { AlertTriangle, Clock, Rocket, Briefcase, Users, DollarSign, Target, ArrowUpRight, ArrowDownRight, Activity, Wallet, Flame, Repeat, CheckCircle2, UserCheck, ListChecks, ClipboardList, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/founder/")({ component: CommandCenter });
