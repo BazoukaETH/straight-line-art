@@ -245,6 +245,7 @@ function WorkloadPage() {
           <div className="px-4 py-8 text-center text-sm text-muted-foreground">No members match this filter.</div>
         )}
       </div>
+      </div>
     </AppShell>
   );
 }
