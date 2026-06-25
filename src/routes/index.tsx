@@ -10,9 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { TaskCard } from "@/components/wasla/TaskCard";
 import { Avatar } from "@/components/wasla/Avatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Pencil, Sunrise, Sunset, Calendar, AlertCircle, ArrowUpRight, TriangleAlert, CheckCircle2 } from "lucide-react";
+import { useCheckins, cairoNow } from "@/lib/checkins-store";
 
 export const Route = createFileRoute("/")({ component: Home });
 
