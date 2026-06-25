@@ -194,4 +194,8 @@ export const Pipeline = () => {
   );
 };
 
-export const Route = createFileRoute("/founder/pipeline")({ component: Pipeline });
+export const Route = createFileRoute("/founder/pipeline")({
+  beforeLoad: () => {
+    throw redirect({ to: "/clients/pipeline" });
+  },
+});
