@@ -7,7 +7,6 @@ import {
   isThisWeek,
   isWithinInterval,
   startOfDay,
-  endOfDay,
   addDays,
   addWeeks,
   startOfWeek,
