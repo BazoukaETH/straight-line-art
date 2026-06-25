@@ -121,7 +121,7 @@ const Clients = () => {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
 
   return (
-    <div className="space-y-5">
+    <div className="px-6 py-6 space-y-6">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h1 className="text-[22px] font-bold text-foreground tracking-tight">Clients Directory</h1>

@@ -115,7 +115,7 @@ const Network = () => {
   const profileCap = profileInv ? capDataFor(profileInv.name, profileInv.entity) : undefined;
 
   return (
-    <div className="space-y-5">
+    <div className="px-6 py-6 space-y-6">
       <div>
         <h1 className="text-[22px] font-bold text-foreground tracking-tight">Network</h1>
         <p className="text-xs text-muted-foreground mt-1">Investor relations, advisors, board, and strategic partners</p>
@@ -125,7 +125,7 @@ const Network = () => {
       <div className="flex gap-0 border-b border-border">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 ${tab === t.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+            className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 -mb-px ${tab === t.id ? "text-foreground border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
             {t.l}
           </button>
         ))}

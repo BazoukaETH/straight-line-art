@@ -105,7 +105,7 @@ const SettingsPage = () => {
   }, []);
 
   return (
-    <div className="space-y-8">
+    <div className="px-6 py-6 space-y-8">
       <div>
         <h1 className="text-[22px] font-bold text-foreground tracking-tight">Settings</h1>
         <p className="text-xs text-muted-foreground mt-1">Roles, users, permissions, and integrations</p>

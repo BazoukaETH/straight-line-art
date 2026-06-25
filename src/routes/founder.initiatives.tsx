@@ -53,7 +53,7 @@ const Initiatives = () => {
   });
 
   return (
-    <div className="space-y-5">
+    <div className="px-6 py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[22px] font-bold text-foreground tracking-tight">Initiatives</h1>
