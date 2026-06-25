@@ -29,7 +29,7 @@ const AIAgents = () => {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
-    <div className="space-y-5">
+    <div className="px-6 py-6 space-y-6">
       <div>
         <h1 className="text-[22px] font-bold text-foreground tracking-tight">AI Agents</h1>
         <p className="text-xs text-muted-foreground mt-1">0 active - {agents.length} total agents - All draft status</p>

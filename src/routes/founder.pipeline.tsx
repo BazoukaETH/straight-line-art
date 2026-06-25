@@ -75,7 +75,7 @@ const Pipeline = () => {
   const tabs = [{ id: "projects" as const, l: "Client Projects" }, { id: "pipeline" as const, l: "Sales Pipeline" }];
 
   return (
-    <div className="space-y-5">
+    <div className="px-6 py-6 space-y-6">
       <div>
         <h1 className="text-[22px] font-bold text-foreground tracking-tight">Pipeline</h1>
         <p className="text-xs text-muted-foreground mt-1">Wasla Solutions client projects & sales pipeline</p>

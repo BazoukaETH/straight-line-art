@@ -119,7 +119,7 @@ const Ventures = () => {
   ];
 
   return (
-    <div className="space-y-5">
+    <div className="px-6 py-6 space-y-6">
       <div>
         <h1 className="text-[22px] font-bold text-foreground tracking-tight">Ventures & Portfolio</h1>
         <p className="text-xs text-muted-foreground mt-1">All subsidiaries, strategic holdings, and investment pipeline under Wasla Ventures</p>
@@ -137,7 +137,7 @@ const Ventures = () => {
 
       {/* ═══════ OVERVIEW ═══════ */}
       {tab === "overview" && (
-        <div className="space-y-5">
+        <div className="px-6 py-6 space-y-6">
           {/* Summary KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
             {[

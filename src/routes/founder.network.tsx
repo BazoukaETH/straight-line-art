@@ -115,7 +115,7 @@ const Network = () => {
   const profileCap = profileInv ? capDataFor(profileInv.name, profileInv.entity) : undefined;
 
   return (
-    <div className="space-y-5">
+    <div className="px-6 py-6 space-y-6">
       <div>
         <h1 className="text-[22px] font-bold text-foreground tracking-tight">Network</h1>
         <p className="text-xs text-muted-foreground mt-1">Investor relations, advisors, board, and strategic partners</p>
