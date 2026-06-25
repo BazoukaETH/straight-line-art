@@ -100,7 +100,7 @@ export function MarketIntelEgypt() {
       <div className="flex gap-0 border-b border-border overflow-x-auto">
         {sections.map((s) => (
           <button key={s.id} onClick={() => setSec(s.id)}
-            className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 whitespace-nowrap ${sec === s.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+            className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${sec === s.id ? "text-foreground border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
             {s.l}
           </button>
         ))}
@@ -169,7 +169,7 @@ export function MarketIntelEgypt() {
           <Panel title="Egypt startup roster — 80+ companies across 12 sectors" subtitle="Rising & emerging companies beyond the top names · ~ = estimated funding">
             {rosterGroups.map((g) => (
               <div key={g} className="mb-3">
-                <div className="text-[10px] font-bold uppercase tracking-wide text-secondary mb-1">{g}</div>
+                <div className="text-[10px] font-bold uppercase tracking-wide text-accent mb-1">{g}</div>
                 <DT head={["Company", "Sub-sector", "What it does", "~Funding", "Status"]}
                   rows={startupRoster80.filter((r) => (r.group ?? "Other") === g).map((r) => [r.company, r.subSector, r.whatItDoes, r.funding, r.status])} />
               </div>
@@ -246,7 +246,7 @@ export function MarketIntelEgypt() {
           <Panel title="Most active investors in Egypt" subtitle="★ = most active 2024–2026 · grouped by type">
             {investorGroups.map((g) => (
               <div key={g} className="mb-3">
-                <div className="text-[10px] font-bold uppercase tracking-wide text-secondary mb-1">{g}</div>
+                <div className="text-[10px] font-bold uppercase tracking-wide text-accent mb-1">{g}</div>
                 <DT head={["Investor", "Type / HQ", "Stage", "Fund size / AUM", "Notable Egypt bets"]}
                   rows={investors.filter((r) => (r.group ?? "Other") === g).map((r) => [r.investor, r.typeHq, r.stage, r.fundSizeAum, r.notableEgyptBets])} />
               </div>
@@ -360,7 +360,7 @@ export function MarketIntelEgypt() {
               <div className="space-y-2">
                 {sources.map((r, i) => (
                   <div key={i}>
-                    <div className="text-[10px] font-bold uppercase tracking-wide text-secondary">{r.category}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wide text-accent">{r.category}</div>
                     <div className="text-[10px] text-muted-foreground leading-relaxed">{r.sources}</div>
                   </div>
                 ))}
