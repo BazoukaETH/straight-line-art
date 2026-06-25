@@ -111,8 +111,7 @@ function CommandCenter() {
     };
   }, []);
 
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
 
   const { tasks } = useTasks();
   const { jobs, applicants } = useHiring();
