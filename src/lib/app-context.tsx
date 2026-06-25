@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { roleToUser, workspaces, subscriptionsSeed, type Role, type Subscription, type SubStatus } from "./mock-data";
 import { TasksProvider } from "./tasks-store";
+import { CheckinsProvider } from "./checkins-store";
 import { navigateToTask } from "./nav-bridge";
 import { seedDiscussedOnce } from "./chat-store";
 
@@ -158,7 +159,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         selectedTaskIds, setSelectedTaskIds, toggleSelectTask, clearSelection,
       }}
     >
-      <TasksProvider>{children}</TasksProvider>
+      <TasksProvider><CheckinsProvider>{children}</CheckinsProvider></TasksProvider>
     </Ctx.Provider>
   );
 }
