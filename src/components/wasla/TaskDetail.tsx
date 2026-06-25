@@ -350,6 +350,75 @@ function DepLine({ label, ids, onOpen, onRemove }: { label: string; ids: string[
   );
 }
 
+/* ---------- Quick edit bar ---------- */
+function QuickEditBar({ task, updateTask }: { task: any; updateTask: (id: string, p: any) => void }) {
+  const assignee = memberById(task.assigneeId);
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+            <CalendarDays className="size-3.5 text-muted-foreground" />
+            {task.due ? new Date(task.due).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Set due date"}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={task.due ? new Date(task.due) : undefined}
+            onSelect={(d) => { if (d) { updateTask(task.id, { due: d.toISOString() }); toast.success("Due date updated"); } }}
+            initialFocus
+            className="p-3 pointer-events-auto"
+          />
+        </PopoverContent>
+      </Popover>
+
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+            <Avatar memberId={assignee.id} size={20} />
+            {assignee.name}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-56 p-1" align="start">
+          {members.map((m) => (
+            <button
+              key={m.id}
+              onClick={() => { updateTask(task.id, { assigneeId: m.id }); toast.success(`Assigned ${m.name}`); }}
+              className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-muted"
+            >
+              <Avatar memberId={m.id} size={20} /> {m.name}
+            </button>
+          ))}
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
+/* ---------- Blocked by / Blocks ---------- */
+function BlockedBySection({ task }: { task: any }) {
+  const { removeDependency } = useTasks();
+  const { goTask } = useTaskNav();
+  const blocks: string[] = task.dependencies?.blocks ?? [];
+  const blockedBy: string[] = task.dependencies?.blockedBy ?? [];
+  return (
+    <section>
+      <div className="mb-2 flex items-center gap-2">
+        <Link2 className="size-4 text-muted-foreground" />
+        <h3 className="text-sm font-semibold">Blocked by / Blocks</h3>
+        <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+          {blockedBy.length + blocks.length}
+        </span>
+      </div>
+      <div className="space-y-2 rounded-lg border border-border bg-card p-3">
+        <DepLine label="Blocked by" ids={blockedBy} onOpen={(id) => goTask(id)} onRemove={(id) => removeDependency(id, task.id)} />
+        <DepLine label="Blocks" ids={blocks} onOpen={(id) => goTask(id)} onRemove={(id) => removeDependency(task.id, id)} />
+      </div>
+    </section>
+  );
+}
+
 /* ---------- Description ---------- */
 function DescriptionSection({ task, onSave }: { task: any; onSave: (v: string) => void }) {
   const [editing, setEditing] = useState(false);
