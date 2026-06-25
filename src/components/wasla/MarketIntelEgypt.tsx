@@ -100,7 +100,7 @@ export function MarketIntelEgypt() {
       <div className="flex gap-0 border-b border-border overflow-x-auto">
         {sections.map((s) => (
           <button key={s.id} onClick={() => setSec(s.id)}
-            className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${sec === s.id ? "text-foreground border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+            className={`px-4 py-2 text-[11px] font-semibold transition-colors border-b-2 -mb-px whitespace-nowrap ${sec === s.id ? "text-primary border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
             {s.l}
           </button>
         ))}
