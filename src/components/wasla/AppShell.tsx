@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   Home, CheckSquare, Inbox, MessageSquare, BarChart3, Files,
   Search, Plus, Bell, Command, Sun, Moon, ChevronRight,
-  Contact2, Users,
+  Contact2, Users, CalendarClock,
 } from "lucide-react";
 
 import { useApp } from "@/lib/app-context";
