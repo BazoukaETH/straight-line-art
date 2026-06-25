@@ -11,6 +11,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { usePageTitle } from "@/lib/page-title";
 import { cn } from "@/lib/utils";
+import { ClientsTabs } from "@/components/wasla/ClientsTabs";
 
 export const Route = createFileRoute("/clients")({ component: ClientsPage });
 
