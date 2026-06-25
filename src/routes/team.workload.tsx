@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { isBefore, isToday, addDays, formatDistanceToNowStrict, format } from "date-fns";
 import { ChevronDown, ChevronRight, AlertTriangle, Activity, Users, Coffee } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTasks } from "@/lib/tasks-store";
 import { useApp } from "@/lib/app-context";
 import { members, memberById, spaces, pillarMeta, type Pillar, type Task } from "@/lib/mock-data";
@@ -10,6 +9,7 @@ import { Avatar } from "@/components/wasla/Avatar";
 import { StatusPill } from "@/components/wasla/StatusPill";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { routeForTask } from "@/lib/task-nav";
+import { TeamTabs } from "@/components/wasla/TeamTabs";
 
 export const Route = createFileRoute("/team/workload")({ component: WorkloadPage });
 
@@ -103,14 +103,7 @@ function WorkloadPage() {
         <p className="text-sm text-muted-foreground">Who is overloaded, who is idle, what is slipping.</p>
       </div>
 
-      <Tabs value="workload">
-        <TabsList>
-          <TabsTrigger value="workload">Workload</TabsTrigger>
-          <TabsTrigger value="checkins" asChild>
-            <Link to="/team/checkins">Check-ins</Link>
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+      <TeamTabs active="workload" />
 
       {/* Stat tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
