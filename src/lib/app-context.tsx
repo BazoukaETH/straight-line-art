@@ -159,7 +159,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         selectedTaskIds, setSelectedTaskIds, toggleSelectTask, clearSelection,
       }}
     >
-      <TasksProvider>{children}</TasksProvider>
+      <TasksProvider><CheckinsProvider>{children}</CheckinsProvider></TasksProvider>
     </Ctx.Provider>
   );
 }
