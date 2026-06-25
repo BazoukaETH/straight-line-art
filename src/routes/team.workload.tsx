@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { isBefore, isToday, addDays, formatDistanceToNowStrict, format } from "date-fns";
 import { ChevronDown, ChevronRight, AlertTriangle, Activity, Users, Coffee } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTasks } from "@/lib/tasks-store";
 import { useApp } from "@/lib/app-context";
 import { members, memberById, spaces, pillarMeta, type Pillar, type Task } from "@/lib/mock-data";
@@ -10,7 +11,7 @@ import { StatusPill } from "@/components/wasla/StatusPill";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { routeForTask } from "@/lib/task-nav";
 
-export const Route = createFileRoute("/founder/workload")({ component: WorkloadPage });
+export const Route = createFileRoute("/team/workload")({ component: WorkloadPage });
 
 type SortKey = "overdue" | "load" | "name";
 type PillarFilter = "all" | Pillar;
@@ -98,9 +99,18 @@ function WorkloadPage() {
   return (
     <div className="p-4 md:p-6 space-y-4">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight">Team Workload</h1>
+        <h1 className="text-xl font-semibold tracking-tight">Team</h1>
         <p className="text-sm text-muted-foreground">Who is overloaded, who is idle, what is slipping.</p>
       </div>
+
+      <Tabs value="workload">
+        <TabsList>
+          <TabsTrigger value="workload">Workload</TabsTrigger>
+          <TabsTrigger value="checkins" asChild>
+            <Link to="/team/checkins">Check-ins</Link>
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Stat tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
