@@ -8,7 +8,7 @@ import { useApp } from "@/lib/app-context";
 import { useTasks } from "@/lib/tasks-store";
 import { TaskCard } from "@/components/wasla/TaskCard";
 import { ListSettingsDialog } from "@/components/wasla/ListSettingsDialog";
-import { spaces, type Status, type Task, memberById, type CustomField } from "@/lib/mock-data";
+import { spaces, type Status, type Task, memberById, type CustomField, spaceById } from "@/lib/mock-data";
 import { Plus, Settings, Filter, Search, Star, Share2, Sliders, Eye, EyeOff, Hash } from "lucide-react";
 
 import { cn } from "@/lib/utils";
