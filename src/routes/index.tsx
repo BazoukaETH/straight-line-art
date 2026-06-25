@@ -22,6 +22,7 @@ export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
   const { currentUserId, role } = useApp();
+  const { tasks: liveTasks } = useTasks();
   const me = memberById(currentUserId);
   const today = formatCairoDate();
   const { submitCheckin, getCheckin } = useCheckins();
