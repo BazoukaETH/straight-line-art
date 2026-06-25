@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "@tanstack/react-router";
 import {
@@ -163,7 +163,7 @@ const Stars = ({ rating, size = 12, onChange }: { rating: number; size?: number;
   </div>
 );
 
-const Team = () => {
+export const Team = () => {
   const [tab, setTab] = useState<"team" | "hiring">("team");
   const [team, setTeam] = useState<TeamMember[]>(TEAM_SEED);
   const [advisors, setAdvisors] = useState<Advisor[]>(ADVISORS_SEED);
@@ -1046,4 +1046,6 @@ const Team = () => {
   );
 };
 
-export const Route = createFileRoute("/founder/team")({ component: Team });
+export const Route = createFileRoute("/founder/team")({
+  beforeLoad: () => { throw redirect({ to: "/team/hiring" }); },
+});

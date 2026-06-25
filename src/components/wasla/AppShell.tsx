@@ -29,13 +29,13 @@ type SidebarCtx = { collapsed: boolean; toggle: () => void; setCollapsed: (b: bo
 const SidebarCollapseCtx = createContext<SidebarCtx>({ collapsed: false, toggle: () => {}, setCollapsed: () => {} });
 export const useSidebarCollapse = () => useContext(SidebarCollapseCtx);
 
-type NavItem = { to: string; icon: typeof Home; label: string; founderOnly?: boolean };
+type NavItem = { to: string; icon: typeof Home; label: string; founderOnly?: boolean; managerOrFounder?: boolean };
 
 const workspaceNav: NavItem[] = [
   { to: "/", icon: Home, label: "Home" },
   { to: "/founder", icon: BarChart3, label: "Founder Dashboard", founderOnly: true },
   { to: "/tasks", icon: CheckSquare, label: "Tasks" },
-  { to: "/team/workload", icon: Users, label: "Team" },
+  { to: "/team/workload", icon: Users, label: "Team", managerOrFounder: true },
   { to: "/inbox", icon: Inbox, label: "Inbox" },
   { to: "/chat", icon: MessageSquare, label: "Chat" },
   { to: "/clients", icon: Contact2, label: "Clients" },
@@ -48,7 +48,11 @@ export function AppShell({ children, sidebar, breadcrumb }: { children: ReactNod
   const loc = useLocation();
   const nav = useNavigate();
   const me = memberById(currentUserId);
-  const items = workspaceNav.filter((i) => !i.founderOnly || role === "founder");
+  const items = workspaceNav.filter((i) => {
+    if (i.founderOnly && role !== "founder") return false;
+    if (i.managerOrFounder && role !== "founder" && role !== "manager") return false;
+    return true;
+  });
   const unreadCount = inboxItems.filter((i) => i.unread).length;
   const showDevTools = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("devTools");
   const [collapsed, setCollapsed] = useState<boolean>(() => {

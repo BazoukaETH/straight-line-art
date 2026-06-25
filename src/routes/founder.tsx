@@ -16,12 +16,11 @@ const navItems: NavItem[] = [
   { to: "/founder/pipeline",     label: "Pipeline",       icon: Briefcase },
   { to: "/founder/clients",      label: "Clients",        icon: Contact2 },
   { to: "/founder/finance",      label: "Finance",        icon: DollarSign },
-  { to: "/founder/team",         label: "Team",           icon: Users },
   { to: "/founder/network",      label: "Network",        icon: Globe },
   { to: "/founder/market-intel", label: "Market Intel",   icon: BarChart3 },
   { to: "/founder/initiatives",  label: "Initiatives",    icon: Target },
   { to: "/founder/ai-agents",    label: "AI Agents",      icon: Bot },
-  
+
   { to: "/founder/settings",     label: "Settings",       icon: SettingsIcon },
 ];
 
