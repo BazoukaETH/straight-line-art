@@ -29,7 +29,7 @@ interface AppCtx {
   // quick create
   quickCreateOpen: boolean;
   setQuickCreateOpen: (b: boolean) => void;
-  quickCreateContext: { listId?: string; parentId?: string; tab?: QuickCreateTab } | null;
+  quickCreateContext: { listId?: string; parentId?: string; tab?: QuickCreateTab; title?: string } | null;
   setQuickCreateContext: (c: AppCtx["quickCreateContext"]) => void;
   openQuickCreate: (c?: AppCtx["quickCreateContext"]) => void;
   // bulk selection
