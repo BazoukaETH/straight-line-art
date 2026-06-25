@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as TeamWorkloadRouteImport } from './routes/team.workload'
 import { Route as TeamHiringRouteImport } from './routes/team.hiring'
+import { Route as TeamCheckinsRouteImport } from './routes/team.checkins'
 import { Route as SpaceSpaceIdRouteImport } from './routes/space.$spaceId'
 import { Route as PillarPillarIdRouteImport } from './routes/pillar.$pillarId'
 import { Route as PeopleIdRouteImport } from './routes/people.$id'
@@ -93,6 +94,11 @@ const TeamWorkloadRoute = TeamWorkloadRouteImport.update({
 const TeamHiringRoute = TeamHiringRouteImport.update({
   id: '/team/hiring',
   path: '/team/hiring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamCheckinsRoute = TeamCheckinsRouteImport.update({
+  id: '/team/checkins',
+  path: '/team/checkins',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SpaceSpaceIdRoute = SpaceSpaceIdRouteImport.update({
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/people/$id': typeof PeopleIdRoute
   '/pillar/$pillarId': typeof PillarPillarIdRoute
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
+  '/team/checkins': typeof TeamCheckinsRoute
   '/team/hiring': typeof TeamHiringRoute
   '/team/workload': typeof TeamWorkloadRoute
   '/founder/': typeof FounderIndexRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/people/$id': typeof PeopleIdRoute
   '/pillar/$pillarId': typeof PillarPillarIdRoute
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
+  '/team/checkins': typeof TeamCheckinsRoute
   '/team/hiring': typeof TeamHiringRoute
   '/team/workload': typeof TeamWorkloadRoute
   '/founder': typeof FounderIndexRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/people/$id': typeof PeopleIdRoute
   '/pillar/$pillarId': typeof PillarPillarIdRoute
   '/space/$spaceId': typeof SpaceSpaceIdRouteWithChildren
+  '/team/checkins': typeof TeamCheckinsRoute
   '/team/hiring': typeof TeamHiringRoute
   '/team/workload': typeof TeamWorkloadRoute
   '/founder/': typeof FounderIndexRoute
@@ -314,6 +323,7 @@ export interface FileRouteTypes {
     | '/people/$id'
     | '/pillar/$pillarId'
     | '/space/$spaceId'
+    | '/team/checkins'
     | '/team/hiring'
     | '/team/workload'
     | '/founder/'
@@ -345,6 +355,7 @@ export interface FileRouteTypes {
     | '/people/$id'
     | '/pillar/$pillarId'
     | '/space/$spaceId'
+    | '/team/checkins'
     | '/team/hiring'
     | '/team/workload'
     | '/founder'
@@ -377,6 +388,7 @@ export interface FileRouteTypes {
     | '/people/$id'
     | '/pillar/$pillarId'
     | '/space/$spaceId'
+    | '/team/checkins'
     | '/team/hiring'
     | '/team/workload'
     | '/founder/'
@@ -400,6 +412,7 @@ export interface RootRouteChildren {
   PeopleIdRoute: typeof PeopleIdRoute
   PillarPillarIdRoute: typeof PillarPillarIdRoute
   SpaceSpaceIdRoute: typeof SpaceSpaceIdRouteWithChildren
+  TeamCheckinsRoute: typeof TeamCheckinsRoute
   TeamHiringRoute: typeof TeamHiringRoute
   TeamWorkloadRoute: typeof TeamWorkloadRoute
 }
@@ -481,6 +494,13 @@ declare module '@tanstack/react-router' {
       path: '/team/hiring'
       fullPath: '/team/hiring'
       preLoaderRoute: typeof TeamHiringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/checkins': {
+      id: '/team/checkins'
+      path: '/team/checkins'
+      fullPath: '/team/checkins'
+      preLoaderRoute: typeof TeamCheckinsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/space/$spaceId': {
@@ -730,6 +750,7 @@ const rootRouteChildren: RootRouteChildren = {
   PeopleIdRoute: PeopleIdRoute,
   PillarPillarIdRoute: PillarPillarIdRoute,
   SpaceSpaceIdRoute: SpaceSpaceIdRouteWithChildren,
+  TeamCheckinsRoute: TeamCheckinsRoute,
   TeamHiringRoute: TeamHiringRoute,
   TeamWorkloadRoute: TeamWorkloadRoute,
 }
