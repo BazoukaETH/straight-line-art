@@ -4,6 +4,8 @@ import { useApp } from "@/lib/app-context";
 import { useUsers } from "@/contexts/UserContext";
 import { TeamTabs } from "@/components/wasla/TeamTabs";
 import { Team } from "./founder.team";
+import { AppShell } from "@/components/wasla/AppShell";
+import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 
 export const Route = createFileRoute("/team/hiring")({ component: TeamHiringPage });
 
@@ -19,9 +21,11 @@ function TeamHiringPage() {
   }, [role, canSeeHiring, nav]);
 
   return (
-    <div className="p-4 md:p-6 space-y-4">
-      <TeamTabs active="hiring" />
-      <Team />
-    </div>
+    <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span>Team / Hiring</span>}>
+      <div className="p-4 md:p-6 space-y-4">
+        <TeamTabs active="hiring" />
+        <Team />
+      </div>
+    </AppShell>
   );
 }

@@ -10,6 +10,8 @@ import { StatusPill } from "@/components/wasla/StatusPill";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { routeForTask } from "@/lib/task-nav";
 import { TeamTabs } from "@/components/wasla/TeamTabs";
+import { AppShell } from "@/components/wasla/AppShell";
+import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 
 export const Route = createFileRoute("/team/workload")({ component: WorkloadPage });
 
@@ -97,7 +99,8 @@ function WorkloadPage() {
   if (role === "member") return null;
 
   return (
-    <div className="p-4 md:p-6 space-y-4">
+    <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span>Team / Workload</span>}>
+      <div className="p-4 md:p-6 space-y-4">
       <div>
         <h1 className="text-xl font-semibold tracking-tight">Team</h1>
         <p className="text-sm text-muted-foreground">Who is overloaded, who is idle, what is slipping.</p>
@@ -242,7 +245,8 @@ function WorkloadPage() {
           <div className="px-4 py-8 text-center text-sm text-muted-foreground">No members match this filter.</div>
         )}
       </div>
-    </div>
+      </div>
+    </AppShell>
   );
 }
 
