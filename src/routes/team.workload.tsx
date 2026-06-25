@@ -10,6 +10,8 @@ import { StatusPill } from "@/components/wasla/StatusPill";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { routeForTask } from "@/lib/task-nav";
 import { TeamTabs } from "@/components/wasla/TeamTabs";
+import { AppShell } from "@/components/wasla/AppShell";
+import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 
 export const Route = createFileRoute("/team/workload")({ component: WorkloadPage });
 
