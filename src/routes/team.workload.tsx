@@ -99,7 +99,8 @@ function WorkloadPage() {
   if (role === "member") return null;
 
   return (
-    <div className="p-4 md:p-6 space-y-4">
+    <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span>Team / Workload</span>}>
+      <div className="p-4 md:p-6 space-y-4">
       <div>
         <h1 className="text-xl font-semibold tracking-tight">Team</h1>
         <p className="text-sm text-muted-foreground">Who is overloaded, who is idle, what is slipping.</p>
