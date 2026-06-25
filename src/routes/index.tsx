@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { useApp } from "@/lib/app-context";
@@ -10,16 +10,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { TaskCard } from "@/components/wasla/TaskCard";
 import { Avatar } from "@/components/wasla/Avatar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Pencil, Sunrise, Sunset, Calendar, AlertCircle, ArrowUpRight, TriangleAlert, CheckCircle2 } from "lucide-react";
 import { useCheckins, cairoNow } from "@/lib/checkins-store";
+import { useTasks } from "@/lib/tasks-store";
+import { formatDistanceToNow, parseISO, isPast } from "date-fns";
 
 export const Route = createFileRoute("/")({ component: Home });
 
 
 function Home() {
   const { currentUserId, role } = useApp();
+  const { tasks: liveTasks } = useTasks();
   const me = memberById(currentUserId);
   const today = formatCairoDate();
   const { submitCheckin, getCheckin } = useCheckins();
@@ -232,6 +235,51 @@ function Home() {
 
         {/* Right column */}
         <div className="space-y-6 lg:col-span-2">
+          <Link to="/deadlines" className="block">
+            <Card className="border-border p-5 transition-colors hover:bg-muted/30">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-sm font-semibold">Due this week</h3>
+                {(() => {
+                  const myOpen = liveTasks
+                    .filter((t) => t.assigneeId === currentUserId && t.status !== "Done")
+                    .sort((a, b) => new Date(a.due).getTime() - new Date(b.due).getTime());
+                  const overdue = myOpen.filter((t) => isPast(parseISO(t.due))).length;
+                  return overdue > 0 ? (
+                    <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1.5 text-[11px] font-medium text-white">
+                      {overdue}
+                    </span>
+                  ) : null;
+                })()}
+              </div>
+              <div className="space-y-2">
+                {(() => {
+                  const myOpen = liveTasks
+                    .filter((t) => t.assigneeId === currentUserId && t.status !== "Done")
+                    .sort((a, b) => new Date(a.due).getTime() - new Date(b.due).getTime())
+                    .slice(0, 5);
+                  if (myOpen.length === 0) {
+                    return <p className="text-sm text-muted-foreground">Nothing due. You're clear.</p>;
+                  }
+                  return myOpen.map((t) => {
+                    const due = parseISO(t.due);
+                    const isOver = isPast(due);
+                    return (
+                      <div key={t.id} className="flex items-center justify-between gap-2">
+                        <span className="truncate text-sm font-medium">{t.title}</span>
+                        <span
+                          className={`whitespace-nowrap text-xs ${isOver ? "font-medium text-destructive" : "text-muted-foreground"}`}
+                          suppressHydrationWarning
+                        >
+                          {isOver ? "Overdue" : formatDistanceToNow(due, { addSuffix: true })}
+                        </span>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            </Card>
+          </Link>
+
           <Card className="border-border p-5">
             <h3 className="mb-3 text-sm font-semibold">Pillars snapshot</h3>
             <div className="space-y-2">
