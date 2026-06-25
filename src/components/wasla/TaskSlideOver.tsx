@@ -172,12 +172,44 @@ export function TaskSlideOver() {
                   </div>
                 </Meta>
                 <Meta label="Assignee">
-                  <div className="flex items-center gap-2">
-                    <Avatar memberId={task.assigneeId} size={22} />
-                    <span>{memberById(task.assigneeId).name}</span>
-                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="flex items-center gap-2 rounded px-1 py-0.5 hover:bg-muted">
+                        <Avatar memberId={task.assigneeId} size={22} />
+                        <span>{memberById(task.assigneeId).name}</span>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-56 p-1" align="start">
+                      {members.map((m) => (
+                        <button
+                          key={m.id}
+                          onClick={() => { updateTask(task.id, { assigneeId: m.id }); toast.success(`Assigned ${m.name}`); }}
+                          className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-muted"
+                        >
+                          <Avatar memberId={m.id} size={20} /> {m.name}
+                        </button>
+                      ))}
+                    </PopoverContent>
+                  </Popover>
                 </Meta>
-                <Meta label="Due"><span>{new Date(task.due).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></Meta>
+                <Meta label="Due">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="rounded px-1 py-0.5 text-left hover:bg-muted">
+                        {task.due ? new Date(task.due).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Set due date"}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={task.due ? new Date(task.due) : undefined}
+                        onSelect={(d) => { if (d) { updateTask(task.id, { due: d.toISOString() }); toast.success("Due date updated"); } }}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </Meta>
                 <Separator />
                 <Meta label="Watchers">
                   <div className="flex -space-x-1.5">
