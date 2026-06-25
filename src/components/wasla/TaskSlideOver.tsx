@@ -12,6 +12,8 @@ import { FileText, Hash, Paperclip, MessageSquare, CheckSquare, Download, Extern
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { members } from "@/lib/mock-data";
 import { getChildren, getAncestors } from "@/lib/task-utils";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
