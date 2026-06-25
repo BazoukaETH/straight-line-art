@@ -31,6 +31,7 @@ function ClientsPage() {
     <AppShell sidebar={<SpaceTreeSidebar />} breadcrumb={<span className="font-medium text-foreground">Clients</span>}>
       <PageHeader crumbs={[{ label: "Clients" }]} />
       <div className="px-6 py-5">
+        <div className="mb-4"><ClientsTabs active="clients" /></div>
         <div className="mb-5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">Clients</h1>
