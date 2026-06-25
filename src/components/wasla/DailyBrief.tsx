@@ -102,6 +102,7 @@ export function DailyBrief() {
   const [variant, setVariant] = useState(0);
   const [generatedAt, setGeneratedAt] = useState<Date | null>(null);
   const [, force] = useState(0);
+  const { entries } = useCheckins();
 
   useEffect(() => {
     setMounted(true);
@@ -114,7 +115,40 @@ export function DailyBrief() {
     return () => clearInterval(t);
   }, []);
 
-  const sections = useMemo(() => VARIANTS[variant % VARIANTS.length], [variant]);
+  const eodSection = useMemo(() => {
+    const yesterday = yesterdayStr();
+    const yesterdayEods = entries.filter((e) => e.date === yesterday && e.phase === "eod");
+    if (yesterdayEods.length === 0) return null;
+
+    const submittedCount = yesterdayEods.length;
+    const submittedIds = new Set(yesterdayEods.map((e) => e.memberId));
+    const missingMembers = members.filter((m) => !submittedIds.has(m.id));
+    const blockerCount = yesterdayEods.filter((e) => e.blockers.trim().length > 0).length;
+
+    const bullets: Bullet[] = [];
+    if (submittedCount === members.length) {
+      bullets.push({ text: `${submittedCount} of ${members.length} EODs in.`, to: "/team/checkins" });
+    } else {
+      const missingNames = missingMembers.map((m) => m.name.split(" ")[0]).join(", ");
+      bullets.push({
+        text: `${submittedCount} of ${members.length} team members submitted EOD. ${missingNames} missed.`,
+        to: "/team/checkins",
+      });
+    }
+    if (blockerCount > 0) {
+      bullets.push({
+        text: `${blockerCount} blocker${blockerCount !== 1 ? "s" : ""} raised.`,
+        to: "/team/checkins",
+      });
+    }
+    return { icon: "☀️", title: "Since yesterday EOD", bullets };
+  }, [entries]);
+
+  const sections = useMemo(() => {
+    const base = VARIANTS[variant % VARIANTS.length];
+    if (!eodSection) return base;
+    return base.map((s) => (s.title === "Since yesterday EOD" ? eodSection : s));
+  }, [variant, eodSection]);
 
   if (!mounted || hidden) return null;
 
