@@ -176,7 +176,7 @@ export default function CandidateModal({ candidateId, onClose, initialTab = "ove
                   { id: "pool" as const, l: "Pool Info" },
                 ].map(t => (
                   <button key={t.id} onClick={() => setTab(t.id)}
-                    className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 ${tab === t.id ? "text-secondary border-secondary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+                    className={`px-4 py-2 text-[11px] font-medium transition-colors border-b-2 -mb-px ${tab === t.id ? "text-foreground border-primary" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
                     {t.l}
                   </button>
                 ))}
