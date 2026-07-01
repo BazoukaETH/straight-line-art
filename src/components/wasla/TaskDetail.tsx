@@ -9,7 +9,7 @@ import { PriorityIcon } from "./PriorityIcon";
 import {
   CheckSquare, Plus, Link2, X, ListChecks, Paperclip, FileText, Upload, Download,
   ExternalLink, Activity, Bell, Filter, Send, Smile, AtSign, GripVertical,
-  Clock, CalendarDays, Tag,
+  Clock, CalendarDays, Tag, Repeat,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
@@ -232,6 +232,12 @@ function PropertiesGrid({ task, updateTask }: { task: any; updateTask: (id: stri
               <Calendar mode="single" selected={new Date(task.due)} onSelect={(d) => d && updateTask(task.id, { due: d.toISOString() })} className="p-3 pointer-events-auto" />
             </PopoverContent>
           </Popover>
+          {task.recurrence && (
+            <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+              <Repeat className="size-3" />
+              Repeats {task.recurrence.freq}
+            </span>
+          )}
         </div>
       </Row>
 
@@ -262,6 +268,23 @@ function PropertiesGrid({ task, updateTask }: { task: any; updateTask: (id: stri
 
       <Row label="Tags" icon={<Tag className="size-3.5 text-muted-foreground" />}>
         <TagEditor tags={task.tags ?? []} onChange={(tags) => updateTask(task.id, { tags })} />
+      </Row>
+
+      <Row label="Repeat" icon={<Repeat className="size-3.5 text-muted-foreground" />}>
+        <Select
+          value={task.recurrence?.freq ?? "none"}
+          onValueChange={(freq) => updateTask(task.id, { recurrence: freq === "none" ? undefined : { freq: freq as "daily" | "weekly" | "monthly" } })}
+        >
+          <SelectTrigger className="h-6 w-40 border-none bg-transparent px-1 text-xs shadow-none focus:ring-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">Doesn't repeat</SelectItem>
+            <SelectItem value="daily">Daily</SelectItem>
+            <SelectItem value="weekly">Weekly</SelectItem>
+            <SelectItem value="monthly">Monthly</SelectItem>
+          </SelectContent>
+        </Select>
       </Row>
 
       <Row label="Relationships" icon={<Link2 className="size-3.5 text-muted-foreground" />}>
