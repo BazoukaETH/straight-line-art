@@ -333,6 +333,7 @@ function ChatPage() {
             channelId={activeId}
             channelName={active.name}
             currentUserId={currentUserId}
+            overrides={overrides}
             onClose={() => setThreadFor(null)}
           />
         )}
