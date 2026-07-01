@@ -191,8 +191,28 @@ function ChatPage() {
                   <div className="mb-0.5 flex items-baseline gap-2">
                     <span className="text-sm font-semibold">{u.name}</span>
                     <ClientTime iso={m.at} className="text-[11px] text-muted-foreground" />
+                    {overrides[m.id]?.editedAt && !overrides[m.id]?.deleted && (
+                      <span className="text-[11px] text-muted-foreground/70">(edited)</span>
+                    )}
                   </div>
-                  {m.kind === "voice" ? (
+                  {overrides[m.id]?.deleted ? (
+                    <p className="text-sm italic text-muted-foreground">This message was deleted</p>
+                  ) : editingId === m.id ? (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        autoFocus
+                        value={editDraft}
+                        onChange={(e) => setEditDraft(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") { e.preventDefault(); saveEdit(); }
+                          if (e.key === "Escape") { e.preventDefault(); cancelEdit(); }
+                        }}
+                        className="h-8 text-sm"
+                      />
+                      <Button size="sm" onClick={saveEdit}>Save</Button>
+                      <Button size="sm" variant="ghost" onClick={cancelEdit}>Cancel</Button>
+                    </div>
+                  ) : m.kind === "voice" ? (
                     <div className="flex w-72 items-center gap-3 rounded-lg border border-border bg-card px-3 py-2">
                       <div className="flex size-8 items-center justify-center rounded-full bg-accent text-accent-foreground"><Mic className="size-3.5" /></div>
                       <div className="flex-1"><div className="h-1 rounded-full bg-muted"><div className="h-full w-1/3 rounded-full bg-accent" /></div></div>
@@ -213,7 +233,7 @@ function ChatPage() {
                       </div>
                     </button>
                   ) : (
-                    <p className="text-sm text-foreground/90">{renderWithMentions(m.body)}</p>
+                    <p className="text-sm text-foreground/90">{renderWithMentions(overrides[m.id]?.body ?? m.body)}</p>
                   )}
                   {promo && (
                     <button
