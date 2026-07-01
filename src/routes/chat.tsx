@@ -372,7 +372,7 @@ function MessageActions({ m, channelId, isDM, onConvert, onReplyInThread }: { m:
     <div className="absolute right-2 top-0 flex translate-y-[-50%] items-center gap-0.5 rounded-md border border-border bg-card px-1 py-0.5 opacity-0 shadow-sm transition group-hover:opacity-100">
       <IconBtn title="React" onClick={() => toast("Reactions coming soon")}><Smile className="size-3.5" /></IconBtn>
       <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
-      <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>
+      {!isDM && <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>}
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
       <IconBtn title="More" onClick={() => toast("More actions coming soon")}><MoreHorizontal className="size-3.5" /></IconBtn>
     </div>
