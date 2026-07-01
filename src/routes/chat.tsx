@@ -80,16 +80,19 @@ function ChatPage() {
     () => [...seeded, ...extras].sort((a, b) => a.at.localeCompare(b.at)),
     [seeded, extras],
   );
+  const overrides = useMemo(() => readMsgOverrides(), [tick]);
   // Only top-level messages appear in the main feed. Replies live in threads.
   const msgs = useMemo(() => allMsgs.filter((m) => !m.parentMessageId), [allMsgs]);
-  // Group replies by parent message id.
+  // Group replies by parent message id. Deleted replies are hidden.
   const repliesByParent = useMemo(() => {
     const map: Record<string, Message[]> = {};
     for (const m of allMsgs) {
-      if (m.parentMessageId) (map[m.parentMessageId] ??= []).push(m);
+      if (m.parentMessageId && !overrides[m.id]?.deleted) {
+        (map[m.parentMessageId] ??= []).push(m);
+      }
     }
     return map;
-  }, [allMsgs]);
+  }, [allMsgs, overrides]);
   const threadRead = useMemo(() => readThreadRead(), [tick]);
   const promoted = useMemo(() => readPromoted(), [tick]);
   const reactionsMap = useMemo(() => readReactions(), [tick]);
