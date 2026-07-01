@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell, SidebarHeader } from "@/components/wasla/AppShell";
 import {
   channels, channelMessages, memberById, taskById, pillarMeta, spaceById,
-  channelHomeSpaceId, type Channel, type Message,
+  channelHomeSpaceId, dmMessages, type Channel, type Message,
 } from "@/lib/mock-data";
 import {
   Hash, Pin, Settings, Paperclip, Mic, Smile, Send, AtSign, MessageSquare,
@@ -63,9 +63,12 @@ function ChatPage() {
     }
   }, [search.channel]);
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  const isDM = activeId.startsWith("dm-");
+  const dmUserId = isDM ? activeId.slice(3) : null;
+  const dmUser = dmUserId ? memberById(dmUserId) : null;
   const active = channels.find((c) => c.id === activeId) ?? channels[0];
   const tick = useChatStorage();
-  const seeded = channelMessages[activeId] ?? [];
+  const seeded = isDM && dmUserId ? (dmMessages[dmUserId] ?? []) : (channelMessages[activeId] ?? []);
   const extras = useMemo(() => readExtras(activeId), [activeId, tick]);
   const allMsgs = useMemo(
     () => [...seeded, ...extras].sort((a, b) => a.at.localeCompare(b.at)),
@@ -115,20 +118,36 @@ function ChatPage() {
   return (
     <AppShell
       sidebar={<ChannelsSidebar active={activeId} onSelect={setActiveId} />}
-      breadcrumb={<><span>Chat</span><span className="text-border">/</span><span className="font-medium text-foreground">#{active.name}</span></>}
+      breadcrumb={<><span>Chat</span><span className="text-border">/</span><span className="font-medium text-foreground">{isDM && dmUser ? `@${dmUser.name}` : `#${active.name}`}</span></>}
     >
       <div className="flex h-full">
         <div className="flex h-full flex-1 flex-col">
-        {/* Channel header */}
-        <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
-          <Hash className="size-4 text-muted-foreground" />
-          <h2 className="text-base font-semibold">{active.name}</h2>
-          <span className="text-xs text-muted-foreground">· 7 members</span>
-          <div className="ml-auto flex gap-1">
-            <Button size="icon" variant="ghost"><Pin className="size-4" /></Button>
-            <ChannelSettingsPopover channelId={activeId} />
+        {/* Header */}
+        {isDM && dmUser ? (
+          <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
+            <Avatar memberId={dmUser.id} size={28} status />
+            <div className="flex flex-col leading-tight">
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-semibold">{dmUser.name}</h2>
+                <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                  <span className="size-1.5 rounded-full bg-emerald-500" />
+                  Active
+                </span>
+              </div>
+              <span className="text-[11px] text-muted-foreground">Direct message</span>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
+            <Hash className="size-4 text-muted-foreground" />
+            <h2 className="text-base font-semibold">{active.name}</h2>
+            <span className="text-xs text-muted-foreground">· 7 members</span>
+            <div className="ml-auto flex gap-1">
+              <Button size="icon" variant="ghost"><Pin className="size-4" /></Button>
+              <ChannelSettingsPopover channelId={activeId} />
+            </div>
+          </div>
+        )}
 
         {/* Messages */}
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4 scrollbar-thin">
@@ -215,6 +234,7 @@ function ChatPage() {
                 <MessageActions
                   m={m}
                   channelId={activeId}
+                  isDM={isDM}
                   onConvert={() => openQuickCreate({ tab: "task", title: m.body })}
                   onReplyInThread={() => openThread(m)}
                 />
@@ -224,7 +244,12 @@ function ChatPage() {
         </div>
 
         {/* Composer */}
-        <Composer channelId={activeId} channelName={active.name} currentUserId={currentUserId} />
+        <Composer
+          channelId={activeId}
+          channelName={isDM && dmUser ? dmUser.name : active.name}
+          currentUserId={currentUserId}
+          isDM={isDM}
+        />
         </div>
 
         {threadParent && (
@@ -337,7 +362,7 @@ function ThreadPanel({
 
 
 /* -------------------- Message hover actions -------------------- */
-function MessageActions({ m, channelId, onConvert, onReplyInThread }: { m: Message; channelId: string; onConvert: () => void; onReplyInThread: () => void }) {
+function MessageActions({ m, channelId, isDM, onConvert, onReplyInThread }: { m: Message; channelId: string; isDM?: boolean; onConvert: () => void; onReplyInThread: () => void }) {
   const copyLink = () => {
     const link = `${window.location.origin}/chat?channel=${channelId}&m=${m.id}`;
     navigator.clipboard?.writeText(link).catch(() => {});
@@ -347,7 +372,7 @@ function MessageActions({ m, channelId, onConvert, onReplyInThread }: { m: Messa
     <div className="absolute right-2 top-0 flex translate-y-[-50%] items-center gap-0.5 rounded-md border border-border bg-card px-1 py-0.5 opacity-0 shadow-sm transition group-hover:opacity-100">
       <IconBtn title="React" onClick={() => toast("Reactions coming soon")}><Smile className="size-3.5" /></IconBtn>
       <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
-      <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>
+      {!isDM && <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>}
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
       <IconBtn title="More" onClick={() => toast("More actions coming soon")}><MoreHorizontal className="size-3.5" /></IconBtn>
     </div>
@@ -484,7 +509,7 @@ function ChannelSettingsPopover({ channelId }: { channelId: string }) {
 }
 
 /* -------------------- Composer with slash commands -------------------- */
-function Composer({ channelId, channelName, currentUserId, threadParentId }: { channelId: string; channelName: string; currentUserId: string; threadParentId?: string }) {
+function Composer({ channelId, channelName, currentUserId, threadParentId, isDM }: { channelId: string; channelName: string; currentUserId: string; threadParentId?: string; isDM?: boolean }) {
   const isThread = !!threadParentId;
   const [value, setValue] = useState("");
   const { tasks, lists } = useTasks();
@@ -495,7 +520,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId }: { c
   const defaultList = lists.find((l) => l.spaceId === homeSpaceId)?.id;
 
   // slash command modes
-  const mode: "none" | "menu" | "find" = isThread ? "none" :
+  const mode: "none" | "menu" | "find" = isThread || isDM ? "none" :
     value === "/" ? "menu" :
     value.startsWith("/find") ? "find" :
     value === "/task" ? "menu" : "none";
@@ -609,7 +634,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId }: { c
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder={isThread ? "Reply in thread…" : `Message #${channelName} — type / for commands`}
+            placeholder={isThread ? "Reply in thread…" : isDM ? `Message ${channelName}` : `Message #${channelName} — type / for commands`}
             className="h-8 border-0 bg-transparent px-1 text-sm shadow-none focus-visible:ring-0"
           />
           <Button size="icon" variant="ghost" className="size-7"><Smile className="size-4" /></Button>
@@ -627,6 +652,14 @@ function Composer({ channelId, channelName, currentUserId, threadParentId }: { c
               });
               setValue("");
               markThreadRead(threadParentId!);
+            } else if (isDM) {
+              pushExtra(channelId, {
+                id: `x-${Date.now()}`,
+                authorId: currentUserId,
+                body: text,
+                at: new Date().toISOString(),
+              });
+              setValue("");
             } else {
               setValue("");
               toast.success("Sent");
@@ -666,12 +699,19 @@ function ChannelsSidebar({ active, onSelect }: { active: string; onSelect: (id: 
           </div>
         ))}
         <div className="mt-2 mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Direct messages</div>
-        {["moaz","usef","ali","hagry"].map((id) => (
-          <button key={id} className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground/75 hover:bg-muted/60">
-            <Avatar memberId={id} size={18} status />
-            <span>{memberById(id).name}</span>
-          </button>
-        ))}
+        {["moaz","usef","ali","hagry"].map((id) => {
+          const dmId = `dm-${id}`;
+          return (
+            <button
+              key={id}
+              onClick={() => onSelect(dmId)}
+              className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition ${active === dmId ? "bg-accent/10 text-accent" : "text-foreground/75 hover:bg-muted/60"}`}
+            >
+              <Avatar memberId={id} size={18} status />
+              <span>{memberById(id).name}</span>
+            </button>
+          );
+        })}
       </div>
     </>
   );
