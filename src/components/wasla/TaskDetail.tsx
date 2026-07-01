@@ -600,6 +600,8 @@ function ActivityRail({ task }: { task: any }) {
     return ev;
   }, [task]);
   const [comment, setComment] = useState("");
+  const commentRef = useRef<HTMLTextAreaElement>(null);
+  const mention = useMentionPicker({ value: comment, setValue: setComment, inputRef: commentRef });
 
   return (
     <aside className="border-t border-border bg-muted/20 lg:sticky lg:top-0 lg:h-[calc(100vh-56px)] lg:border-l lg:border-t-0">
