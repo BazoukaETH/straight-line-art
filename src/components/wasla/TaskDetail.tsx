@@ -9,7 +9,7 @@ import { PriorityIcon } from "./PriorityIcon";
 import {
   CheckSquare, Plus, Link2, X, ListChecks, Paperclip, FileText, Upload, Download,
   ExternalLink, Activity, Bell, Filter, Send, Smile, AtSign, GripVertical,
-  Clock, CalendarDays, Tag,
+  Clock, CalendarDays, Tag, Repeat,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
