@@ -372,7 +372,7 @@ function ThreadPanel({
                   <span className="text-sm font-semibold">{u.name}</span>
                   <ClientTime iso={r.at} className="text-[11px] text-muted-foreground" />
                 </div>
-                <p className="text-sm text-foreground/90 break-words">{r.body}</p>
+                <p className="text-sm text-foreground/90 break-words">{renderWithMentions(r.body)}</p>
               </div>
             </div>
           );
