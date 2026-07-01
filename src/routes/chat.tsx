@@ -96,7 +96,6 @@ function ChatPage() {
   const threadRead = useMemo(() => readThreadRead(), [tick]);
   const promoted = useMemo(() => readPromoted(), [tick]);
   const reactionsMap = useMemo(() => readReactions(), [tick]);
-  const overrides = useMemo(() => readMsgOverrides(), [tick]);
   const { goTask } = useTaskNav();
   const { currentUserId, openQuickCreate } = useApp();
   const [convertMsg, setConvertMsg] = useState<Message | null>(null);
