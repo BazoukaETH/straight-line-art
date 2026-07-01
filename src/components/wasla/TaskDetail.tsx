@@ -629,7 +629,7 @@ function ActivityRail({ task }: { task: any }) {
                 <div className="flex-1 min-w-0">
                   <div className="text-xs">
                     <span className="font-medium text-foreground">{m.name}</span>{" "}
-                    <span className="text-muted-foreground">{e.text}</span>
+                    <span className="text-muted-foreground">{renderWithMentions(e.text)}</span>
                   </div>
                   <div className="text-[10px] text-muted-foreground/70">{new Date(e.at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</div>
                 </div>
