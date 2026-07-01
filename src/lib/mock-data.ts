@@ -535,10 +535,13 @@ export interface Message {
   authorId: string;
   body: string;
   at: string;
-  kind?: "text" | "voice" | "image" | "task";
+  kind?: "text" | "voice" | "image" | "task" | "file";
   taskId?: string;
   replies?: number;
   reactions?: { emoji: string; count: number }[];
+  /** For image/file kinds: object URL + original filename. */
+  fileUrl?: string;
+  fileName?: string;
   /** If set, this message is a thread reply to the given parent message id. */
   parentMessageId?: string | null;
 }
