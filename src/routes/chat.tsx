@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppShell, SidebarHeader } from "@/components/wasla/AppShell";
 import {
   channels, channelMessages, memberById, taskById, pillarMeta, spaceById,
-  channelHomeSpaceId, type Channel, type Message,
+  channelHomeSpaceId, dmMessages, type Channel, type Message,
 } from "@/lib/mock-data";
 import {
   Hash, Pin, Settings, Paperclip, Mic, Smile, Send, AtSign, MessageSquare,
