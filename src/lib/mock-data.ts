@@ -113,6 +113,7 @@ export interface Task {
   customFieldValues?: Record<string, string | number>;
   createdAt?: string;
   subtasks?: { id: string; title: string; done: boolean }[];
+  recurrence?: { freq: "daily" | "weekly" | "monthly"; interval?: number };
 }
 
 export interface TaskTemplate {
