@@ -788,7 +788,38 @@ function Composer({ channelId, channelName, currentUserId, threadParentId, isDM 
           </div>
         )}
         <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2">
-          <Button size="icon" variant="ghost" className="size-7"><Paperclip className="size-4" /></Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const url = URL.createObjectURL(file);
+              const isImage = file.type.startsWith("image/");
+              pushExtra(channelId, {
+                id: `x-${Date.now()}`,
+                authorId: currentUserId,
+                body: "",
+                at: new Date().toISOString(),
+                kind: isImage ? "image" : "file",
+                fileUrl: url,
+                fileName: file.name,
+                ...(isThread ? { parentMessageId: threadParentId } : {}),
+              });
+              if (isThread) markThreadRead(threadParentId!);
+              e.target.value = "";
+            }}
+          />
+          <Button
+            size="icon"
+            variant="ghost"
+            className="size-7"
+            onClick={() => fileInputRef.current?.click()}
+            title="Attach file"
+          >
+            <Paperclip className="size-4" />
+          </Button>
           <Button size="icon" variant="ghost" className="size-7"><AtSign className="size-4" /></Button>
           <Input
             ref={inputRef}
