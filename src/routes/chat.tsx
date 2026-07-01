@@ -6,7 +6,7 @@ import {
 } from "@/lib/mock-data";
 import {
   Hash, Pin, Settings, Paperclip, Mic, Smile, Send, AtSign, MessageSquare,
-  CheckSquare, Link as LinkIcon, MoreHorizontal, Reply, Slash,
+  CheckSquare, Link as LinkIcon, MoreHorizontal, Reply, Slash, X,
 } from "lucide-react";
 import { Avatar } from "@/components/wasla/Avatar";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useTasks } from "@/lib/tasks-store";
 import {
   readPromoted, setPromoted, addDiscussed, readExtras, pushExtra,
-  readChannelSettings, writeChannelSetting,
+  readChannelSettings, writeChannelSetting, readThreadRead, markThreadRead,
 } from "@/lib/chat-store";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -52,18 +52,43 @@ function ChatPage() {
   const tick = useChatStorage();
   const seeded = channelMessages[activeId] ?? [];
   const extras = useMemo(() => readExtras(activeId), [activeId, tick]);
-  const msgs = useMemo(() => [...seeded, ...extras].sort((a, b) => a.at.localeCompare(b.at)), [seeded, extras]);
+  const allMsgs = useMemo(
+    () => [...seeded, ...extras].sort((a, b) => a.at.localeCompare(b.at)),
+    [seeded, extras],
+  );
+  // Only top-level messages appear in the main feed. Replies live in threads.
+  const msgs = useMemo(() => allMsgs.filter((m) => !m.parentMessageId), [allMsgs]);
+  // Group replies by parent message id.
+  const repliesByParent = useMemo(() => {
+    const map: Record<string, Message[]> = {};
+    for (const m of allMsgs) {
+      if (m.parentMessageId) (map[m.parentMessageId] ??= []).push(m);
+    }
+    return map;
+  }, [allMsgs]);
+  const threadRead = useMemo(() => readThreadRead(), [tick]);
   const promoted = useMemo(() => readPromoted(), [tick]);
   const { goTask } = useTaskNav();
   const { currentUserId, openQuickCreate } = useApp();
   const [convertMsg, setConvertMsg] = useState<Message | null>(null);
+  const [threadFor, setThreadFor] = useState<Message | null>(null);
+
+  const openThread = (m: Message) => {
+    setThreadFor(m);
+    markThreadRead(m.id);
+  };
+
+  // Keep threadFor in sync with latest message data (e.g., after reload).
+  const threadParent = threadFor ? allMsgs.find((x) => x.id === threadFor.id) ?? threadFor : null;
+  const threadReplies = threadParent ? (repliesByParent[threadParent.id] ?? []) : [];
 
   return (
     <AppShell
       sidebar={<ChannelsSidebar active={activeId} onSelect={setActiveId} />}
       breadcrumb={<><span>Chat</span><span className="text-border">/</span><span className="font-medium text-foreground">#{active.name}</span></>}
     >
-      <div className="flex h-full flex-col">
+      <div className="flex h-full">
+        <div className="flex h-full flex-1 flex-col">
         {/* Channel header */}
         <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
           <Hash className="size-4 text-muted-foreground" />
@@ -80,13 +105,19 @@ function ChatPage() {
           {msgs.map((m) => {
             const u = memberById(m.authorId);
             const promo = promoted[m.id];
+            const replies = repliesByParent[m.id] ?? [];
+            const derivedCount = replies.length;
+            const displayReplyCount = derivedCount || m.replies || 0;
+            const lastReply = replies[replies.length - 1];
+            const lastReadAt = threadRead[m.id];
+            const unread = replies.filter((r) => !lastReadAt || r.at > lastReadAt).length;
             return (
               <div key={m.id} id={`msg-${m.id}`} className="group relative flex gap-3 rounded-md p-1 -m-1 hover:bg-muted/30">
                 <Avatar memberId={u.id} size={32} />
                 <div className="flex-1 min-w-0">
                   <div className="mb-0.5 flex items-baseline gap-2">
                     <span className="text-sm font-semibold">{u.name}</span>
-                    <span className="text-[11px] text-muted-foreground">{new Date(m.at).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}</span>
+                    <ClientTime iso={m.at} className="text-[11px] text-muted-foreground" />
                   </div>
                   {m.kind === "voice" ? (
                     <div className="flex w-72 items-center gap-3 rounded-lg border border-border bg-card px-3 py-2">
@@ -125,14 +156,38 @@ function ChatPage() {
                     {m.reactions?.map((r) => (
                       <span key={r.emoji} className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-1.5 py-0.5 text-[11px]">{r.emoji} {r.count}</span>
                     ))}
-                    {m.replies && (
-                      <button className="inline-flex items-center gap-1 text-[11px] font-medium text-accent hover:underline">
-                        <MessageSquare className="size-3" /> {m.replies} replies
-                      </button>
-                    )}
                   </div>
+                  {displayReplyCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => openThread(m)}
+                      className="mt-1.5 inline-flex items-center gap-2 rounded-md border border-transparent px-1.5 py-1 text-[11px] font-medium text-accent transition hover:border-border hover:bg-muted/60"
+                    >
+                      <span className="flex -space-x-1.5">
+                        {Array.from(new Set(replies.map((r) => r.authorId))).slice(0, 3).map((id) => (
+                          <span key={id} className="ring-2 ring-background rounded-full">
+                            <Avatar memberId={id} size={18} />
+                          </span>
+                        ))}
+                      </span>
+                      <span>{displayReplyCount} {displayReplyCount === 1 ? "reply" : "replies"}</span>
+                      {lastReply && (
+                        <ClientTime iso={lastReply.at} className="text-[11px] font-normal text-muted-foreground" prefix="Last " />
+                      )}
+                      {unread > 0 && (
+                        <span className="rounded-full bg-destructive px-1.5 text-[10px] font-bold text-destructive-foreground">
+                          {unread}
+                        </span>
+                      )}
+                    </button>
+                  )}
                 </div>
-                <MessageActions m={m} channelId={activeId} onConvert={() => openQuickCreate({ tab: "task", title: m.body })} />
+                <MessageActions
+                  m={m}
+                  channelId={activeId}
+                  onConvert={() => openQuickCreate({ tab: "task", title: m.body })}
+                  onReplyInThread={() => openThread(m)}
+                />
               </div>
             );
           })}
@@ -140,6 +195,18 @@ function ChatPage() {
 
         {/* Composer */}
         <Composer channelId={activeId} channelName={active.name} currentUserId={currentUserId} />
+        </div>
+
+        {threadParent && (
+          <ThreadPanel
+            parent={threadParent}
+            replies={threadReplies}
+            channelId={activeId}
+            channelName={active.name}
+            currentUserId={currentUserId}
+            onClose={() => setThreadFor(null)}
+          />
+        )}
       </div>
 
       {convertMsg && (
@@ -153,8 +220,94 @@ function ChatPage() {
   );
 }
 
+/* -------------------- Client-only time (SSR-safe) -------------------- */
+function ClientTime({ iso, className, prefix }: { iso: string; className?: string; prefix?: string }) {
+  const [text, setText] = useState<string>("");
+  useEffect(() => {
+    setText(new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }));
+  }, [iso]);
+  return <span className={className} suppressHydrationWarning>{text ? `${prefix ?? ""}${text}` : ""}</span>;
+}
+
+/* -------------------- Thread panel -------------------- */
+function ThreadPanel({
+  parent, replies, channelId, channelName, currentUserId, onClose,
+}: {
+  parent: Message; replies: Message[]; channelId: string; channelName: string;
+  currentUserId: string; onClose: () => void;
+}) {
+  const author = memberById(parent.authorId);
+  return (
+    <aside className="flex h-full w-[420px] shrink-0 flex-col border-l border-border bg-card">
+      <div className="flex items-center gap-3 border-b border-border px-4 py-3">
+        <MessageSquare className="size-4 text-muted-foreground" />
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold">Thread</div>
+          <div className="truncate text-[11px] text-muted-foreground">#{channelName}</div>
+        </div>
+        <Button size="icon" variant="ghost" onClick={onClose} title="Close thread">
+          <X className="size-4" />
+        </Button>
+      </div>
+
+      {/* Parent (pinned) */}
+      <div className="border-b border-border px-4 py-3">
+        <div className="flex gap-3">
+          <Avatar memberId={author.id} size={32} />
+          <div className="min-w-0 flex-1">
+            <div className="mb-0.5 flex items-baseline gap-2">
+              <span className="text-sm font-semibold">{author.name}</span>
+              <ClientTime iso={parent.at} className="text-[11px] text-muted-foreground" />
+            </div>
+            <p className="text-sm text-foreground/90 break-words">{parent.body}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Reply count divider */}
+      <div className="flex items-center gap-2 px-4 pt-3 pb-1 text-[11px] font-medium text-muted-foreground">
+        <span>{replies.length} {replies.length === 1 ? "reply" : "replies"}</span>
+        <span className="h-px flex-1 bg-border" />
+      </div>
+
+      {/* Replies */}
+      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3 scrollbar-thin">
+        {replies.length === 0 && (
+          <div className="rounded-md border border-dashed border-border px-3 py-4 text-center text-xs text-muted-foreground">
+            No replies yet. Start the thread below.
+          </div>
+        )}
+        {replies.map((r) => {
+          const u = memberById(r.authorId);
+          return (
+            <div key={r.id} className="flex gap-3">
+              <Avatar memberId={u.id} size={28} />
+              <div className="min-w-0 flex-1">
+                <div className="mb-0.5 flex items-baseline gap-2">
+                  <span className="text-sm font-semibold">{u.name}</span>
+                  <ClientTime iso={r.at} className="text-[11px] text-muted-foreground" />
+                </div>
+                <p className="text-sm text-foreground/90 break-words">{r.body}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Reuse existing composer, in thread mode */}
+      <Composer
+        channelId={channelId}
+        channelName={channelName}
+        currentUserId={currentUserId}
+        threadParentId={parent.id}
+      />
+    </aside>
+  );
+}
+
+
 /* -------------------- Message hover actions -------------------- */
-function MessageActions({ m, channelId, onConvert }: { m: Message; channelId: string; onConvert: () => void }) {
+function MessageActions({ m, channelId, onConvert, onReplyInThread }: { m: Message; channelId: string; onConvert: () => void; onReplyInThread: () => void }) {
   const copyLink = () => {
     const link = `${window.location.origin}/chat?channel=${channelId}&m=${m.id}`;
     navigator.clipboard?.writeText(link).catch(() => {});
@@ -163,7 +316,7 @@ function MessageActions({ m, channelId, onConvert }: { m: Message; channelId: st
   return (
     <div className="absolute right-2 top-0 flex translate-y-[-50%] items-center gap-0.5 rounded-md border border-border bg-card px-1 py-0.5 opacity-0 shadow-sm transition group-hover:opacity-100">
       <IconBtn title="React" onClick={() => toast("Reactions coming soon")}><Smile className="size-3.5" /></IconBtn>
-      <IconBtn title="Reply in thread" onClick={() => toast("Threads coming soon")}><Reply className="size-3.5" /></IconBtn>
+      <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
       <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
       <IconBtn title="More" onClick={() => toast("More actions coming soon")}><MoreHorizontal className="size-3.5" /></IconBtn>
@@ -301,7 +454,8 @@ function ChannelSettingsPopover({ channelId }: { channelId: string }) {
 }
 
 /* -------------------- Composer with slash commands -------------------- */
-function Composer({ channelId, channelName, currentUserId }: { channelId: string; channelName: string; currentUserId: string }) {
+function Composer({ channelId, channelName, currentUserId, threadParentId }: { channelId: string; channelName: string; currentUserId: string; threadParentId?: string }) {
+  const isThread = !!threadParentId;
   const [value, setValue] = useState("");
   const { tasks, lists } = useTasks();
   const { openQuickCreate } = useApp();
@@ -311,7 +465,7 @@ function Composer({ channelId, channelName, currentUserId }: { channelId: string
   const defaultList = lists.find((l) => l.spaceId === homeSpaceId)?.id;
 
   // slash command modes
-  const mode: "none" | "menu" | "find" =
+  const mode: "none" | "menu" | "find" = isThread ? "none" :
     value === "/" ? "menu" :
     value.startsWith("/find") ? "find" :
     value === "/task" ? "menu" : "none";
@@ -425,12 +579,29 @@ function Composer({ channelId, channelName, currentUserId }: { channelId: string
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder={`Message #${channelName} — type / for commands`}
+            placeholder={isThread ? "Reply in thread…" : `Message #${channelName} — type / for commands`}
             className="h-8 border-0 bg-transparent px-1 text-sm shadow-none focus-visible:ring-0"
           />
           <Button size="icon" variant="ghost" className="size-7"><Smile className="size-4" /></Button>
           <Button size="icon" variant="ghost" className="size-7"><Mic className="size-4" /></Button>
-          <Button size="icon" className="size-8" onClick={() => { if (value.trim()) { setValue(""); toast.success("Sent"); } }}><Send className="size-3.5" /></Button>
+          <Button size="icon" className="size-8" onClick={() => {
+            const text = value.trim();
+            if (!text) return;
+            if (isThread) {
+              pushExtra(channelId, {
+                id: `x-${Date.now()}`,
+                authorId: currentUserId,
+                body: text,
+                at: new Date().toISOString(),
+                parentMessageId: threadParentId,
+              });
+              setValue("");
+              markThreadRead(threadParentId!);
+            } else {
+              setValue("");
+              toast.success("Sent");
+            }
+          }}><Send className="size-3.5" /></Button>
         </div>
       </div>
     </div>

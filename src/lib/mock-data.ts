@@ -539,6 +539,8 @@ export interface Message {
   taskId?: string;
   replies?: number;
   reactions?: { emoji: string; count: number }[];
+  /** If set, this message is a thread reply to the given parent message id. */
+  parentMessageId?: string | null;
 }
 export const channelMessages: Record<string, Message[]> = {
   "client-smg": [

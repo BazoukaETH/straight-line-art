@@ -4,6 +4,7 @@ const LS_PROMOTED = "wasla.chat.promoted";
 const LS_DISCUSSED = "wasla.tasks.discussedIn";
 const LS_EXTRAS = "wasla.chat.extras";
 const LS_CHSETTINGS = "wasla.chat.channelSettings";
+const LS_THREAD_READ = "wasla.chat.threadRead";
 
 export type PromotedMap = Record<string, { taskId: string; taskTitle: string }>;
 export type DiscussedMap = Record<string, { channelId: string; messageId: string; at: string }[]>;
@@ -78,4 +79,16 @@ export function seedDiscussedOnce() {
   if (!localStorage.getItem(LS_DISCUSSED)) {
     localStorage.setItem(LS_DISCUSSED, JSON.stringify(SEED_DISCUSSED));
   }
+}
+
+export type ThreadReadMap = Record<string, string>; // parentMessageId -> ISO lastReadAt
+export function readThreadRead(): ThreadReadMap {
+  if (typeof window === "undefined") return {};
+  return safeParse<ThreadReadMap>(localStorage.getItem(LS_THREAD_READ), {});
+}
+export function markThreadRead(parentMessageId: string) {
+  const m = readThreadRead();
+  m[parentMessageId] = new Date().toISOString();
+  localStorage.setItem(LS_THREAD_READ, JSON.stringify(m));
+  window.dispatchEvent(new Event("wasla.chat.changed"));
 }
