@@ -3,7 +3,7 @@ import type { Message } from "./mock-data";
 const LS_PROMOTED = "wasla.chat.promoted";
 const LS_DISCUSSED = "wasla.tasks.discussedIn";
 const LS_EXTRAS = "wasla.chat.extras";
-const LS_CHSETTINGS = "wasla.chat.channelSettings";
+const LS_THREAD_READ = "wasla.chat.threadRead";
 
 export type PromotedMap = Record<string, { taskId: string; taskTitle: string }>;
 export type DiscussedMap = Record<string, { channelId: string; messageId: string; at: string }[]>;
