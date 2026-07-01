@@ -6,7 +6,7 @@ import {
 } from "@/lib/mock-data";
 import {
   Hash, Pin, Settings, Paperclip, Mic, Smile, Send, AtSign, MessageSquare,
-  CheckSquare, Link as LinkIcon, MoreHorizontal, Reply, Slash,
+  CheckSquare, Link as LinkIcon, MoreHorizontal, Reply, Slash, X,
 } from "lucide-react";
 import { Avatar } from "@/components/wasla/Avatar";
 import { Button } from "@/components/ui/button";
