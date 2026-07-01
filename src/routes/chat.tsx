@@ -192,7 +192,7 @@ function ChatPage() {
                       </div>
                     </button>
                   ) : (
-                    <p className="text-sm text-foreground/90">{m.body}</p>
+                    <p className="text-sm text-foreground/90">{renderWithMentions(m.body)}</p>
                   )}
                   {promo && (
                     <button
