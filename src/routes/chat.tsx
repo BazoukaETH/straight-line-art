@@ -27,7 +27,11 @@ import {
   readPromoted, setPromoted, addDiscussed, readExtras, pushExtra,
   readChannelSettings, writeChannelSetting, readThreadRead, markThreadRead,
   readReactions, toggleReaction,
+  readMsgOverrides, editMessage, deleteMessage, type MsgOverridesMap,
 } from "@/lib/chat-store";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { renderWithMentions, useMentionPicker } from "@/lib/mentions";
@@ -76,16 +80,19 @@ function ChatPage() {
     () => [...seeded, ...extras].sort((a, b) => a.at.localeCompare(b.at)),
     [seeded, extras],
   );
+  const overrides = useMemo(() => readMsgOverrides(), [tick]);
   // Only top-level messages appear in the main feed. Replies live in threads.
   const msgs = useMemo(() => allMsgs.filter((m) => !m.parentMessageId), [allMsgs]);
-  // Group replies by parent message id.
+  // Group replies by parent message id. Deleted replies are hidden.
   const repliesByParent = useMemo(() => {
     const map: Record<string, Message[]> = {};
     for (const m of allMsgs) {
-      if (m.parentMessageId) (map[m.parentMessageId] ??= []).push(m);
+      if (m.parentMessageId && !overrides[m.id]?.deleted) {
+        (map[m.parentMessageId] ??= []).push(m);
+      }
     }
     return map;
-  }, [allMsgs]);
+  }, [allMsgs, overrides]);
   const threadRead = useMemo(() => readThreadRead(), [tick]);
   const promoted = useMemo(() => readPromoted(), [tick]);
   const reactionsMap = useMemo(() => readReactions(), [tick]);
@@ -93,6 +100,20 @@ function ChatPage() {
   const { currentUserId, openQuickCreate } = useApp();
   const [convertMsg, setConvertMsg] = useState<Message | null>(null);
   const [threadFor, setThreadFor] = useState<Message | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState("");
+  const beginEdit = (m: Message) => {
+    const ov = overrides[m.id];
+    setEditingId(m.id);
+    setEditDraft(ov?.body ?? m.body);
+  };
+  const saveEdit = () => {
+    if (!editingId) return;
+    const t = editDraft.trim();
+    if (t) editMessage(editingId, t);
+    setEditingId(null);
+  };
+  const cancelEdit = () => setEditingId(null);
 
   const openThread = (m: Message) => {
     setThreadFor(m);
@@ -170,8 +191,28 @@ function ChatPage() {
                   <div className="mb-0.5 flex items-baseline gap-2">
                     <span className="text-sm font-semibold">{u.name}</span>
                     <ClientTime iso={m.at} className="text-[11px] text-muted-foreground" />
+                    {overrides[m.id]?.editedAt && !overrides[m.id]?.deleted && (
+                      <span className="text-[11px] text-muted-foreground/70">(edited)</span>
+                    )}
                   </div>
-                  {m.kind === "voice" ? (
+                  {overrides[m.id]?.deleted ? (
+                    <p className="text-sm italic text-muted-foreground">This message was deleted</p>
+                  ) : editingId === m.id ? (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        autoFocus
+                        value={editDraft}
+                        onChange={(e) => setEditDraft(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") { e.preventDefault(); saveEdit(); }
+                          if (e.key === "Escape") { e.preventDefault(); cancelEdit(); }
+                        }}
+                        className="h-8 text-sm"
+                      />
+                      <Button size="sm" onClick={saveEdit}>Save</Button>
+                      <Button size="sm" variant="ghost" onClick={cancelEdit}>Cancel</Button>
+                    </div>
+                  ) : m.kind === "voice" ? (
                     <div className="flex w-72 items-center gap-3 rounded-lg border border-border bg-card px-3 py-2">
                       <div className="flex size-8 items-center justify-center rounded-full bg-accent text-accent-foreground"><Mic className="size-3.5" /></div>
                       <div className="flex-1"><div className="h-1 rounded-full bg-muted"><div className="h-full w-1/3 rounded-full bg-accent" /></div></div>
@@ -192,7 +233,7 @@ function ChatPage() {
                       </div>
                     </button>
                   ) : (
-                    <p className="text-sm text-foreground/90">{renderWithMentions(m.body)}</p>
+                    <p className="text-sm text-foreground/90">{renderWithMentions(overrides[m.id]?.body ?? m.body)}</p>
                   )}
                   {promo && (
                     <button
@@ -265,8 +306,11 @@ function ChatPage() {
                   channelId={activeId}
                   isDM={isDM}
                   currentUserId={currentUserId}
+                  isDeleted={!!overrides[m.id]?.deleted}
                   onConvert={() => openQuickCreate({ tab: "task", title: m.body })}
                   onReplyInThread={() => openThread(m)}
+                  onEdit={() => beginEdit(m)}
+                  onDelete={() => deleteMessage(m.id)}
                 />
               </div>
             );
@@ -289,6 +333,7 @@ function ChatPage() {
             channelId={activeId}
             channelName={active.name}
             currentUserId={currentUserId}
+            overrides={overrides}
             onClose={() => setThreadFor(null)}
           />
         )}
@@ -316,12 +361,13 @@ function ClientTime({ iso, className, prefix }: { iso: string; className?: strin
 
 /* -------------------- Thread panel -------------------- */
 function ThreadPanel({
-  parent, replies, channelId, channelName, currentUserId, onClose,
+  parent, replies, channelId, channelName, currentUserId, overrides, onClose,
 }: {
   parent: Message; replies: Message[]; channelId: string; channelName: string;
-  currentUserId: string; onClose: () => void;
+  currentUserId: string; overrides: MsgOverridesMap; onClose: () => void;
 }) {
   const author = memberById(parent.authorId);
+  const parentOv = overrides[parent.id];
   return (
     <aside className="flex h-full w-[420px] shrink-0 flex-col border-l border-border bg-card">
       <div className="flex items-center gap-3 border-b border-border px-4 py-3">
@@ -343,8 +389,15 @@ function ThreadPanel({
             <div className="mb-0.5 flex items-baseline gap-2">
               <span className="text-sm font-semibold">{author.name}</span>
               <ClientTime iso={parent.at} className="text-[11px] text-muted-foreground" />
+              {parentOv?.editedAt && !parentOv?.deleted && (
+                <span className="text-[11px] text-muted-foreground/70">(edited)</span>
+              )}
             </div>
-            <p className="text-sm text-foreground/90 break-words">{renderWithMentions(parent.body)}</p>
+            {parentOv?.deleted ? (
+              <p className="text-sm italic text-muted-foreground">This message was deleted</p>
+            ) : (
+              <p className="text-sm text-foreground/90 break-words">{renderWithMentions(parentOv?.body ?? parent.body)}</p>
+            )}
           </div>
         </div>
       </div>
@@ -364,6 +417,7 @@ function ThreadPanel({
         )}
         {replies.map((r) => {
           const u = memberById(r.authorId);
+          const rov = overrides[r.id];
           return (
             <div key={r.id} className="flex gap-3">
               <Avatar memberId={u.id} size={28} />
@@ -371,8 +425,9 @@ function ThreadPanel({
                 <div className="mb-0.5 flex items-baseline gap-2">
                   <span className="text-sm font-semibold">{u.name}</span>
                   <ClientTime iso={r.at} className="text-[11px] text-muted-foreground" />
+                  {rov?.editedAt && <span className="text-[11px] text-muted-foreground/70">(edited)</span>}
                 </div>
-                <p className="text-sm text-foreground/90 break-words">{renderWithMentions(r.body)}</p>
+                <p className="text-sm text-foreground/90 break-words">{renderWithMentions(rov?.body ?? r.body)}</p>
               </div>
             </div>
           );
@@ -392,7 +447,7 @@ function ThreadPanel({
 
 
 /* -------------------- Message hover actions -------------------- */
-function MessageActions({ m, channelId, isDM, currentUserId, onConvert, onReplyInThread }: { m: Message; channelId: string; isDM?: boolean; currentUserId: string; onConvert: () => void; onReplyInThread: () => void }) {
+function MessageActions({ m, channelId, isDM, currentUserId, isDeleted, onConvert, onReplyInThread, onEdit, onDelete }: { m: Message; channelId: string; isDM?: boolean; currentUserId: string; isDeleted?: boolean; onConvert: () => void; onReplyInThread: () => void; onEdit: () => void; onDelete: () => void }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const copyLink = () => {
     const link = `${window.location.origin}/chat?channel=${channelId}&m=${m.id}`;
@@ -430,7 +485,34 @@ function MessageActions({ m, channelId, isDM, currentUserId, onConvert, onReplyI
       <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
       {!isDM && <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>}
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
-      <IconBtn title="More" onClick={() => toast("More actions coming soon")}><MoreHorizontal className="size-3.5" /></IconBtn>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            title="More"
+            className="flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <MoreHorizontal className="size-3.5" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem onClick={copyLink}>
+            <LinkIcon className="mr-2 size-3.5" /> Copy link
+          </DropdownMenuItem>
+          {m.authorId === currentUserId && !isDeleted && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={onEdit}>Edit message</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={onDelete}
+                className="text-destructive focus:text-destructive"
+              >
+                Delete message
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
