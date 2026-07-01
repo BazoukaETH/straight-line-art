@@ -173,15 +173,69 @@ function ChatPage() {
             </div>
           </div>
         ) : (
+          <>
           <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
             <Hash className="size-4 text-muted-foreground" />
             <h2 className="text-base font-semibold">{active.name}</h2>
             <span className="text-xs text-muted-foreground">· 7 members</span>
             <div className="ml-auto flex gap-1">
-              <Button size="icon" variant="ghost"><Pin className="size-4" /></Button>
+              <Button
+                size="icon"
+                variant={pinnedOpen && pinnedIds.length > 0 ? "secondary" : "ghost"}
+                onClick={() => setPinnedOpen((v) => !v)}
+                title={pinnedIds.length ? `${pinnedIds.length} pinned` : "No pinned messages"}
+                className="relative"
+              >
+                <Pin className="size-4" />
+                {pinnedIds.length > 0 && (
+                  <span className="absolute -right-1 -top-1 rounded-full bg-accent px-1 text-[9px] font-bold leading-4 text-accent-foreground">
+                    {pinnedIds.length}
+                  </span>
+                )}
+              </Button>
               <ChannelSettingsPopover channelId={activeId} />
             </div>
           </div>
+          {pinnedOpen && pinnedIds.length > 0 && (
+            <div className="border-b border-border bg-muted/30 px-5 py-2">
+              <div className="mb-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <Pin className="size-3" /> Pinned · {pinnedIds.length}
+              </div>
+              <ul className="space-y-1">
+                {pinnedIds.map((pid) => {
+                  const pm = allMsgs.find((x) => x.id === pid);
+                  if (!pm) return null;
+                  const pu = memberById(pm.authorId);
+                  const body = overrides[pm.id]?.deleted
+                    ? "This message was deleted"
+                    : (overrides[pm.id]?.body ?? pm.body ?? pm.fileName ?? "");
+                  const snippet = body.length > 80 ? body.slice(0, 80) + "…" : body;
+                  return (
+                    <li key={pid} className="group/pin flex items-center gap-2 rounded-md px-2 py-1 hover:bg-background">
+                      <Avatar memberId={pu.id} size={18} />
+                      <button
+                        type="button"
+                        onClick={() => scrollToMessage(pid)}
+                        className="flex-1 min-w-0 text-left text-xs"
+                      >
+                        <span className="font-semibold">{pu.name}: </span>
+                        <span className="text-muted-foreground">{snippet}</span>
+                      </button>
+                      <button
+                        type="button"
+                        title="Unpin"
+                        onClick={() => togglePin(activeId, pid)}
+                        className="flex size-5 items-center justify-center rounded text-muted-foreground opacity-0 hover:bg-muted hover:text-foreground group-hover/pin:opacity-100"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+          </>
         )}
 
         {/* Messages */}
