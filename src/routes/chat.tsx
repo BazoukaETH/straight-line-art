@@ -25,7 +25,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useTasks } from "@/lib/tasks-store";
 import {
   readPromoted, setPromoted, addDiscussed, readExtras, pushExtra,
-  readChannelSettings, writeChannelSetting,
+  readChannelSettings, writeChannelSetting, readThreadRead, markThreadRead,
 } from "@/lib/chat-store";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
