@@ -30,7 +30,13 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/chat")({ component: ChatPage });
+export const Route = createFileRoute("/chat")({
+  component: ChatPage,
+  validateSearch: (search: Record<string, unknown>): { channel?: string; m?: string } => ({
+    channel: typeof search.channel === "string" ? search.channel : undefined,
+    m: typeof search.m === "string" ? search.m : undefined,
+  }),
+});
 
 function useChatStorage() {
   const [tick, setTick] = useState(0);
@@ -47,7 +53,16 @@ function useChatStorage() {
 }
 
 function ChatPage() {
-  const [activeId, setActiveId] = useState<string>("client-smg");
+  const search = Route.useSearch();
+  const [activeId, setActiveId] = useState<string>(
+    search.channel && channels.some((c) => c.id === search.channel) ? search.channel : "client-smg",
+  );
+  useEffect(() => {
+    if (search.channel && channels.some((c) => c.id === search.channel)) {
+      setActiveId(search.channel);
+    }
+  }, [search.channel]);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
   const active = channels.find((c) => c.id === activeId) ?? channels[0];
   const tick = useChatStorage();
   const seeded = channelMessages[activeId] ?? [];

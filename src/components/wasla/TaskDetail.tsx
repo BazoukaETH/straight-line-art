@@ -793,8 +793,8 @@ function DiscussedInSection({ taskId }: { taskId: string }) {
                 key={i}
                 onClick={() => {
                   nav({ to: "/chat", search: { channel: r.channelId, m: r.messageId } as any });
-                  setTimeout(() => toast("Scrolling to message coming soon"), 50);
                 }}
+
                 className="flex w-full items-center gap-3 border-b border-border/60 px-3 py-2 text-left text-sm last:border-b-0 hover:bg-muted/40"
               >
                 <span className="font-medium text-accent">#{ch?.name ?? r.channelId}</span>
