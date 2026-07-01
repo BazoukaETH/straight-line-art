@@ -234,6 +234,7 @@ function ChatPage() {
                 <MessageActions
                   m={m}
                   channelId={activeId}
+                  isDM={isDM}
                   onConvert={() => openQuickCreate({ tab: "task", title: m.body })}
                   onReplyInThread={() => openThread(m)}
                 />
@@ -243,7 +244,12 @@ function ChatPage() {
         </div>
 
         {/* Composer */}
-        <Composer channelId={activeId} channelName={active.name} currentUserId={currentUserId} />
+        <Composer
+          channelId={activeId}
+          channelName={isDM && dmUser ? dmUser.name : active.name}
+          currentUserId={currentUserId}
+          isDM={isDM}
+        />
         </div>
 
         {threadParent && (
