@@ -392,6 +392,7 @@ function ChatPage() {
                   isDM={isDM}
                   currentUserId={currentUserId}
                   isDeleted={!!overrides[m.id]?.deleted}
+                  isPinned={pinnedSet.has(m.id)}
                   onConvert={() => openQuickCreate({ tab: "task", title: m.body })}
                   onReplyInThread={() => openThread(m)}
                   onEdit={() => beginEdit(m)}
