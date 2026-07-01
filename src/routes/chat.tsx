@@ -474,7 +474,34 @@ function MessageActions({ m, channelId, isDM, currentUserId, isDeleted, onConver
       <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
       {!isDM && <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>}
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
-      <IconBtn title="More" onClick={() => toast("More actions coming soon")}><MoreHorizontal className="size-3.5" /></IconBtn>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            title="More"
+            className="flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <MoreHorizontal className="size-3.5" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem onClick={copyLink}>
+            <LinkIcon className="mr-2 size-3.5" /> Copy link
+          </DropdownMenuItem>
+          {m.authorId === currentUserId && !isDeleted && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={onEdit}>Edit message</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={onDelete}
+                className="text-destructive focus:text-destructive"
+              >
+                Delete message
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
