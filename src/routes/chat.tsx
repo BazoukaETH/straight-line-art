@@ -27,7 +27,11 @@ import {
   readPromoted, setPromoted, addDiscussed, readExtras, pushExtra,
   readChannelSettings, writeChannelSetting, readThreadRead, markThreadRead,
   readReactions, toggleReaction,
+  readMsgOverrides, editMessage, deleteMessage, type MsgOverridesMap,
 } from "@/lib/chat-store";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { renderWithMentions, useMentionPicker } from "@/lib/mentions";
