@@ -4,12 +4,14 @@ import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useApp } from "@/lib/app-context";
 import { useTasks } from "@/lib/tasks-store";
 import { TaskCard } from "@/components/wasla/TaskCard";
 import { ListSettingsDialog } from "@/components/wasla/ListSettingsDialog";
-import { spaces, type Status, type Task, memberById, type CustomField, spaceById } from "@/lib/mock-data";
-import { Plus, Settings, Filter, Search, Star, Share2, Sliders, Eye, EyeOff, Hash } from "lucide-react";
+import { spaces, type Status, type Task, memberById, type CustomField, spaceById, members } from "@/lib/mock-data";
+import { Plus, Settings, Filter, Search, Star, Share2, Sliders, Eye, EyeOff, Hash, Trash2, Copy, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/wasla/Avatar";
@@ -426,7 +428,10 @@ function CalendarView({ tasks }: { tasks: Task[] }) {
 // ============ Table ============
 function TableView({ tasks, customFields }: { tasks: Task[]; customFields: CustomField[] }) {
   const { goTask } = useTaskNav();
+  const { bulkUpdate, bulkDelete, duplicateTasks } = useTasks();
   const [sort, setSort] = useState<{ key: string; dir: "asc" | "desc" }>({ key: "title", dir: "asc" });
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
   const sorted = useMemo(() => {
     const arr = [...tasks];
     arr.sort((a: any, b: any) => {
@@ -436,14 +441,78 @@ function TableView({ tasks, customFields }: { tasks: Task[]; customFields: Custo
     });
     return arr;
   }, [tasks, sort]);
+
+  const allSelected = sorted.length > 0 && sorted.every((t) => selected.has(t.id));
+  const someSelected = sorted.some((t) => selected.has(t.id));
+
+  const toggleAll = () => {
+    if (allSelected) {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        sorted.forEach((t) => next.delete(t.id));
+        return next;
+      });
+    } else {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        sorted.forEach((t) => next.add(t.id));
+        return next;
+      });
+    }
+  };
+
+  const toggleRow = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const clear = () => setSelected(new Set());
+
+  const selectedIds = useMemo(() => Array.from(selected), [selected]);
+  const n = selectedIds.length;
+
   const head = (k: string, label: string) => (
     <th onClick={() => setSort((s) => ({ key: k, dir: s.key === k && s.dir === "asc" ? "desc" : "asc" }))} className="cursor-pointer px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground">{label}</th>
   );
+
   return (
-    <div className="overflow-auto rounded-lg border border-border bg-card">
+    <div className="relative overflow-auto rounded-lg border border-border bg-card">
+      {n > 0 && (
+        <div className="sticky top-0 z-20 flex items-center gap-2 border-b border-border bg-muted/80 px-3 py-2 backdrop-blur">
+          <span className="text-xs font-semibold">{n} selected</span>
+          <div className="mx-1 h-4 w-px bg-border" />
+          <Select onValueChange={(v) => { bulkUpdate(selectedIds, { status: v as Status }); toast.success(`Status updated`); clear(); }}>
+            <SelectTrigger className="h-7 w-auto min-w-[8rem] text-xs"><SelectValue placeholder="Set status" /></SelectTrigger>
+            <SelectContent>
+              {STATUSES.map((s) => <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select onValueChange={(v) => { bulkUpdate(selectedIds, { assigneeId: v }); toast.success(`Assignee updated`); clear(); }}>
+            <SelectTrigger className="h-7 w-auto min-w-[8rem] text-xs"><SelectValue placeholder="Set assignee" /></SelectTrigger>
+            <SelectContent>
+              {members.map((m) => <SelectItem key={m.id} value={m.id} className="text-xs">{m.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Button size="sm" variant="ghost" className="h-7 gap-1 text-xs" onClick={() => { duplicateTasks(selectedIds); toast.success(`Duplicated ${n} task${n > 1 ? "s" : ""}`); clear(); }}>
+            <Copy className="size-3.5" /> Duplicate
+          </Button>
+          <Button size="sm" variant="ghost" className="h-7 gap-1 text-xs text-destructive hover:text-destructive" onClick={() => { if (confirm(`Delete ${n} task${n > 1 ? "s" : ""}?`)) { bulkDelete(selectedIds); toast.success(`Deleted ${n} task${n > 1 ? "s" : ""}`); clear(); } }}>
+            <Trash2 className="size-3.5" /> Delete
+          </Button>
+          <div className="mx-1 h-4 w-px bg-border" />
+          <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={clear}><X className="size-3.5" /> Clear</Button>
+        </div>
+      )}
       <table className="w-full text-sm">
         <thead className="border-b border-border bg-muted/40">
           <tr>
+            <th className="px-3 py-2 text-left">
+              <Checkbox checked={allSelected} aria-label="Select all" onCheckedChange={toggleAll} />
+            </th>
             {head("title", "Title")}
             {head("status", "Status")}
             {head("assigneeId", "Assignee")}
@@ -458,8 +527,12 @@ function TableView({ tasks, customFields }: { tasks: Task[]; customFields: Custo
           {sorted.map((t) => {
             const due = relativeDue(t.due);
             const r = routeForTask(t);
+            const isSel = selected.has(t.id);
             return (
-              <tr key={t.id} onClick={() => goTask(t.id)} onDoubleClick={() => goTask(t.id)} className="cursor-pointer border-b border-border/60 hover:bg-muted/40">
+              <tr key={t.id} onClick={() => goTask(t.id)} onDoubleClick={() => goTask(t.id)} className={cn("cursor-pointer border-b border-border/60 hover:bg-muted/40", isSel && "bg-accent/10")}>
+                <td className="px-3 py-2" onClick={(e) => e.stopPropagation()}>
+                  <Checkbox checked={isSel} aria-label={`Select ${t.title}`} onCheckedChange={() => toggleRow(t.id)} />
+                </td>
                 <td className="px-3 py-2 font-medium"><Link to={r.to as any} params={r.params as any} className="block hover:underline">{t.title}</Link></td>
                 <td className="px-3 py-2"><StatusPill status={t.status} /></td>
                 <td className="px-3 py-2"><div className="flex items-center gap-1.5"><Avatar memberId={t.assigneeId} size={20} /><span className="text-xs">{memberById(t.assigneeId).name.split(" ")[0]}</span></div></td>
@@ -472,7 +545,7 @@ function TableView({ tasks, customFields }: { tasks: Task[]; customFields: Custo
             );
           })}
           {sorted.length === 0 && (
-            <tr><td colSpan={7 + customFields.length} className="py-12 text-center text-sm text-muted-foreground">No tasks in this view</td></tr>
+            <tr><td colSpan={8 + customFields.length} className="py-12 text-center text-sm text-muted-foreground">No tasks in this view</td></tr>
           )}
         </tbody>
       </table>
