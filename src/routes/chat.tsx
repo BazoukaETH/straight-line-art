@@ -30,6 +30,7 @@ import {
 } from "@/lib/chat-store";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { renderWithMentions, useMentionPicker } from "@/lib/mentions";
 
 export const Route = createFileRoute("/chat")({
   component: ChatPage,
