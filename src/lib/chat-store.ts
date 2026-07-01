@@ -92,3 +92,28 @@ export function markThreadRead(parentMessageId: string) {
   localStorage.setItem(LS_THREAD_READ, JSON.stringify(m));
   window.dispatchEvent(new Event("wasla.chat.changed"));
 }
+
+const LS_REACTIONS = "wasla.chat.reactions";
+export type ReactionsMap = Record<string, Record<string, string[]>>;
+
+export function readReactions(): ReactionsMap {
+  if (typeof window === "undefined") return {};
+  return safeParse<ReactionsMap>(localStorage.getItem(LS_REACTIONS), {});
+}
+
+export function toggleReaction(messageId: string, emoji: string, userId: string) {
+  const map = readReactions();
+  const forMsg = { ...(map[messageId] ?? {}) };
+  const users = forMsg[emoji] ?? [];
+  if (users.includes(userId)) {
+    const next = users.filter((u) => u !== userId);
+    if (next.length === 0) delete forMsg[emoji];
+    else forMsg[emoji] = next;
+  } else {
+    forMsg[emoji] = [...users, userId];
+  }
+  if (Object.keys(forMsg).length === 0) delete map[messageId];
+  else map[messageId] = forMsg;
+  localStorage.setItem(LS_REACTIONS, JSON.stringify(map));
+  window.dispatchEvent(new Event("wasla.chat.changed"));
+}
