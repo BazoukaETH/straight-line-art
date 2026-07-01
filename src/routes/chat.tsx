@@ -639,7 +639,8 @@ function Composer({ channelId, channelName, currentUserId, threadParentId, isDM 
   return (
     <div className="border-t border-border bg-card p-3">
       <div className="relative">
-        {showPopover && (
+        {mention.dropdown}
+        {showPopover && !mention.active && (
           <div className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
             {mode === "menu" && (
               <ul className="py-1 text-sm">
