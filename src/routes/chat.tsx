@@ -26,6 +26,7 @@ import { useTasks } from "@/lib/tasks-store";
 import {
   readPromoted, setPromoted, addDiscussed, readExtras, pushExtra,
   readChannelSettings, writeChannelSetting, readThreadRead, markThreadRead,
+  readReactions, toggleReaction,
 } from "@/lib/chat-store";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -86,6 +87,7 @@ function ChatPage() {
   }, [allMsgs]);
   const threadRead = useMemo(() => readThreadRead(), [tick]);
   const promoted = useMemo(() => readPromoted(), [tick]);
+  const reactionsMap = useMemo(() => readReactions(), [tick]);
   const { goTask } = useTaskNav();
   const { currentUserId, openQuickCreate } = useApp();
   const [convertMsg, setConvertMsg] = useState<Message | null>(null);
@@ -201,10 +203,36 @@ function ChatPage() {
                       <span className="text-accent">→</span>
                     </button>
                   )}
-                  <div className="mt-1 flex items-center gap-2">
-                    {m.reactions?.map((r) => (
-                      <span key={r.emoji} className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-1.5 py-0.5 text-[11px]">{r.emoji} {r.count}</span>
-                    ))}
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
+                    {(() => {
+                      const stored = reactionsMap[m.id] ?? {};
+                      const emojis = new Set<string>([
+                        ...(m.reactions ?? []).map((r) => r.emoji),
+                        ...Object.keys(stored),
+                      ]);
+                      return Array.from(emojis).map((emoji) => {
+                        const seeded = m.reactions?.find((r) => r.emoji === emoji)?.count ?? 0;
+                        const users = stored[emoji] ?? [];
+                        const total = seeded + users.length;
+                        if (total === 0) return null;
+                        const mine = users.includes(currentUserId);
+                        return (
+                          <button
+                            key={emoji}
+                            type="button"
+                            onClick={() => toggleReaction(m.id, emoji, currentUserId)}
+                            className={cn(
+                              "inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[11px] transition",
+                              mine
+                                ? "border-accent bg-accent/15 text-accent"
+                                : "border-border bg-muted hover:bg-muted/70",
+                            )}
+                          >
+                            {emoji} {total}
+                          </button>
+                        );
+                      });
+                    })()}
                   </div>
                   {displayReplyCount > 0 && (
                     <button
@@ -235,6 +263,7 @@ function ChatPage() {
                   m={m}
                   channelId={activeId}
                   isDM={isDM}
+                  currentUserId={currentUserId}
                   onConvert={() => openQuickCreate({ tab: "task", title: m.body })}
                   onReplyInThread={() => openThread(m)}
                 />
@@ -362,15 +391,41 @@ function ThreadPanel({
 
 
 /* -------------------- Message hover actions -------------------- */
-function MessageActions({ m, channelId, isDM, onConvert, onReplyInThread }: { m: Message; channelId: string; isDM?: boolean; onConvert: () => void; onReplyInThread: () => void }) {
+function MessageActions({ m, channelId, isDM, currentUserId, onConvert, onReplyInThread }: { m: Message; channelId: string; isDM?: boolean; currentUserId: string; onConvert: () => void; onReplyInThread: () => void }) {
+  const [pickerOpen, setPickerOpen] = useState(false);
   const copyLink = () => {
     const link = `${window.location.origin}/chat?channel=${channelId}&m=${m.id}`;
     navigator.clipboard?.writeText(link).catch(() => {});
     toast.success("Link copied");
   };
+  const quickEmojis = ["👍", "❤️", "🔥", "✅", "😂", "🎉"];
   return (
     <div className="absolute right-2 top-0 flex translate-y-[-50%] items-center gap-0.5 rounded-md border border-border bg-card px-1 py-0.5 opacity-0 shadow-sm transition group-hover:opacity-100">
-      <IconBtn title="React" onClick={() => toast("Reactions coming soon")}><Smile className="size-3.5" /></IconBtn>
+      <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            title="React"
+            className="flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <Smile className="size-3.5" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-auto p-1">
+          <div className="flex items-center gap-0.5">
+            {quickEmojis.map((emoji) => (
+              <button
+                key={emoji}
+                type="button"
+                onClick={() => { toggleReaction(m.id, emoji, currentUserId); setPickerOpen(false); }}
+                className="flex size-8 items-center justify-center rounded text-base hover:bg-muted"
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
       <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
       {!isDM && <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>}
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
