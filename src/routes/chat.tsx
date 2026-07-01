@@ -220,9 +220,29 @@ function ChatPage() {
                     </div>
                   ) : m.kind === "image" ? (
                     <div className="w-72 overflow-hidden rounded-lg border border-border">
-                      <div className="aspect-video bg-gradient-to-br from-[color:var(--accent)]/30 via-[color:var(--accent)]/10 to-transparent" />
-                      <div className="px-3 py-2 text-xs text-muted-foreground">hero-option-b.png</div>
+                      {m.fileUrl ? (
+                        <img src={m.fileUrl} alt={m.fileName ?? "image"} className="block aspect-video w-full object-cover" />
+                      ) : (
+                        <div className="aspect-video bg-gradient-to-br from-[color:var(--accent)]/30 via-[color:var(--accent)]/10 to-transparent" />
+                      )}
+                      <div className="px-3 py-2 text-xs text-muted-foreground">{m.fileName ?? "hero-option-b.png"}</div>
                     </div>
+                  ) : m.kind === "file" ? (
+                    <a
+                      href={m.fileUrl}
+                      download={m.fileName}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex w-72 items-center gap-3 rounded-lg border border-border bg-card px-3 py-2 transition hover:border-foreground/20"
+                    >
+                      <div className="flex size-9 items-center justify-center rounded-md bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] text-accent">
+                        <Paperclip className="size-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-medium">{m.fileName ?? "attachment"}</div>
+                        <div className="text-[11px] text-muted-foreground">Click to download</div>
+                      </div>
+                    </a>
                   ) : m.kind === "task" && m.taskId ? (
                     <button onClick={() => goTask(m.taskId!)} className="block w-96 rounded-lg border border-border bg-card p-3 text-left transition hover:border-foreground/20">
                       <div className="mb-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Task · {m.taskId}</div>
