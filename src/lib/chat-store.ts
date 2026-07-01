@@ -80,3 +80,15 @@ export function seedDiscussedOnce() {
     localStorage.setItem(LS_DISCUSSED, JSON.stringify(SEED_DISCUSSED));
   }
 }
+
+export type ThreadReadMap = Record<string, string>; // parentMessageId -> ISO lastReadAt
+export function readThreadRead(): ThreadReadMap {
+  if (typeof window === "undefined") return {};
+  return safeParse<ThreadReadMap>(localStorage.getItem(LS_THREAD_READ), {});
+}
+export function markThreadRead(parentMessageId: string) {
+  const m = readThreadRead();
+  m[parentMessageId] = new Date().toISOString();
+  localStorage.setItem(LS_THREAD_READ, JSON.stringify(m));
+  window.dispatchEvent(new Event("wasla.chat.changed"));
+}
