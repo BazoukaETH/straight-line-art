@@ -4,6 +4,7 @@ import { AppShell } from "@/components/wasla/AppShell";
 import { SpaceTreeSidebar } from "@/components/wasla/SpaceTreeSidebar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useApp } from "@/lib/app-context";
 import { useTasks } from "@/lib/tasks-store";
 import { TaskCard } from "@/components/wasla/TaskCard";
