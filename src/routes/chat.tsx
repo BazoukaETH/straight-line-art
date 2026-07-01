@@ -361,12 +361,13 @@ function ClientTime({ iso, className, prefix }: { iso: string; className?: strin
 
 /* -------------------- Thread panel -------------------- */
 function ThreadPanel({
-  parent, replies, channelId, channelName, currentUserId, onClose,
+  parent, replies, channelId, channelName, currentUserId, overrides, onClose,
 }: {
   parent: Message; replies: Message[]; channelId: string; channelName: string;
-  currentUserId: string; onClose: () => void;
+  currentUserId: string; overrides: MsgOverridesMap; onClose: () => void;
 }) {
   const author = memberById(parent.authorId);
+  const parentOv = overrides[parent.id];
   return (
     <aside className="flex h-full w-[420px] shrink-0 flex-col border-l border-border bg-card">
       <div className="flex items-center gap-3 border-b border-border px-4 py-3">
