@@ -118,20 +118,36 @@ function ChatPage() {
   return (
     <AppShell
       sidebar={<ChannelsSidebar active={activeId} onSelect={setActiveId} />}
-      breadcrumb={<><span>Chat</span><span className="text-border">/</span><span className="font-medium text-foreground">#{active.name}</span></>}
+      breadcrumb={<><span>Chat</span><span className="text-border">/</span><span className="font-medium text-foreground">{isDM && dmUser ? `@${dmUser.name}` : `#${active.name}`}</span></>}
     >
       <div className="flex h-full">
         <div className="flex h-full flex-1 flex-col">
-        {/* Channel header */}
-        <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
-          <Hash className="size-4 text-muted-foreground" />
-          <h2 className="text-base font-semibold">{active.name}</h2>
-          <span className="text-xs text-muted-foreground">· 7 members</span>
-          <div className="ml-auto flex gap-1">
-            <Button size="icon" variant="ghost"><Pin className="size-4" /></Button>
-            <ChannelSettingsPopover channelId={activeId} />
+        {/* Header */}
+        {isDM && dmUser ? (
+          <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
+            <Avatar memberId={dmUser.id} size={28} status />
+            <div className="flex flex-col leading-tight">
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-semibold">{dmUser.name}</h2>
+                <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                  <span className="size-1.5 rounded-full bg-emerald-500" />
+                  Active
+                </span>
+              </div>
+              <span className="text-[11px] text-muted-foreground">Direct message</span>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
+            <Hash className="size-4 text-muted-foreground" />
+            <h2 className="text-base font-semibold">{active.name}</h2>
+            <span className="text-xs text-muted-foreground">· 7 members</span>
+            <div className="ml-auto flex gap-1">
+              <Button size="icon" variant="ghost"><Pin className="size-4" /></Button>
+              <ChannelSettingsPopover channelId={activeId} />
+            </div>
+          </div>
+        )}
 
         {/* Messages */}
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4 scrollbar-thin">
