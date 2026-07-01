@@ -140,3 +140,23 @@ export function deleteMessage(messageId: string) {
   map[messageId] = { ...map[messageId], deleted: true };
   writeMsgOverrides(map);
 }
+
+const LS_PINNED = "wasla.chat.pinned";
+export type PinnedMap = Record<string, string[]>;
+
+export function readPinnedAll(): PinnedMap {
+  if (typeof window === "undefined") return {};
+  return safeParse<PinnedMap>(localStorage.getItem(LS_PINNED), {});
+}
+export function readPinned(channelId: string): string[] {
+  return readPinnedAll()[channelId] ?? [];
+}
+export function togglePin(channelId: string, messageId: string) {
+  const all = readPinnedAll();
+  const cur = all[channelId] ?? [];
+  const next = cur.includes(messageId) ? cur.filter((id) => id !== messageId) : [...cur, messageId];
+  if (next.length === 0) delete all[channelId];
+  else all[channelId] = next;
+  localStorage.setItem(LS_PINNED, JSON.stringify(all));
+  window.dispatchEvent(new Event("wasla.chat.changed"));
+}
