@@ -28,6 +28,7 @@ import {
   readChannelSettings, writeChannelSetting, readThreadRead, markThreadRead,
   readReactions, toggleReaction,
   readMsgOverrides, editMessage, deleteMessage, type MsgOverridesMap,
+  readPinned, togglePin,
 } from "@/lib/chat-store";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
@@ -96,6 +97,16 @@ function ChatPage() {
   const threadRead = useMemo(() => readThreadRead(), [tick]);
   const promoted = useMemo(() => readPromoted(), [tick]);
   const reactionsMap = useMemo(() => readReactions(), [tick]);
+  const pinnedIds = useMemo(() => readPinned(activeId), [activeId, tick]);
+  const pinnedSet = useMemo(() => new Set(pinnedIds), [pinnedIds]);
+  const [pinnedOpen, setPinnedOpen] = useState(true);
+  const scrollToMessage = (id: string) => {
+    const el = document.getElementById(`msg-${id}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    setHighlightId(id);
+    setTimeout(() => setHighlightId((cur) => (cur === id ? null : cur)), 2000);
+  };
   const { goTask } = useTaskNav();
   const { currentUserId, openQuickCreate } = useApp();
   const [convertMsg, setConvertMsg] = useState<Message | null>(null);
@@ -162,15 +173,69 @@ function ChatPage() {
             </div>
           </div>
         ) : (
+          <>
           <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
             <Hash className="size-4 text-muted-foreground" />
             <h2 className="text-base font-semibold">{active.name}</h2>
             <span className="text-xs text-muted-foreground">· 7 members</span>
             <div className="ml-auto flex gap-1">
-              <Button size="icon" variant="ghost"><Pin className="size-4" /></Button>
+              <Button
+                size="icon"
+                variant={pinnedOpen && pinnedIds.length > 0 ? "secondary" : "ghost"}
+                onClick={() => setPinnedOpen((v) => !v)}
+                title={pinnedIds.length ? `${pinnedIds.length} pinned` : "No pinned messages"}
+                className="relative"
+              >
+                <Pin className="size-4" />
+                {pinnedIds.length > 0 && (
+                  <span className="absolute -right-1 -top-1 rounded-full bg-accent px-1 text-[9px] font-bold leading-4 text-accent-foreground">
+                    {pinnedIds.length}
+                  </span>
+                )}
+              </Button>
               <ChannelSettingsPopover channelId={activeId} />
             </div>
           </div>
+          {pinnedOpen && pinnedIds.length > 0 && (
+            <div className="border-b border-border bg-muted/30 px-5 py-2">
+              <div className="mb-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <Pin className="size-3" /> Pinned · {pinnedIds.length}
+              </div>
+              <ul className="space-y-1">
+                {pinnedIds.map((pid) => {
+                  const pm = allMsgs.find((x) => x.id === pid);
+                  if (!pm) return null;
+                  const pu = memberById(pm.authorId);
+                  const body = overrides[pm.id]?.deleted
+                    ? "This message was deleted"
+                    : (overrides[pm.id]?.body ?? pm.body ?? pm.fileName ?? "");
+                  const snippet = body.length > 80 ? body.slice(0, 80) + "…" : body;
+                  return (
+                    <li key={pid} className="group/pin flex items-center gap-2 rounded-md px-2 py-1 hover:bg-background">
+                      <Avatar memberId={pu.id} size={18} />
+                      <button
+                        type="button"
+                        onClick={() => scrollToMessage(pid)}
+                        className="flex-1 min-w-0 text-left text-xs"
+                      >
+                        <span className="font-semibold">{pu.name}: </span>
+                        <span className="text-muted-foreground">{snippet}</span>
+                      </button>
+                      <button
+                        type="button"
+                        title="Unpin"
+                        onClick={() => togglePin(activeId, pid)}
+                        className="flex size-5 items-center justify-center rounded text-muted-foreground opacity-0 hover:bg-muted hover:text-foreground group-hover/pin:opacity-100"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+          </>
         )}
 
         {/* Messages */}
@@ -327,6 +392,7 @@ function ChatPage() {
                   isDM={isDM}
                   currentUserId={currentUserId}
                   isDeleted={!!overrides[m.id]?.deleted}
+                  isPinned={pinnedSet.has(m.id)}
                   onConvert={() => openQuickCreate({ tab: "task", title: m.body })}
                   onReplyInThread={() => openThread(m)}
                   onEdit={() => beginEdit(m)}
@@ -467,7 +533,7 @@ function ThreadPanel({
 
 
 /* -------------------- Message hover actions -------------------- */
-function MessageActions({ m, channelId, isDM, currentUserId, isDeleted, onConvert, onReplyInThread, onEdit, onDelete }: { m: Message; channelId: string; isDM?: boolean; currentUserId: string; isDeleted?: boolean; onConvert: () => void; onReplyInThread: () => void; onEdit: () => void; onDelete: () => void }) {
+function MessageActions({ m, channelId, isDM, currentUserId, isDeleted, isPinned, onConvert, onReplyInThread, onEdit, onDelete }: { m: Message; channelId: string; isDM?: boolean; currentUserId: string; isDeleted?: boolean; isPinned?: boolean; onConvert: () => void; onReplyInThread: () => void; onEdit: () => void; onDelete: () => void }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const copyLink = () => {
     const link = `${window.location.origin}/chat?channel=${channelId}&m=${m.id}`;
@@ -503,6 +569,11 @@ function MessageActions({ m, channelId, isDM, currentUserId, isDeleted, onConver
         </PopoverContent>
       </Popover>
       <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
+      {!isDM && (
+        <IconBtn title={isPinned ? "Unpin" : "Pin"} onClick={() => togglePin(channelId, m.id)}>
+          <Pin className={cn("size-3.5", isPinned && "text-accent")} />
+        </IconBtn>
+      )}
       {!isDM && <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>}
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
       <DropdownMenu>
