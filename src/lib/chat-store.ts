@@ -117,3 +117,26 @@ export function toggleReaction(messageId: string, emoji: string, userId: string)
   localStorage.setItem(LS_REACTIONS, JSON.stringify(map));
   window.dispatchEvent(new Event("wasla.chat.changed"));
 }
+
+const LS_MSG_OVERRIDES = "wasla.chat.msgOverrides";
+export type MsgOverride = { body?: string; deleted?: boolean; editedAt?: string };
+export type MsgOverridesMap = Record<string, MsgOverride>;
+
+export function readMsgOverrides(): MsgOverridesMap {
+  if (typeof window === "undefined") return {};
+  return safeParse<MsgOverridesMap>(localStorage.getItem(LS_MSG_OVERRIDES), {});
+}
+function writeMsgOverrides(map: MsgOverridesMap) {
+  localStorage.setItem(LS_MSG_OVERRIDES, JSON.stringify(map));
+  window.dispatchEvent(new Event("wasla.chat.changed"));
+}
+export function editMessage(messageId: string, body: string) {
+  const map = readMsgOverrides();
+  map[messageId] = { ...map[messageId], body, editedAt: new Date().toISOString() };
+  writeMsgOverrides(map);
+}
+export function deleteMessage(messageId: string) {
+  const map = readMsgOverrides();
+  map[messageId] = { ...map[messageId], deleted: true };
+  writeMsgOverrides(map);
+}
