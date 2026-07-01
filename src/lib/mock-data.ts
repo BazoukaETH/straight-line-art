@@ -557,6 +557,35 @@ export const channelMessages: Record<string, Message[]> = {
   ],
 };
 
+export const dmMessages: Record<string, Message[]> = {
+  moaz: [
+    { id: "dm-moaz-1", authorId: "moaz",   body: "Pushed the QA build for the holding site — can you spin through the contact form?", at: "2026-05-24T09:12:00Z" },
+    { id: "dm-moaz-2", authorId: "bassel", body: "On it. Any known issues on mobile?", at: "2026-05-24T09:18:00Z" },
+    { id: "dm-moaz-3", authorId: "moaz",   body: "Safari iOS 17 has a sticky-header glitch on scroll — fix landing tonight.", at: "2026-05-24T09:20:00Z" },
+    { id: "dm-moaz-4", authorId: "bassel", body: "Nice. Push the war-room env creds to 1Password when you get a sec.", at: "2026-05-24T09:34:00Z" },
+    { id: "dm-moaz-5", authorId: "moaz",   body: "Done ✅ — vault: Wasla / Dev.", at: "2026-05-24T09:41:00Z" },
+  ],
+  usef: [
+    { id: "dm-usef-1", authorId: "usef",   body: "Liqui Moly deck v2 is ready — swapped hero to option B per your note.", at: "2026-05-25T10:02:00Z" },
+    { id: "dm-usef-2", authorId: "bassel", body: "Great. Can you make the pricing slide breathe more? Feels dense.", at: "2026-05-25T10:07:00Z" },
+    { id: "dm-usef-3", authorId: "usef",   body: "Yep, thinning it to three tiers + a footnote. Also refreshed the Paperwork brand marks.", at: "2026-05-25T10:11:00Z" },
+    { id: "dm-usef-4", authorId: "bassel", body: "Perfect. Share both in #client-smg once you're happy.", at: "2026-05-25T10:15:00Z" },
+  ],
+  ali: [
+    { id: "dm-ali-1",  authorId: "ali",    body: "Sharm providers all countersigned. Uploading to Drive under Tourism/Contracts.", at: "2026-05-25T11:20:00Z" },
+    { id: "dm-ali-2",  authorId: "bassel", body: "Amazing — start Hurghada outreach this week?", at: "2026-05-25T11:24:00Z" },
+    { id: "dm-ali-3",  authorId: "ali",    body: "Yes, I have 6 warm intros lined up. Kicking off Wednesday.", at: "2026-05-25T11:27:00Z" },
+    { id: "dm-ali-4",  authorId: "bassel", body: "Loop me on the first call.", at: "2026-05-25T11:29:00Z" },
+    { id: "dm-ali-5",  authorId: "ali",    body: "Will do 👍", at: "2026-05-25T11:30:00Z" },
+  ],
+  hagry: [
+    { id: "dm-hagry-1", authorId: "hagry",  body: "May P&L close is done — sending the pack tonight.", at: "2026-05-25T14:05:00Z" },
+    { id: "dm-hagry-2", authorId: "bassel", body: "Anything unusual on burn?", at: "2026-05-25T14:08:00Z" },
+    { id: "dm-hagry-3", authorId: "hagry",  body: "Down 6% vs April — subscription cutovers finally hitting.", at: "2026-05-25T14:10:00Z" },
+    { id: "dm-hagry-4", authorId: "bassel", body: "Beautiful. Let's chat runway in tomorrow's stand-up.", at: "2026-05-25T14:12:00Z" },
+  ],
+};
+
 function dayStr(offset: number) {
   const d = new Date();
   d.setDate(d.getDate() - offset);
