@@ -533,7 +533,7 @@ function ThreadPanel({
 
 
 /* -------------------- Message hover actions -------------------- */
-function MessageActions({ m, channelId, isDM, currentUserId, isDeleted, onConvert, onReplyInThread, onEdit, onDelete }: { m: Message; channelId: string; isDM?: boolean; currentUserId: string; isDeleted?: boolean; onConvert: () => void; onReplyInThread: () => void; onEdit: () => void; onDelete: () => void }) {
+function MessageActions({ m, channelId, isDM, currentUserId, isDeleted, isPinned, onConvert, onReplyInThread, onEdit, onDelete }: { m: Message; channelId: string; isDM?: boolean; currentUserId: string; isDeleted?: boolean; isPinned?: boolean; onConvert: () => void; onReplyInThread: () => void; onEdit: () => void; onDelete: () => void }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const copyLink = () => {
     const link = `${window.location.origin}/chat?channel=${channelId}&m=${m.id}`;
