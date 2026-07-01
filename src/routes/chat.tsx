@@ -306,8 +306,11 @@ function ChatPage() {
                   channelId={activeId}
                   isDM={isDM}
                   currentUserId={currentUserId}
+                  isDeleted={!!overrides[m.id]?.deleted}
                   onConvert={() => openQuickCreate({ tab: "task", title: m.body })}
                   onReplyInThread={() => openThread(m)}
+                  onEdit={() => beginEdit(m)}
+                  onDelete={() => deleteMessage(m.id)}
                 />
               </div>
             );
