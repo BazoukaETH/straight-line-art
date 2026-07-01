@@ -28,6 +28,7 @@ import {
   readChannelSettings, writeChannelSetting, readThreadRead, markThreadRead,
   readReactions, toggleReaction,
   readMsgOverrides, editMessage, deleteMessage, type MsgOverridesMap,
+  readPinned, togglePin,
 } from "@/lib/chat-store";
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
