@@ -465,7 +465,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId }: { c
   const defaultList = lists.find((l) => l.spaceId === homeSpaceId)?.id;
 
   // slash command modes
-  const mode: "none" | "menu" | "find" =
+  const mode: "none" | "menu" | "find" = isThread ? "none" :
     value === "/" ? "menu" :
     value.startsWith("/find") ? "find" :
     value === "/task" ? "menu" : "none";
