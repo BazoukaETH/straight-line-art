@@ -509,7 +509,7 @@ function ChannelSettingsPopover({ channelId }: { channelId: string }) {
 }
 
 /* -------------------- Composer with slash commands -------------------- */
-function Composer({ channelId, channelName, currentUserId, threadParentId }: { channelId: string; channelName: string; currentUserId: string; threadParentId?: string }) {
+function Composer({ channelId, channelName, currentUserId, threadParentId, isDM }: { channelId: string; channelName: string; currentUserId: string; threadParentId?: string; isDM?: boolean }) {
   const isThread = !!threadParentId;
   const [value, setValue] = useState("");
   const { tasks, lists } = useTasks();
@@ -520,7 +520,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId }: { c
   const defaultList = lists.find((l) => l.spaceId === homeSpaceId)?.id;
 
   // slash command modes
-  const mode: "none" | "menu" | "find" = isThread ? "none" :
+  const mode: "none" | "menu" | "find" = isThread || isDM ? "none" :
     value === "/" ? "menu" :
     value.startsWith("/find") ? "find" :
     value === "/task" ? "menu" : "none";
@@ -634,7 +634,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId }: { c
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder={isThread ? "Reply in thread…" : `Message #${channelName} — type / for commands`}
+            placeholder={isThread ? "Reply in thread…" : isDM ? `Message ${channelName}` : `Message #${channelName} — type / for commands`}
             className="h-8 border-0 bg-transparent px-1 text-sm shadow-none focus-visible:ring-0"
           />
           <Button size="icon" variant="ghost" className="size-7"><Smile className="size-4" /></Button>
@@ -652,6 +652,14 @@ function Composer({ channelId, channelName, currentUserId, threadParentId }: { c
               });
               setValue("");
               markThreadRead(threadParentId!);
+            } else if (isDM) {
+              pushExtra(channelId, {
+                id: `x-${Date.now()}`,
+                authorId: currentUserId,
+                body: text,
+                at: new Date().toISOString(),
+              });
+              setValue("");
             } else {
               setValue("");
               toast.success("Sent");
