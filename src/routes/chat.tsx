@@ -26,6 +26,7 @@ import { useTasks } from "@/lib/tasks-store";
 import {
   readPromoted, setPromoted, addDiscussed, readExtras, pushExtra,
   readChannelSettings, writeChannelSetting, readThreadRead, markThreadRead,
+  readReactions, toggleReaction,
 } from "@/lib/chat-store";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
