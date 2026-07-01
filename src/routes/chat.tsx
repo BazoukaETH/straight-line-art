@@ -362,7 +362,7 @@ function ThreadPanel({
 
 
 /* -------------------- Message hover actions -------------------- */
-function MessageActions({ m, channelId, onConvert, onReplyInThread }: { m: Message; channelId: string; onConvert: () => void; onReplyInThread: () => void }) {
+function MessageActions({ m, channelId, isDM, onConvert, onReplyInThread }: { m: Message; channelId: string; isDM?: boolean; onConvert: () => void; onReplyInThread: () => void }) {
   const copyLink = () => {
     const link = `${window.location.origin}/chat?channel=${channelId}&m=${m.id}`;
     navigator.clipboard?.writeText(link).catch(() => {});
