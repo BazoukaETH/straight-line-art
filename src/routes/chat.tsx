@@ -592,6 +592,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId, isDM 
   const inputRef = useRef<HTMLInputElement>(null);
   const [highlight, setHighlight] = useState(0);
   useEffect(() => { setHighlight(0); }, [value]);
+  const mention = useMentionPicker({ value, setValue, inputRef });
 
   const pickTask = () => {
     setValue("");
