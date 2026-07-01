@@ -569,6 +569,11 @@ function MessageActions({ m, channelId, isDM, currentUserId, isDeleted, isPinned
         </PopoverContent>
       </Popover>
       <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
+      {!isDM && (
+        <IconBtn title={isPinned ? "Unpin" : "Pin"} onClick={() => togglePin(channelId, m.id)}>
+          <Pin className={cn("size-3.5", isPinned && "text-accent")} />
+        </IconBtn>
+      )}
       {!isDM && <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>}
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
       <DropdownMenu>
