@@ -389,8 +389,15 @@ function ThreadPanel({
             <div className="mb-0.5 flex items-baseline gap-2">
               <span className="text-sm font-semibold">{author.name}</span>
               <ClientTime iso={parent.at} className="text-[11px] text-muted-foreground" />
+              {parentOv?.editedAt && !parentOv?.deleted && (
+                <span className="text-[11px] text-muted-foreground/70">(edited)</span>
+              )}
             </div>
-            <p className="text-sm text-foreground/90 break-words">{renderWithMentions(parent.body)}</p>
+            {parentOv?.deleted ? (
+              <p className="text-sm italic text-muted-foreground">This message was deleted</p>
+            ) : (
+              <p className="text-sm text-foreground/90 break-words">{renderWithMentions(parentOv?.body ?? parent.body)}</p>
+            )}
           </div>
         </div>
       </div>
