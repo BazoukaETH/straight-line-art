@@ -264,6 +264,23 @@ function PropertiesGrid({ task, updateTask }: { task: any; updateTask: (id: stri
         <TagEditor tags={task.tags ?? []} onChange={(tags) => updateTask(task.id, { tags })} />
       </Row>
 
+      <Row label="Repeat" icon={<Repeat className="size-3.5 text-muted-foreground" />}>
+        <Select
+          value={task.recurrence?.freq ?? "none"}
+          onValueChange={(freq) => updateTask(task.id, { recurrence: freq === "none" ? undefined : { freq: freq as "daily" | "weekly" | "monthly" } })}
+        >
+          <SelectTrigger className="h-6 w-40 border-none bg-transparent px-1 text-xs shadow-none focus:ring-0">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">Doesn't repeat</SelectItem>
+            <SelectItem value="daily">Daily</SelectItem>
+            <SelectItem value="weekly">Weekly</SelectItem>
+            <SelectItem value="monthly">Monthly</SelectItem>
+          </SelectContent>
+        </Select>
+      </Row>
+
       <Row label="Relationships" icon={<Link2 className="size-3.5 text-muted-foreground" />}>
         <DependencyEditor task={task} />
       </Row>
