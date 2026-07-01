@@ -417,6 +417,7 @@ function ThreadPanel({
         )}
         {replies.map((r) => {
           const u = memberById(r.authorId);
+          const rov = overrides[r.id];
           return (
             <div key={r.id} className="flex gap-3">
               <Avatar memberId={u.id} size={28} />
@@ -424,8 +425,9 @@ function ThreadPanel({
                 <div className="mb-0.5 flex items-baseline gap-2">
                   <span className="text-sm font-semibold">{u.name}</span>
                   <ClientTime iso={r.at} className="text-[11px] text-muted-foreground" />
+                  {rov?.editedAt && <span className="text-[11px] text-muted-foreground/70">(edited)</span>}
                 </div>
-                <p className="text-sm text-foreground/90 break-words">{renderWithMentions(r.body)}</p>
+                <p className="text-sm text-foreground/90 break-words">{renderWithMentions(rov?.body ?? r.body)}</p>
               </div>
             </div>
           );
