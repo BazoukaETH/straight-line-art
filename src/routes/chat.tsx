@@ -97,6 +97,16 @@ function ChatPage() {
   const threadRead = useMemo(() => readThreadRead(), [tick]);
   const promoted = useMemo(() => readPromoted(), [tick]);
   const reactionsMap = useMemo(() => readReactions(), [tick]);
+  const pinnedIds = useMemo(() => readPinned(activeId), [activeId, tick]);
+  const pinnedSet = useMemo(() => new Set(pinnedIds), [pinnedIds]);
+  const [pinnedOpen, setPinnedOpen] = useState(true);
+  const scrollToMessage = (id: string) => {
+    const el = document.getElementById(`msg-${id}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    setHighlightId(id);
+    setTimeout(() => setHighlightId((cur) => (cur === id ? null : cur)), 2000);
+  };
   const { goTask } = useTaskNav();
   const { currentUserId, openQuickCreate } = useApp();
   const [convertMsg, setConvertMsg] = useState<Message | null>(null);
