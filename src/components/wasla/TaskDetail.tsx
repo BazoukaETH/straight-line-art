@@ -232,6 +232,12 @@ function PropertiesGrid({ task, updateTask }: { task: any; updateTask: (id: stri
               <Calendar mode="single" selected={new Date(task.due)} onSelect={(d) => d && updateTask(task.id, { due: d.toISOString() })} className="p-3 pointer-events-auto" />
             </PopoverContent>
           </Popover>
+          {task.recurrence && (
+            <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+              <Repeat className="size-3" />
+              Repeats {task.recurrence.freq}
+            </span>
+          )}
         </div>
       </Row>
 
