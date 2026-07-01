@@ -579,12 +579,29 @@ function Composer({ channelId, channelName, currentUserId, threadParentId }: { c
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder={`Message #${channelName} — type / for commands`}
+            placeholder={isThread ? "Reply in thread…" : `Message #${channelName} — type / for commands`}
             className="h-8 border-0 bg-transparent px-1 text-sm shadow-none focus-visible:ring-0"
           />
           <Button size="icon" variant="ghost" className="size-7"><Smile className="size-4" /></Button>
           <Button size="icon" variant="ghost" className="size-7"><Mic className="size-4" /></Button>
-          <Button size="icon" className="size-8" onClick={() => { if (value.trim()) { setValue(""); toast.success("Sent"); } }}><Send className="size-3.5" /></Button>
+          <Button size="icon" className="size-8" onClick={() => {
+            const text = value.trim();
+            if (!text) return;
+            if (isThread) {
+              pushExtra(channelId, {
+                id: `x-${Date.now()}`,
+                authorId: currentUserId,
+                body: text,
+                at: new Date().toISOString(),
+                parentMessageId: threadParentId,
+              });
+              setValue("");
+              markThreadRead(threadParentId!);
+            } else {
+              setValue("");
+              toast.success("Sent");
+            }
+          }}><Send className="size-3.5" /></Button>
         </div>
       </div>
     </div>
