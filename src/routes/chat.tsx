@@ -263,6 +263,7 @@ function ChatPage() {
                   m={m}
                   channelId={activeId}
                   isDM={isDM}
+                  currentUserId={currentUserId}
                   onConvert={() => openQuickCreate({ tab: "task", title: m.body })}
                   onReplyInThread={() => openThread(m)}
                 />
@@ -390,15 +391,41 @@ function ThreadPanel({
 
 
 /* -------------------- Message hover actions -------------------- */
-function MessageActions({ m, channelId, isDM, onConvert, onReplyInThread }: { m: Message; channelId: string; isDM?: boolean; onConvert: () => void; onReplyInThread: () => void }) {
+function MessageActions({ m, channelId, isDM, currentUserId, onConvert, onReplyInThread }: { m: Message; channelId: string; isDM?: boolean; currentUserId: string; onConvert: () => void; onReplyInThread: () => void }) {
+  const [pickerOpen, setPickerOpen] = useState(false);
   const copyLink = () => {
     const link = `${window.location.origin}/chat?channel=${channelId}&m=${m.id}`;
     navigator.clipboard?.writeText(link).catch(() => {});
     toast.success("Link copied");
   };
+  const quickEmojis = ["👍", "❤️", "🔥", "✅", "😂", "🎉"];
   return (
     <div className="absolute right-2 top-0 flex translate-y-[-50%] items-center gap-0.5 rounded-md border border-border bg-card px-1 py-0.5 opacity-0 shadow-sm transition group-hover:opacity-100">
-      <IconBtn title="React" onClick={() => toast("Reactions coming soon")}><Smile className="size-3.5" /></IconBtn>
+      <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            title="React"
+            className="flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <Smile className="size-3.5" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-auto p-1">
+          <div className="flex items-center gap-0.5">
+            {quickEmojis.map((emoji) => (
+              <button
+                key={emoji}
+                type="button"
+                onClick={() => { toggleReaction(m.id, emoji, currentUserId); setPickerOpen(false); }}
+                className="flex size-8 items-center justify-center rounded text-base hover:bg-muted"
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
       <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
       {!isDM && <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>}
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
