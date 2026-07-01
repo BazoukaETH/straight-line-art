@@ -307,7 +307,7 @@ function ThreadPanel({
 
 
 /* -------------------- Message hover actions -------------------- */
-function MessageActions({ m, channelId, onConvert }: { m: Message; channelId: string; onConvert: () => void }) {
+function MessageActions({ m, channelId, onConvert, onReplyInThread }: { m: Message; channelId: string; onConvert: () => void; onReplyInThread: () => void }) {
   const copyLink = () => {
     const link = `${window.location.origin}/chat?channel=${channelId}&m=${m.id}`;
     navigator.clipboard?.writeText(link).catch(() => {});
@@ -316,7 +316,7 @@ function MessageActions({ m, channelId, onConvert }: { m: Message; channelId: st
   return (
     <div className="absolute right-2 top-0 flex translate-y-[-50%] items-center gap-0.5 rounded-md border border-border bg-card px-1 py-0.5 opacity-0 shadow-sm transition group-hover:opacity-100">
       <IconBtn title="React" onClick={() => toast("Reactions coming soon")}><Smile className="size-3.5" /></IconBtn>
-      <IconBtn title="Reply in thread" onClick={() => toast("Threads coming soon")}><Reply className="size-3.5" /></IconBtn>
+      <IconBtn title="Reply in thread" onClick={onReplyInThread}><Reply className="size-3.5" /></IconBtn>
       <IconBtn title="Create task" onClick={onConvert}><CheckSquare className="size-3.5" /></IconBtn>
       <IconBtn title="Copy link" onClick={copyLink}><LinkIcon className="size-3.5" /></IconBtn>
       <IconBtn title="More" onClick={() => toast("More actions coming soon")}><MoreHorizontal className="size-3.5" /></IconBtn>
