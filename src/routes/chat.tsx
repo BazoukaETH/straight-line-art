@@ -30,6 +30,7 @@ import {
 } from "@/lib/chat-store";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { renderWithMentions, useMentionPicker } from "@/lib/mentions";
 
 export const Route = createFileRoute("/chat")({
   component: ChatPage,
@@ -191,7 +192,7 @@ function ChatPage() {
                       </div>
                     </button>
                   ) : (
-                    <p className="text-sm text-foreground/90">{m.body}</p>
+                    <p className="text-sm text-foreground/90">{renderWithMentions(m.body)}</p>
                   )}
                   {promo && (
                     <button
@@ -343,7 +344,7 @@ function ThreadPanel({
               <span className="text-sm font-semibold">{author.name}</span>
               <ClientTime iso={parent.at} className="text-[11px] text-muted-foreground" />
             </div>
-            <p className="text-sm text-foreground/90 break-words">{parent.body}</p>
+            <p className="text-sm text-foreground/90 break-words">{renderWithMentions(parent.body)}</p>
           </div>
         </div>
       </div>
@@ -371,7 +372,7 @@ function ThreadPanel({
                   <span className="text-sm font-semibold">{u.name}</span>
                   <ClientTime iso={r.at} className="text-[11px] text-muted-foreground" />
                 </div>
-                <p className="text-sm text-foreground/90 break-words">{r.body}</p>
+                <p className="text-sm text-foreground/90 break-words">{renderWithMentions(r.body)}</p>
               </div>
             </div>
           );
@@ -591,6 +592,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId, isDM 
   const inputRef = useRef<HTMLInputElement>(null);
   const [highlight, setHighlight] = useState(0);
   useEffect(() => { setHighlight(0); }, [value]);
+  const mention = useMentionPicker({ value, setValue, inputRef });
 
   const pickTask = () => {
     setValue("");
@@ -612,6 +614,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId, isDM 
   const menuItems = ["/task", "/find"];
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (mention.onKeyDown(e)) return;
     if (!showPopover) return;
     if (e.key === "Escape") { setValue(""); return; }
     if (mode === "menu") {
@@ -636,7 +639,8 @@ function Composer({ channelId, channelName, currentUserId, threadParentId, isDM 
   return (
     <div className="border-t border-border bg-card p-3">
       <div className="relative">
-        {showPopover && (
+        {mention.dropdown}
+        {showPopover && !mention.active && (
           <div className="absolute bottom-full left-0 right-0 mb-2 overflow-hidden rounded-lg border border-border bg-popover shadow-lg">
             {mode === "menu" && (
               <ul className="py-1 text-sm">

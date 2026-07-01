@@ -15,7 +15,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { getChildren } from "@/lib/task-utils";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { renderWithMentions, useMentionPicker } from "@/lib/mentions";
 import { toast } from "sonner";
 import { useTaskNav } from "@/lib/task-nav";
 import { cn } from "@/lib/utils";
@@ -599,6 +600,8 @@ function ActivityRail({ task }: { task: any }) {
     return ev;
   }, [task]);
   const [comment, setComment] = useState("");
+  const commentRef = useRef<HTMLTextAreaElement>(null);
+  const mention = useMentionPicker({ value: comment, setValue: setComment, inputRef: commentRef });
 
   return (
     <aside className="border-t border-border bg-muted/20 lg:sticky lg:top-0 lg:h-[calc(100vh-56px)] lg:border-l lg:border-t-0">
@@ -626,7 +629,7 @@ function ActivityRail({ task }: { task: any }) {
                 <div className="flex-1 min-w-0">
                   <div className="text-xs">
                     <span className="font-medium text-foreground">{m.name}</span>{" "}
-                    <span className="text-muted-foreground">{e.text}</span>
+                    <span className="text-muted-foreground">{renderWithMentions(e.text)}</span>
                   </div>
                   <div className="text-[10px] text-muted-foreground/70">{new Date(e.at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</div>
                 </div>
@@ -636,13 +639,18 @@ function ActivityRail({ task }: { task: any }) {
         </div>
         <Separator />
         <div className="space-y-2 px-3 py-2.5">
-          <textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Add a comment..."
-            rows={2}
-            className="w-full resize-none rounded-md border border-border bg-card p-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          />
+          <div className="relative">
+            {mention.dropdown}
+            <textarea
+              ref={commentRef}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              onKeyDown={(e) => { mention.onKeyDown(e); }}
+              placeholder="Add a comment..."
+              rows={2}
+              className="w-full resize-none rounded-md border border-border bg-card p-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-0.5 text-muted-foreground">
               <Button size="icon" variant="ghost" className="size-7"><AtSign className="size-3.5" /></Button>
