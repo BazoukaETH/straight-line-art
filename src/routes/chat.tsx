@@ -30,7 +30,13 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/chat")({ component: ChatPage });
+export const Route = createFileRoute("/chat")({
+  component: ChatPage,
+  validateSearch: (search: Record<string, unknown>): { channel?: string; m?: string } => ({
+    channel: typeof search.channel === "string" ? search.channel : undefined,
+    m: typeof search.m === "string" ? search.m : undefined,
+  }),
+});
 
 function useChatStorage() {
   const [tick, setTick] = useState(0);
@@ -47,7 +53,16 @@ function useChatStorage() {
 }
 
 function ChatPage() {
-  const [activeId, setActiveId] = useState<string>("client-smg");
+  const search = Route.useSearch();
+  const [activeId, setActiveId] = useState<string>(
+    search.channel && channels.some((c) => c.id === search.channel) ? search.channel : "client-smg",
+  );
+  useEffect(() => {
+    if (search.channel && channels.some((c) => c.id === search.channel)) {
+      setActiveId(search.channel);
+    }
+  }, [search.channel]);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
   const active = channels.find((c) => c.id === activeId) ?? channels[0];
   const tick = useChatStorage();
   const seeded = channelMessages[activeId] ?? [];
@@ -82,6 +97,21 @@ function ChatPage() {
   const threadParent = threadFor ? allMsgs.find((x) => x.id === threadFor.id) ?? threadFor : null;
   const threadReplies = threadParent ? (repliesByParent[threadParent.id] ?? []) : [];
 
+  // Scroll to a specific message when navigated with ?m=<id>
+  useEffect(() => {
+    if (!search.m) return;
+    if (activeId !== (search.channel ?? activeId)) return;
+    const id = search.m;
+    const t = setTimeout(() => {
+      const el = document.getElementById(`msg-${id}`);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      setHighlightId(id);
+      setTimeout(() => setHighlightId((cur) => (cur === id ? null : cur)), 2000);
+    }, 80);
+    return () => clearTimeout(t);
+  }, [search.m, search.channel, activeId, msgs.length]);
+
   return (
     <AppShell
       sidebar={<ChannelsSidebar active={activeId} onSelect={setActiveId} />}
@@ -112,7 +142,7 @@ function ChatPage() {
             const lastReadAt = threadRead[m.id];
             const unread = replies.filter((r) => !lastReadAt || r.at > lastReadAt).length;
             return (
-              <div key={m.id} id={`msg-${m.id}`} className="group relative flex gap-3 rounded-md p-1 -m-1 hover:bg-muted/30">
+              <div key={m.id} id={`msg-${m.id}`} className={cn("group relative flex gap-3 rounded-md p-1 -m-1 hover:bg-muted/30 transition-colors", highlightId === m.id && "ring-2 ring-accent bg-accent/10")}>
                 <Avatar memberId={u.id} size={32} />
                 <div className="flex-1 min-w-0">
                   <div className="mb-0.5 flex items-baseline gap-2">
