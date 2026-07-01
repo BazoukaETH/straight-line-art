@@ -614,6 +614,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId, isDM 
   const menuItems = ["/task", "/find"];
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (mention.onKeyDown(e)) return;
     if (!showPopover) return;
     if (e.key === "Escape") { setValue(""); return; }
     if (mode === "menu") {
