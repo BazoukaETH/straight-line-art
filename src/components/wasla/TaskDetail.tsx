@@ -639,13 +639,18 @@ function ActivityRail({ task }: { task: any }) {
         </div>
         <Separator />
         <div className="space-y-2 px-3 py-2.5">
-          <textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Add a comment..."
-            rows={2}
-            className="w-full resize-none rounded-md border border-border bg-card p-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          />
+          <div className="relative">
+            {mention.dropdown}
+            <textarea
+              ref={commentRef}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              onKeyDown={(e) => { mention.onKeyDown(e); }}
+              placeholder="Add a comment..."
+              rows={2}
+              className="w-full resize-none rounded-md border border-border bg-card p-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-0.5 text-muted-foreground">
               <Button size="icon" variant="ghost" className="size-7"><AtSign className="size-3.5" /></Button>
