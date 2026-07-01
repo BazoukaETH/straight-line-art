@@ -454,7 +454,8 @@ function ChannelSettingsPopover({ channelId }: { channelId: string }) {
 }
 
 /* -------------------- Composer with slash commands -------------------- */
-function Composer({ channelId, channelName, currentUserId }: { channelId: string; channelName: string; currentUserId: string }) {
+function Composer({ channelId, channelName, currentUserId, threadParentId }: { channelId: string; channelName: string; currentUserId: string; threadParentId?: string }) {
+  const isThread = !!threadParentId;
   const [value, setValue] = useState("");
   const { tasks, lists } = useTasks();
   const { openQuickCreate } = useApp();
