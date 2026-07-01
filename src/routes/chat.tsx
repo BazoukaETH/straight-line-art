@@ -100,6 +100,20 @@ function ChatPage() {
   const { currentUserId, openQuickCreate } = useApp();
   const [convertMsg, setConvertMsg] = useState<Message | null>(null);
   const [threadFor, setThreadFor] = useState<Message | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState("");
+  const beginEdit = (m: Message) => {
+    const ov = overrides[m.id];
+    setEditingId(m.id);
+    setEditDraft(ov?.body ?? m.body);
+  };
+  const saveEdit = () => {
+    if (!editingId) return;
+    const t = editDraft.trim();
+    if (t) editMessage(editingId, t);
+    setEditingId(null);
+  };
+  const cancelEdit = () => setEditingId(null);
 
   const openThread = (m: Message) => {
     setThreadFor(m);
