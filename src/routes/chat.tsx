@@ -63,9 +63,12 @@ function ChatPage() {
     }
   }, [search.channel]);
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  const isDM = activeId.startsWith("dm-");
+  const dmUserId = isDM ? activeId.slice(3) : null;
+  const dmUser = dmUserId ? memberById(dmUserId) : null;
   const active = channels.find((c) => c.id === activeId) ?? channels[0];
   const tick = useChatStorage();
-  const seeded = channelMessages[activeId] ?? [];
+  const seeded = isDM && dmUserId ? (dmMessages[dmUserId] ?? []) : (channelMessages[activeId] ?? []);
   const extras = useMemo(() => readExtras(activeId), [activeId, tick]);
   const allMsgs = useMemo(
     () => [...seeded, ...extras].sort((a, b) => a.at.localeCompare(b.at)),
