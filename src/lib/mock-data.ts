@@ -609,16 +609,26 @@ export const bodEod: BodEod[] = (() => {
   return out;
 })();
 
-export interface InboxItem { id: string; source: "chat" | "task" | "system"; preview: string; at: string; unread: boolean; fromId?: string }
+export interface InboxItem {
+  id: string;
+  source: "chat" | "task" | "system";
+  preview: string;
+  at: string;
+  unread: boolean;
+  fromId?: string;
+  taskId?: string;
+  channelId?: string;
+  messageId?: string;
+}
 export const inboxItems: InboxItem[] = [
-  { id: "i1", source: "chat",   preview: "@bassel — approve Liqui Moly proposal scope?",   at: "2026-05-25T08:40:00Z", unread: true, fromId: "usef" },
-  { id: "i2", source: "task",   preview: "Moaz assigned you 'QA pass — SMG corporate site'",at: "2026-05-25T08:30:00Z", unread: true, fromId: "moaz" },
+  { id: "i1", source: "chat",   preview: "@bassel — approve Liqui Moly proposal scope?",   at: "2026-05-25T08:40:00Z", unread: true, fromId: "usef", channelId: "client-smg", messageId: "m2" },
+  { id: "i2", source: "task",   preview: "Moaz assigned you 'QA pass — SMG corporate site'",at: "2026-05-25T08:30:00Z", unread: true, fromId: "moaz", taskId: "T-SMG-CORP" },
   { id: "i3", source: "system", preview: "Saif hasn't submitted BOD today",                 at: "2026-05-25T09:05:00Z", unread: true },
-  { id: "i4", source: "chat",   preview: "Osama: Liqui Moly ad spend benchmarks shared",    at: "2026-05-25T07:55:00Z", unread: false, fromId: "osama" },
-  { id: "i5", source: "task",   preview: "Hagry moved 'Corporate Website (EJB)' to In Progress", at: "2026-05-24T18:11:00Z", unread: false, fromId: "hagry" },
-  { id: "i6", source: "task",   preview: "Bassel commented on 'Investor deck' — @bassel can you review?", at: "2026-05-25T10:15:00Z", unread: true, fromId: "bassel" },
-  { id: "i7", source: "chat",   preview: "Moaz mentioned you in #tourism — 'war room dev env is up'", at: "2026-05-25T09:14:00Z", unread: true, fromId: "moaz" },
-  { id: "i8", source: "task",   preview: "Task you watch moved: 'Onboard accommodation providers' → In Progress", at: "2026-05-24T14:00:00Z", unread: false, fromId: "bassel" },
+  { id: "i4", source: "chat",   preview: "Osama: Liqui Moly ad spend benchmarks shared",    at: "2026-05-25T07:55:00Z", unread: false, fromId: "osama", channelId: "client-smg", messageId: "m4" },
+  { id: "i5", source: "task",   preview: "Hagry moved 'Corporate Website (EJB)' to In Progress", at: "2026-05-24T18:11:00Z", unread: false, fromId: "hagry", taskId: "T-SMG-CORP" },
+  { id: "i6", source: "task",   preview: "Bassel commented on 'Investor deck' — @bassel can you review?", at: "2026-05-25T10:15:00Z", unread: true, fromId: "bassel", taskId: "T-SMG-COMP" },
+  { id: "i7", source: "chat",   preview: "Moaz mentioned you in #tourism — 'war room dev env is up'", at: "2026-05-25T09:14:00Z", unread: true, fromId: "moaz", channelId: "tourism", messageId: "t2" },
+  { id: "i8", source: "task",   preview: "Task you watch moved: 'Onboard accommodation providers' → In Progress", at: "2026-05-24T14:00:00Z", unread: false, fromId: "bassel", taskId: "T-TOUR-ACCOM" },
 ];
 
 
