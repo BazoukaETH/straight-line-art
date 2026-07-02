@@ -937,47 +937,77 @@ function Composer({ channelId, channelName, currentUserId, threadParentId, isDM 
 }
 
 function ChannelsSidebar({ active, onSelect }: { active: string; onSelect: (id: string) => void }) {
+  const { collapsed } = useSidebarCollapse();
   const grouped = channels.reduce<Record<string, Channel[]>>((acc, c) => {
     (acc[c.pillar] ??= []).push(c); return acc;
   }, {});
-  return (
-    <>
-      <SidebarHeader title="Chat" />
-      <div className="flex-1 overflow-y-auto px-2 py-2 scrollbar-thin">
+  const dmIds = ["moaz", "usef", "ali", "hagry"];
+
+  if (collapsed) {
+    return (
+      <div className="flex h-full w-full min-w-0 flex-col items-center gap-1.5 overflow-hidden py-3">
         {(Object.keys(grouped) as Array<keyof typeof pillarMeta>).map((p) => (
-          <div key={p} className="mb-3">
-            <div className="mb-1 flex items-center gap-1.5 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              <span className="size-1.5 rounded-full" style={{ backgroundColor: pillarMeta[p].color }} />
-              {pillarMeta[p].label}
-            </div>
-            {grouped[p].map((c) => (
-              <button
-                key={c.id}
-                onClick={() => onSelect(c.id)}
-                className={`group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition ${active === c.id ? "bg-accent/10 text-accent" : "text-foreground/75 hover:bg-muted/60"}`}
-              >
-                <Hash className="size-3.5" />
-                <span className="flex-1 truncate text-left">{c.name}</span>
-                {c.unread && <span className="rounded-full bg-destructive px-1.5 text-[10px] font-bold text-destructive-foreground">{c.unread}</span>}
-              </button>
-            ))}
+          <div key={p} className="flex size-8 items-center justify-center" title={pillarMeta[p].label}>
+            <span className="size-2.5 rounded-full" style={{ background: pillarMeta[p].color }} />
           </div>
         ))}
-        <div className="mt-2 mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Direct messages</div>
-        {["moaz","usef","ali","hagry"].map((id) => {
+        <div className="my-1 h-px w-6 bg-border" />
+        {dmIds.map((id) => {
           const dmId = `dm-${id}`;
           return (
             <button
               key={id}
               onClick={() => onSelect(dmId)}
-              className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition ${active === dmId ? "bg-accent/10 text-accent" : "text-foreground/75 hover:bg-muted/60"}`}
+              className={`flex size-8 items-center justify-center rounded-md ${active === dmId ? "bg-accent/10" : "hover:bg-muted"}`}
+              title={memberById(id).name}
             >
-              <Avatar memberId={id} size={18} status />
-              <span>{memberById(id).name}</span>
+              <Avatar memberId={id} size={20} />
             </button>
           );
         })}
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div className="flex h-full w-full min-w-0 flex-col overflow-hidden">
+      <SidebarHeader title="Chat" />
+      <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 py-2 scrollbar-thin">
+        {(Object.keys(grouped) as Array<keyof typeof pillarMeta>).map((p) => (
+          <div key={p} className="mb-3 min-w-0">
+            <div className="mb-1 flex items-center gap-1.5 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <span className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: pillarMeta[p].color }} />
+              <span className="truncate">{pillarMeta[p].label}</span>
+            </div>
+            {grouped[p].map((c) => (
+              <button
+                key={c.id}
+                onClick={() => onSelect(c.id)}
+                className={`group flex w-full min-w-0 items-center gap-2 rounded-md px-2 py-1.5 text-sm transition ${active === c.id ? "bg-accent/10 text-accent" : "text-foreground/75 hover:bg-muted/60"}`}
+              >
+                <Hash className="size-3.5 shrink-0" />
+                <span className="flex-1 truncate text-left">{c.name}</span>
+                {c.unread && <span className="shrink-0 rounded-full bg-destructive px-1.5 text-[10px] font-bold text-destructive-foreground">{c.unread}</span>}
+              </button>
+            ))}
+          </div>
+        ))}
+        <div className="mt-2 mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Direct messages</div>
+        {dmIds.map((id) => {
+          const dmId = `dm-${id}`;
+          return (
+            <button
+              key={id}
+              onClick={() => onSelect(dmId)}
+              className={`flex w-full min-w-0 items-center gap-2 rounded-md px-2 py-1.5 text-sm transition ${active === dmId ? "bg-accent/10 text-accent" : "text-foreground/75 hover:bg-muted/60"}`}
+            >
+              <Avatar memberId={id} size={18} status />
+              <span className="truncate">{memberById(id).name}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
+
