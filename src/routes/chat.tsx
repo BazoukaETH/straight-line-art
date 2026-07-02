@@ -938,7 +938,7 @@ function Composer({ channelId, channelName, currentUserId, threadParentId, isDM 
 }
 
 function ChannelsSidebar({ active, onSelect }: { active: string; onSelect: (id: string) => void }) {
-  const { collapsed } = useSidebarCollapse();
+  const { collapsed, toggle } = useSidebarCollapse();
   const grouped = channels.reduce<Record<string, Channel[]>>((acc, c) => {
     (acc[c.pillar] ??= []).push(c); return acc;
   }, {});
@@ -947,6 +947,15 @@ function ChannelsSidebar({ active, onSelect }: { active: string; onSelect: (id: 
   if (collapsed) {
     return (
       <div className="flex h-full w-full min-w-0 flex-col items-center gap-1.5 overflow-hidden py-3">
+        <button
+          onClick={toggle}
+          className="flex size-8 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          title="Expand sidebar  (⌘B)"
+          aria-label="Expand sidebar"
+        >
+          <ChevronsRight className="size-4" />
+        </button>
+        <div className="my-1 h-px w-6 bg-border" />
         {(Object.keys(grouped) as Array<keyof typeof pillarMeta>).map((p) => (
           <div key={p} className="flex size-8 items-center justify-center" title={pillarMeta[p].label}>
             <span className="size-2.5 rounded-full" style={{ background: pillarMeta[p].color }} />
@@ -972,8 +981,19 @@ function ChannelsSidebar({ active, onSelect }: { active: string; onSelect: (id: 
 
   return (
     <div className="flex h-full w-full min-w-0 flex-col overflow-hidden">
-      <SidebarHeader title="Chat" />
+      <div className="flex items-center justify-between border-b border-border/60 pl-4 pr-2 py-2">
+        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Chat</h2>
+        <button
+          onClick={toggle}
+          className="flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          title="Collapse (⌘B)"
+          aria-label="Collapse sidebar"
+        >
+          <ChevronsLeft className="size-3.5" />
+        </button>
+      </div>
       <div className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-2 py-2 scrollbar-thin">
+
         {(Object.keys(grouped) as Array<keyof typeof pillarMeta>).map((p) => (
           <div key={p} className="mb-3 min-w-0">
             <div className="mb-1 flex items-center gap-1.5 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
