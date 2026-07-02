@@ -155,8 +155,9 @@ function ChatPage() {
       sidebar={<ChannelsSidebar active={activeId} onSelect={setActiveId} />}
       breadcrumb={<><span>Chat</span><span className="text-border">/</span><span className="font-medium text-foreground">{isDM && dmUser ? `@${dmUser.name}` : `#${active.name}`}</span></>}
     >
-      <div className="flex h-full">
-        <div className="flex h-full flex-1 flex-col">
+      <div className="flex h-full min-w-0">
+        <div className="flex h-full flex-1 min-w-0 flex-col">
+
         {/* Header */}
         {isDM && dmUser ? (
           <div className="flex items-center gap-3 border-b border-border bg-card px-5 py-3">
