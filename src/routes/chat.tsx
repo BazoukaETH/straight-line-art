@@ -7,6 +7,7 @@ import {
 import {
   Hash, Pin, Settings, Paperclip, Mic, Smile, Send, AtSign, MessageSquare,
   CheckSquare, Link as LinkIcon, MoreHorizontal, Reply, Slash, X,
+  ChevronsLeft, ChevronsRight,
 } from "lucide-react";
 import { Avatar } from "@/components/wasla/Avatar";
 import { Button } from "@/components/ui/button";
