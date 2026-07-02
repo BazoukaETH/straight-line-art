@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { AppShell, SidebarHeader } from "@/components/wasla/AppShell";
+import { AppShell, SidebarHeader, useSidebarCollapse } from "@/components/wasla/AppShell";
 import {
   channels, channelMessages, memberById, taskById, pillarMeta, spaceById,
   channelHomeSpaceId, dmMessages, type Channel, type Message,
